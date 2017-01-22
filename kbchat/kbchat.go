@@ -3,18 +3,63 @@ package kbchat
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os/exec"
+	"strings"
 	"time"
 )
 
 type API struct {
-	input  io.Writer
-	output *bufio.Scanner
+	input    io.Writer
+	output   *bufio.Scanner
+	username string
+}
+
+func getUsername(keybaseLocation string) (username string, err error) {
+	p := exec.Command(keybaseLocation, "status")
+	output, err := p.StdoutPipe()
+	if err != nil {
+		return "", err
+	}
+
+	p.Start()
+	doneCh := make(chan error)
+	go func() {
+		scanner := bufio.NewScanner(output)
+		if !scanner.Scan() {
+			doneCh <- errors.New("unable to find Keybase username")
+			return
+		}
+		toks := strings.Fields(scanner.Text())
+		if len(toks) != 2 {
+			doneCh <- errors.New("invalid Keybase username output")
+			return
+		}
+		username = toks[1]
+		doneCh <- nil
+	}()
+
+	select {
+	case err = <-doneCh:
+		if err != nil {
+			return "", err
+		}
+	case <-time.After(5 * time.Second):
+		return "", errors.New("unable to run Keybase command")
+	}
+
+	return username, nil
 }
 
 func NewAPI(keybaseLocation string) (*API, error) {
+
+	// Get username first
+	username, err := getUsername(keybaseLocation)
+	if err != nil {
+		return nil, err
+	}
 
 	p := exec.Command(keybaseLocation, "chat", "api")
 	input, err := p.StdinPipe()
@@ -31,8 +76,9 @@ func NewAPI(keybaseLocation string) (*API, error) {
 
 	boutput := bufio.NewScanner(output)
 	return &API{
-		input:  input,
-		output: boutput,
+		input:    input,
+		output:   boutput,
+		username: username,
 	}, nil
 }
 
@@ -80,6 +126,19 @@ func (a *API) SendMessage(convID string, body string) error {
 	}
 	a.output.Scan()
 	return nil
+}
+
+func (a *API) SendMessageByTlfName(tlfName string, body string) error {
+	send := fmt.Sprintf("{\"method\": \"send\", \"params\": {\"options\": {\"channel\": { \"name\": \"%s\"}, \"message\": {\"body\": \"%s\"}}}}", tlfName, body)
+	if _, err := io.WriteString(a.input, send); err != nil {
+		return err
+	}
+	a.output.Scan()
+	return nil
+}
+
+func (a *API) Username() string {
+	return a.username
 }
 
 type SubscriptionMessage struct {
