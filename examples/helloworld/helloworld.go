@@ -30,4 +30,5 @@ func main() {
 	if err = kbc.SendMessageByTlfName(tlfName, "hello!"); err != nil {
 		fail("Error sending message; %s", err.Error())
 	}
+
 }
