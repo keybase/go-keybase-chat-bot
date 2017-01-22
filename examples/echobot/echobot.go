@@ -21,7 +21,7 @@ func main() {
 	flag.StringVar(&kbLoc, "keybase", "keybase", "the location of the Keybase app")
 	flag.Parse()
 
-	if kbc, err = kbchat.NewAPI(kbLoc); err != nil {
+	if kbc, err = kbchat.Start(kbLoc); err != nil {
 		fail("Error creating API: %s", err.Error())
 	}
 

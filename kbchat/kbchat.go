@@ -23,8 +23,10 @@ func getUsername(keybaseLocation string) (username string, err error) {
 	if err != nil {
 		return "", err
 	}
+	if err = p.Start(); err != nil {
+		return "", err
+	}
 
-	p.Start()
 	doneCh := make(chan error)
 	go func() {
 		scanner := bufio.NewScanner(output)
@@ -53,7 +55,7 @@ func getUsername(keybaseLocation string) (username string, err error) {
 	return username, nil
 }
 
-func NewAPI(keybaseLocation string) (*API, error) {
+func Start(keybaseLocation string) (*API, error) {
 
 	// Get username first
 	username, err := getUsername(keybaseLocation)
