@@ -8,9 +8,11 @@ type Sender struct {
 }
 
 type Channel struct {
-	Name      string `json:"name"`
-	Public    bool   `json:"public"`
-	TopicType string `json:"topic_type"`
+	Name        string `json:"name"`
+	Public      bool   `json:"public"`
+	TopicType   string `json:"topic_type"`
+	TopicName   string `json:"topic_name"`
+	MembersType string `json:"members_type"`
 }
 
 type Conversation struct {

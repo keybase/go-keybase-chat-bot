@@ -127,24 +127,69 @@ func (a *API) GetTextMessages(convID string, unreadOnly bool) ([]Message, error)
 	return res, nil
 }
 
-// SendMessage sends a new text message on the given conversation ID
-func (a *API) SendMessage(convID string, body string) error {
-	send := fmt.Sprintf(`{"method": "send", "params": {"options": {"conversation_id": "%s", "message": {"body": "%s"}}}}`, convID, body)
-	if _, err := io.WriteString(a.input, send); err != nil {
+type sendMessageBody struct {
+	Body string
+}
+
+type sendMessageOptions struct {
+	ConversationID string  `json:"conversation_id,omitempty"`
+	Channel        Channel `json:"channel,omitempty"`
+	Message        sendMessageBody
+}
+
+type sendMessageParams struct {
+	Options sendMessageOptions
+}
+
+type sendMessageArg struct {
+	Method string
+	Params sendMessageParams
+}
+
+func (a *API) doSend(arg sendMessageArg) error {
+	bArg, err := json.Marshal(arg)
+	if err != nil {
+		return err
+	}
+	if _, err := io.WriteString(a.input, string(bArg)); err != nil {
 		return err
 	}
 	a.output.Scan()
 	return nil
 }
 
+// SendMessage sends a new text message on the given conversation ID
+func (a *API) SendMessage(convID string, body string) error {
+	arg := sendMessageArg{
+		Method: "send",
+		Params: sendMessageParams{
+			Options: sendMessageOptions{
+				ConversationID: convID,
+				Message: sendMessageBody{
+					Body: body,
+				},
+			},
+		},
+	}
+	return a.doSend(arg)
+}
+
 // SendMessageByTlfName sends a message on the given TLF name
 func (a *API) SendMessageByTlfName(tlfName string, body string) error {
-	send := fmt.Sprintf(`{"method": "send", "params": {"options": {"channel": { "name": "%s"}, "message": {"body": "%s"}}}}`, tlfName, body)
-	if _, err := io.WriteString(a.input, send); err != nil {
-		return err
+	arg := sendMessageArg{
+		Method: "send",
+		Params: sendMessageParams{
+			Options: sendMessageOptions{
+				Channel: Channel{
+					Name: tlfName,
+				},
+				Message: sendMessageBody{
+					Body: body,
+				},
+			},
+		},
 	}
-	a.output.Scan()
-	return nil
+	return a.doSend(arg)
 }
 
 func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *string) error {
@@ -152,12 +197,22 @@ func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *str
 	if inChannel != nil {
 		channel = *inChannel
 	}
-	send := fmt.Sprintf(`{"method": "send", "params": {"options": {"channel": { "members_type": "team", "name": "%s", "topic_name": "%s"}, "message": {"body": "%s"}}}}`, teamName, channel, body)
-	if _, err := io.WriteString(a.input, send); err != nil {
-		return err
+	arg := sendMessageArg{
+		Method: "send",
+		Params: sendMessageParams{
+			Options: sendMessageOptions{
+				Channel: Channel{
+					MembersType: "team",
+					Name:        teamName,
+					TopicName:   channel,
+				},
+				Message: sendMessageBody{
+					Body: body,
+				},
+			},
+		},
 	}
-	a.output.Scan()
-	return nil
+	return a.doSend(arg)
 }
 
 func (a *API) Username() string {
