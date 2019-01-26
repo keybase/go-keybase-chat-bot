@@ -58,13 +58,13 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 
 type RunOptions struct {
 	KeybaseLocation string
-	HomeDir string
+	HomeDir         string
 }
 
 func (r RunOptions) Command(args ...string) *exec.Cmd {
 	var cmd []string
 	if r.HomeDir != "" {
-		cmd = append(cmd, r.HomeDir)
+		cmd = append(cmd, "--home", r.HomeDir)
 	}
 	cmd = append(cmd, args...)
 	return exec.Command(r.KeybaseLocation, cmd...)
