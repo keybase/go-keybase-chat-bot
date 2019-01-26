@@ -18,8 +18,8 @@ type API struct {
 	username string
 }
 
-func getUsername(keybaseLocation string) (username string, err error) {
-	p := exec.Command(keybaseLocation, "status")
+func getUsername(runOpts RunOptions) (username string, err error) {
+	p := runOpts.Command("status")
 	output, err := p.StdoutPipe()
 	if err != nil {
 		return "", err
@@ -56,16 +56,31 @@ func getUsername(keybaseLocation string) (username string, err error) {
 	return username, nil
 }
 
+type RunOptions struct {
+	KeybaseLocation string
+	HomeDir string
+}
+
+func (r RunOptions) Command(args ...string) *exec.Cmd {
+	var cmd []string
+	if r.HomeDir != "" {
+		cmd = append(cmd, r.HomeDir)
+	}
+	cmd = append(cmd, args...)
+	return exec.Command(r.KeybaseLocation, cmd...)
+}
+
 // Start fires up the Keybase JSON API in stdin/stdout mode
-func Start(keybaseLocation string) (*API, error) {
+func Start(runOpts RunOptions) (*API, error) {
 
 	// Get username first
-	username, err := getUsername(keybaseLocation)
+	username, err := getUsername(runOpts)
 	if err != nil {
 		return nil, err
 	}
 
-	p := exec.Command(keybaseLocation, "chat", "api")
+	p := runOpts.Command("chat", "api")
+
 	input, err := p.StdinPipe()
 	if err != nil {
 		return nil, err
