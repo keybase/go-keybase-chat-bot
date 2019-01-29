@@ -230,6 +230,56 @@ func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *str
 	return a.doSend(arg)
 }
 
+func (a *API) SendAttachmentByTeam(teamName string, filename, string, title string, inChannel *string) error {
+	channel := "general"
+	if inChannel != nil {
+		channel = *inChannel
+	}
+	arg := sendAttachmentArg{
+		Method: "attach",
+		Params: sendAttachmentParams{
+			Options: sendAttachmentOptions{
+				Channel: Channel{
+					MembersType: "team",
+					Name:        teamName,
+					TopicName:   channel,
+				},
+				Filename: filename,
+				Title:    title,
+			},
+		},
+	}
+	return a.doSendAttachment(arg)
+}
+
+func (a *API) doSendAttachment(arg sendAttachmentArg) error {
+	bArg, err := json.Marshal(arg)
+	if err != nil {
+		return err
+	}
+	if _, err := io.WriteString(a.input, string(bArg)); err != nil {
+		return err
+	}
+	a.output.Scan()
+	return nil
+}
+
+type sendAttachmentOptions struct {
+	ConversationID string  `json:"conversation_id,omitempty"`
+	Channel        Channel `json:"channel,omitempty"`
+	Filename       string
+	Title          string
+}
+
+type sendAttachmentParams struct {
+	Options sendAttachmentOptions
+}
+
+type sendAttachmentArg struct {
+	Method string
+	Params sendAttachmentParams
+}
+
 func (a *API) Username() string {
 	return a.username
 }
