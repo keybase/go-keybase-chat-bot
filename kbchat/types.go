@@ -4,7 +4,7 @@ type Sender struct {
 	Uid        string `json:"uid"`
 	Username   string `json:"username"`
 	DeviceID   string `json:"device_id"`
-	DeviceName string `json:device_name"`
+	DeviceName string `json:"device_name"`
 }
 
 type Channel struct {
