@@ -147,9 +147,11 @@ type sendMessageBody struct {
 }
 
 type sendMessageOptions struct {
-	ConversationID string  `json:"conversation_id,omitempty"`
-	Channel        Channel `json:"channel,omitempty"`
-	Message        sendMessageBody
+	ConversationID string          `json:"conversation_id,omitempty"`
+	Channel        Channel         `json:"channel,omitempty"`
+	Message        sendMessageBody `json:",omitempty"`
+	Filename       string          `json:"filename,omitempty"`
+	Title          string          `json:"title,omitempty"`
 }
 
 type sendMessageParams struct {
@@ -230,15 +232,15 @@ func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *str
 	return a.doSend(arg)
 }
 
-func (a *API) SendAttachmentByTeam(teamName string, filename, string, title string, inChannel *string) error {
+func (a *API) SendAttachmentByTeam(teamName string, filename string, title string, inChannel *string) error {
 	channel := "general"
 	if inChannel != nil {
 		channel = *inChannel
 	}
-	arg := sendAttachmentArg{
+	arg := sendMessageArg{
 		Method: "attach",
-		Params: sendAttachmentParams{
-			Options: sendAttachmentOptions{
+		Params: sendMessageParams{
+			Options: sendMessageOptions{
 				Channel: Channel{
 					MembersType: "team",
 					Name:        teamName,
@@ -249,35 +251,7 @@ func (a *API) SendAttachmentByTeam(teamName string, filename, string, title stri
 			},
 		},
 	}
-	return a.doSendAttachment(arg)
-}
-
-func (a *API) doSendAttachment(arg sendAttachmentArg) error {
-	bArg, err := json.Marshal(arg)
-	if err != nil {
-		return err
-	}
-	if _, err := io.WriteString(a.input, string(bArg)); err != nil {
-		return err
-	}
-	a.output.Scan()
-	return nil
-}
-
-type sendAttachmentOptions struct {
-	ConversationID string  `json:"conversation_id,omitempty"`
-	Channel        Channel `json:"channel,omitempty"`
-	Filename       string
-	Title          string
-}
-
-type sendAttachmentParams struct {
-	Options sendAttachmentOptions
-}
-
-type sendAttachmentArg struct {
-	Method string
-	Params sendAttachmentParams
+	return a.doSend(arg)
 }
 
 func (a *API) Username() string {
