@@ -36,10 +36,6 @@ func main() {
 			fail("failed to read message: %s", err.Error())
 		}
 
-		if !(msg.Message.Sender.Username == "modalduality" && msg.Message.Channel.Name == "scianmuses") {
-			continue
-		}
-
 		if msg.Message.Content.Type != "text" {
 			continue
 		}

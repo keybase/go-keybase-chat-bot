@@ -264,6 +264,7 @@ func (a *API) Username() string {
 	return a.username
 }
 
+// SubscriptionMessage contains a message and conversation object
 type SubscriptionMessage struct {
 	Message      Message
 	Conversation Conversation
@@ -318,11 +319,10 @@ func (a *API) ListenForNewTextMessages() (NewMessageSubscription, error) {
 			default:
 				boutput.Scan()
 				t := boutput.Text()
-				fmt.Printf("processing %s\n", t)
 				var holder MessageHolder
 				var subscriptionMessage SubscriptionMessage
 				if err := json.Unmarshal([]byte(t), &holder); err != nil {
-					fmt.Println(err)
+					errorCh <- err
 					continue
 				}
 				subscriptionMessage = SubscriptionMessage{
