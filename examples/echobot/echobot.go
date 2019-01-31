@@ -25,14 +25,26 @@ func main() {
 		fail("Error creating API: %s", err.Error())
 	}
 
-	sub := kbc.ListenForNewTextMessages()
+	sub, err := kbc.ListenForNewTextMessages()
+	if err != nil {
+		fail("Error listening: %s", err.Error())
+	}
+
 	for {
 		msg, err := sub.Read()
 		if err != nil {
 			fail("failed to read message: %s", err.Error())
 		}
 
-		if err = kbc.SendMessage(msg.Conversation.Id, msg.Message.Content.Text.Body); err != nil {
+		if !(msg.Message.Sender.Username == "modalduality" && msg.Message.Channel.Name == "scianmuses") {
+			continue
+		}
+
+		if msg.Message.Content.Type != "text" {
+			continue
+		}
+
+		if err = kbc.SendMessage(msg.Message.Channel, msg.Message.Content.Text.Body); err != nil {
 			fail("error echo'ing message: %s", err.Error())
 		}
 	}

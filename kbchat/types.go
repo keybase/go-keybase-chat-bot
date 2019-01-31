@@ -16,7 +16,6 @@ type Channel struct {
 }
 
 type Conversation struct {
-	Id      string  `json:"id"`
 	Unread  bool    `json:"unread"`
 	Channel Channel `json:"channel"`
 }
@@ -41,6 +40,7 @@ type Content struct {
 type Message struct {
 	Content Content `json:"content"`
 	Sender  Sender  `json:"sender"`
+	Channel Channel `json:"channel"`
 }
 
 type MessageHolder struct {
