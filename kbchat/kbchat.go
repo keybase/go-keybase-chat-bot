@@ -103,8 +103,7 @@ func Start(runOpts RunOptions) (*API, error) {
 	}, nil
 }
 
-// GetConversations reads all conversations from the current user's inbox. Optionally
-// can filter for unread only.
+// GetConversations reads all conversations from the current user's inbox.
 func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 	list := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
 	if _, err := io.WriteString(a.input, list); err != nil {
@@ -120,15 +119,15 @@ func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 	return inbox.Result.Convs, nil
 }
 
-// GetTextMessages fetches all text messages from a given conversation. Optionally can filter
+// GetTextMessages fetches all text messages from a given channel. Optionally can filter
 // ont unread status.
-func (a *API) GetTextMessages(conv Conversation, unreadOnly bool) ([]Message, error) {
-	channelBytes, err := json.Marshal(conv.Channel)
+func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, error) {
+	channelBytes, err := json.Marshal(channel)
 	if err != nil {
 		return nil, err
 	}
 
-	read := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s, "unread_only": %v}}}`, string(channelBytes), unreadOnly)
+	read := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s}}}`, string(channelBytes))
 	if _, err := io.WriteString(a.input, read); err != nil {
 		return nil, err
 	}
