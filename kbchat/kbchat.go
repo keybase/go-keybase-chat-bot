@@ -341,3 +341,7 @@ func (a *API) ListenForNewTextMessages() (NewMessageSubscription, error) {
 
 	return sub, nil
 }
+
+func (a *API) GetUsername() string {
+	return a.username
+}

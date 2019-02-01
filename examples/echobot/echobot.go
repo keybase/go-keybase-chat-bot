@@ -40,6 +40,10 @@ func main() {
 			continue
 		}
 
+		if msg.Message.Sender.Username == kbc.GetUsername() {
+			continue
+		}
+
 		if err = kbc.SendMessage(msg.Message.Channel, msg.Message.Content.Text.Body); err != nil {
 			fail("error echo'ing message: %s", err.Error())
 		}
