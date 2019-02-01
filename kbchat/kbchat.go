@@ -16,6 +16,7 @@ type API struct {
 	input    io.Writer
 	output   *bufio.Scanner
 	username string
+	runOpts  RunOptions
 }
 
 func getUsername(runOpts RunOptions) (username string, err error) {
@@ -98,11 +99,11 @@ func Start(runOpts RunOptions) (*API, error) {
 		input:    input,
 		output:   boutput,
 		username: username,
+		runOpts:  runOpts,
 	}, nil
 }
 
-// GetConversations reads all conversations from the current user's inbox. Optionally
-// can filter for unread only.
+// GetConversations reads all conversations from the current user's inbox.
 func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 	list := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
 	if _, err := io.WriteString(a.input, list); err != nil {
@@ -118,10 +119,15 @@ func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 	return inbox.Result.Convs, nil
 }
 
-// GetTextMessages fetches all text messages from a given conversation ID. Optionally can filter
+// GetTextMessages fetches all text messages from a given channel. Optionally can filter
 // ont unread status.
-func (a *API) GetTextMessages(convID string, unreadOnly bool) ([]Message, error) {
-	read := fmt.Sprintf(`{"method": "read", "params": {"options": {"conversation_id": "%s", "unread_only": %v}}}`, convID, unreadOnly)
+func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, error) {
+	channelBytes, err := json.Marshal(channel)
+	if err != nil {
+		return nil, err
+	}
+
+	read := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s}}}`, string(channelBytes))
 	if _, err := io.WriteString(a.input, read); err != nil {
 		return nil, err
 	}
@@ -147,11 +153,10 @@ type sendMessageBody struct {
 }
 
 type sendMessageOptions struct {
-	ConversationID string          `json:"conversation_id,omitempty"`
-	Channel        Channel         `json:"channel,omitempty"`
-	Message        sendMessageBody `json:",omitempty"`
-	Filename       string          `json:"filename,omitempty"`
-	Title          string          `json:"title,omitempty"`
+	Channel  Channel         `json:"channel,omitempty"`
+	Message  sendMessageBody `json:",omitempty"`
+	Filename string          `json:"filename,omitempty"`
+	Title    string          `json:"title,omitempty"`
 }
 
 type sendMessageParams struct {
@@ -175,13 +180,13 @@ func (a *API) doSend(arg sendMessageArg) error {
 	return nil
 }
 
-// SendMessage sends a new text message on the given conversation ID
-func (a *API) SendMessage(convID string, body string) error {
+// SendMessage sends a new text message on the given channel
+func (a *API) SendMessage(channel Channel, body string) error {
 	arg := sendMessageArg{
 		Method: "send",
 		Params: sendMessageParams{
 			Options: sendMessageOptions{
-				ConversationID: convID,
+				Channel: channel,
 				Message: sendMessageBody{
 					Body: body,
 				},
@@ -286,58 +291,57 @@ func (m NewMessageSubscription) Shutdown() {
 	m.shutdownCh <- struct{}{}
 }
 
-func (a *API) getUnreadMessagesFromConvs(convs []Conversation) ([]SubscriptionMessage, error) {
-	var res []SubscriptionMessage
-	for _, conv := range convs {
-		msgs, err := a.GetTextMessages(conv.Id, true)
-		if err != nil {
-			return nil, err
-		}
-		for _, msg := range msgs {
-			res = append(res, SubscriptionMessage{
-				Message:      msg,
-				Conversation: conv,
-			})
-		}
+// ListenForNewTextMessages fires off a background loop to fetch incoming messages.
+func (a *API) ListenForNewTextMessages() (NewMessageSubscription, error) {
+	p := a.runOpts.Command("chat", "api-listen")
+	output, err := p.StdoutPipe()
+	if err != nil {
+		return NewMessageSubscription{}, fmt.Errorf("Failed to listen: %s", err)
 	}
-	return res, nil
-}
 
-// ListenForNewTextMessages fires off a background loop to fetch new unread messages.
-func (a *API) ListenForNewTextMessages() NewMessageSubscription {
 	newMsgCh := make(chan SubscriptionMessage, 100)
 	errorCh := make(chan error, 100)
 	shutdownCh := make(chan struct{})
+
 	sub := NewMessageSubscription{
 		newMsgsCh:  newMsgCh,
 		shutdownCh: shutdownCh,
 		errorCh:    errorCh,
 	}
+
+	boutput := bufio.NewScanner(output)
 	go func() {
 		for {
 			select {
 			case <-shutdownCh:
 				return
-			case <-time.After(2 * time.Second):
-				// Get all unread convos
-				convs, err := a.GetConversations(true)
-				if err != nil {
+			default:
+				boutput.Scan()
+				t := boutput.Text()
+				var holder MessageHolder
+				var subscriptionMessage SubscriptionMessage
+				if err := json.Unmarshal([]byte(t), &holder); err != nil {
 					errorCh <- err
 					continue
 				}
-				// Get unread msgs from convs
-				msgs, err := a.getUnreadMessagesFromConvs(convs)
-				if err != nil {
-					errorCh <- err
-					continue
+				subscriptionMessage = SubscriptionMessage{
+					Message: holder.Msg,
+					Conversation: Conversation{
+						Channel: holder.Msg.Channel,
+					},
 				}
-				// Send all the new messages out
-				for _, msg := range msgs {
-					newMsgCh <- msg
-				}
+				newMsgCh <- subscriptionMessage
 			}
 		}
 	}()
 
-	return sub
+	if err := p.Start(); err != nil {
+		return NewMessageSubscription{}, err
+	}
+
+	return sub, nil
+}
+
+func (a *API) GetUsername() string {
+	return a.username
 }
