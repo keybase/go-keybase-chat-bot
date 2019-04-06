@@ -357,15 +357,20 @@ type SubscriptionMessage struct {
 	Conversation Conversation
 }
 
-// NewMessageSubscription has methods to control the background message fetcher loop
-type NewMessageSubscription struct {
-	newMsgsCh  <-chan SubscriptionMessage
-	errorCh    <-chan error
-	shutdownCh chan struct{}
+type SubscriptionWalletEvent struct {
+	Payment Payment
+}
+
+// NewSubscription has methods to control the background message fetcher loop
+type NewSubscription struct {
+	newMsgsCh   <-chan SubscriptionMessage
+	newWalletCh <-chan SubscriptionWalletEvent
+	errorCh     <-chan error
+	shutdownCh  chan struct{}
 }
 
 // Read blocks until a new message arrives
-func (m NewMessageSubscription) Read() (SubscriptionMessage, error) {
+func (m NewSubscription) Read() (SubscriptionMessage, error) {
 	select {
 	case msg := <-m.newMsgsCh:
 		return msg, nil
@@ -374,64 +379,112 @@ func (m NewMessageSubscription) Read() (SubscriptionMessage, error) {
 	}
 }
 
+// Read blocks until a new message arrives
+func (m NewSubscription) ReadWallet() (SubscriptionWalletEvent, error) {
+	select {
+	case msg := <-m.newWalletCh:
+		return msg, nil
+	case err := <-m.errorCh:
+		return SubscriptionWalletEvent{}, err
+	}
+}
+
 // Shutdown terminates the background process
-func (m NewMessageSubscription) Shutdown() {
+func (m NewSubscription) Shutdown() {
 	m.shutdownCh <- struct{}{}
 }
 
-// ListenForNewTextMessages fires off a background loop to fetch incoming messages.
-func (a *API) ListenForNewTextMessages() (NewMessageSubscription, error) {
+type ListenOptions struct {
+	Wallet bool
+}
+
+// ListenForNewTextMessages proxies to Listen without wallet events
+func (a *API) ListenForNewTextMessages() (NewSubscription, error) {
+	opts := ListenOptions{Wallet: false}
+	return a.Listen(opts)
+}
+
+// Listen fires of a background loop and puts chat messages and wallet
+// events into channels
+func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 	newMsgCh := make(chan SubscriptionMessage, 100)
+	newWalletCh := make(chan SubscriptionWalletEvent, 100)
 	errorCh := make(chan error, 100)
 	shutdownCh := make(chan struct{})
-	sub := NewMessageSubscription{
-		newMsgsCh:  newMsgCh,
-		shutdownCh: shutdownCh,
-		errorCh:    errorCh,
+
+	sub := NewSubscription{
+		newMsgsCh:   newMsgCh,
+		newWalletCh: newWalletCh,
+		shutdownCh:  shutdownCh,
+		errorCh:     errorCh,
 	}
 	pause := 2 * time.Second
 	readScanner := func(boutput *bufio.Scanner) {
 		for {
 			boutput.Scan()
 			t := boutput.Text()
-			var holder MessageHolder
-			var subscriptionMessage SubscriptionMessage
-			if err := json.Unmarshal([]byte(t), &holder); err != nil {
+			var typeHolder TypeHolder
+			if err := json.Unmarshal([]byte(t), &typeHolder); err != nil {
 				errorCh <- err
 				return
 			}
-			subscriptionMessage = SubscriptionMessage{
-				Message: holder.Msg,
-				Conversation: Conversation{
-					Channel: holder.Msg.Channel,
-				},
+			switch typeHolder.Type {
+			case "chat":
+				var holder MessageHolder
+				if err := json.Unmarshal([]byte(t), &holder); err != nil {
+					errorCh <- err
+					return
+				}
+				subscriptionMessage := SubscriptionMessage{
+					Message: holder.Msg,
+					Conversation: Conversation{
+						Channel: holder.Msg.Channel,
+					},
+				}
+				newMsgCh <- subscriptionMessage
+			case "wallet":
+				var holder PaymentHolder
+				if err := json.Unmarshal([]byte(t), &holder); err != nil {
+					errorCh <- err
+					return
+				}
+				subscriptionPayment := SubscriptionWalletEvent{
+					Payment: holder.Payment,
+				}
+				newWalletCh <- subscriptionPayment
+			default:
+				continue
 			}
-			newMsgCh <- subscriptionMessage
 		}
 	}
+
 	attempts := 0
 	maxAttempts := 1800
 	go func() {
 		for {
 			if attempts >= maxAttempts {
-				panic("ListenForNewTextMessages: failed to auth, giving up")
+				panic("Listen: failed to auth, giving up")
 			}
 			attempts++
 			if _, err := a.auth(); err != nil {
-				log.Printf("ListenForNewTextMessages: failed to auth: %s", err)
+				log.Printf("Listen: failed to auth: %s", err)
 				time.Sleep(pause)
 				continue
 			}
-			p := a.runOpts.Command("chat", "api-listen")
+			cmdElements := []string{"chat", "api-listen"}
+			if opts.Wallet {
+				cmdElements = append(cmdElements, "--wallet")
+			}
+			p := a.runOpts.Command(cmdElements...)
 			output, err := p.StdoutPipe()
 			if err != nil {
-				log.Printf("ListenForNewTextMessages: failed to listen: %s", err)
+				log.Printf("Listen: failed to listen: %s", err)
 				time.Sleep(pause)
 				continue
 			}
 			boutput := bufio.NewScanner(output)
 			if err := p.Start(); err != nil {
-				log.Printf("ListenForNewTextMessages: failed to make listen scanner: %s", err)
+				log.Printf("Listen: failed to make listen scanner: %s", err)
 				time.Sleep(pause)
 				continue
 			}
