@@ -38,9 +38,10 @@ type Content struct {
 }
 
 type Message struct {
-	Content Content `json:"content"`
-	Sender  Sender  `json:"sender"`
-	Channel Channel `json:"channel"`
+	Content        Content `json:"content"`
+	Sender         Sender  `json:"sender"`
+	Channel        Channel `json:"channel"`
+	ConversationID string  `json:"conversation_id"`
 }
 
 type MessageHolder struct {
