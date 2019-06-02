@@ -57,9 +57,22 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 	return username, nil
 }
 
+type OneshotOptions struct {
+	Username string
+	PaperKey string
+}
+
 type RunOptions struct {
 	KeybaseLocation string
 	HomeDir         string
+	Oneshot         *OneshotOptions
+}
+
+func (r RunOptions) Location() string {
+	if r.KeybaseLocation == "" {
+		return "keybase"
+	}
+	return r.KeybaseLocation
 }
 
 func (r RunOptions) Command(args ...string) *exec.Cmd {
@@ -68,11 +81,22 @@ func (r RunOptions) Command(args ...string) *exec.Cmd {
 		cmd = append(cmd, "--home", r.HomeDir)
 	}
 	cmd = append(cmd, args...)
-	return exec.Command(r.KeybaseLocation, cmd...)
+	return exec.Command(r.Location(), cmd...)
 }
 
 // Start fires up the Keybase JSON API in stdin/stdout mode
 func Start(runOpts RunOptions) (*API, error) {
+
+	// If a paper key is specified, then login with oneshot mode (logout first)
+	if runOpts.Oneshot != nil {
+		if err := runOpts.Command("logout", "-f").Run(); err != nil {
+			return nil, err
+		}
+		if err := runOpts.Command("oneshot", "--username", runOpts.Oneshot.Username, "--paperkey",
+			runOpts.Oneshot.PaperKey).Run(); err != nil {
+			return nil, err
+		}
+	}
 
 	// Get username first
 	username, err := getUsername(runOpts)
