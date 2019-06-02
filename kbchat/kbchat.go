@@ -153,10 +153,11 @@ type sendMessageBody struct {
 }
 
 type sendMessageOptions struct {
-	Channel  Channel         `json:"channel,omitempty"`
-	Message  sendMessageBody `json:",omitempty"`
-	Filename string          `json:"filename,omitempty"`
-	Title    string          `json:"title,omitempty"`
+	Channel        Channel         `json:"channel,omitempty"`
+	ConversationID string          `json:"conversation_id,omitempty"`
+	Message        sendMessageBody `json:",omitempty"`
+	Filename       string          `json:"filename,omitempty"`
+	Title          string          `json:"title,omitempty"`
 }
 
 type sendMessageParams struct {
@@ -187,6 +188,21 @@ func (a *API) SendMessage(channel Channel, body string) error {
 		Params: sendMessageParams{
 			Options: sendMessageOptions{
 				Channel: channel,
+				Message: sendMessageBody{
+					Body: body,
+				},
+			},
+		},
+	}
+	return a.doSend(arg)
+}
+
+func (a *API) SendMessageByConvID(convID string, body string) error {
+	arg := sendMessageArg{
+		Method: "send",
+		Params: sendMessageParams{
+			Options: sendMessageOptions{
+				ConversationID: convID,
 				Message: sendMessageBody{
 					Body: body,
 				},
