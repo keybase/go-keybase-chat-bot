@@ -409,25 +409,33 @@ func (a *API) ListenForNewTextMessages() (NewMessageSubscription, error) {
 			newMsgCh <- subscriptionMessage
 		}
 	}
+	attempts := 0
+	maxAttempts := 1800
 	go func() {
 		for {
+			if attempts >= maxAttempts {
+				panic("ListenForNewTextMessages: failed to auth, giving up")
+			}
+			attempts++
 			if _, err := a.auth(); err != nil {
+				log.Printf("ListenForNewTextMessages: failed to auth: %s", err)
 				time.Sleep(pause)
 				continue
 			}
 			p := a.runOpts.Command("chat", "api-listen")
 			output, err := p.StdoutPipe()
 			if err != nil {
-				log.Printf("failed to listen: %s", err)
+				log.Printf("ListenForNewTextMessages: failed to listen: %s", err)
 				time.Sleep(pause)
 				continue
 			}
 			boutput := bufio.NewScanner(output)
 			if err := p.Start(); err != nil {
-				log.Printf("failed to make listen scanner: %s", err)
+				log.Printf("ListenForNewTextMessages: failed to make listen scanner: %s", err)
 				time.Sleep(pause)
 				continue
 			}
+			attempts = 0
 			go readScanner(boutput)
 			p.Wait()
 			time.Sleep(pause)
