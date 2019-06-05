@@ -6,17 +6,21 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os/exec"
 	"strings"
+	"sync"
 	"time"
 )
 
 // API is the main object used for communicating with the Keybase JSON API
 type API struct {
-	input    io.Writer
-	output   *bufio.Scanner
-	username string
-	runOpts  RunOptions
+	sync.Mutex
+	apiInput  io.Writer
+	apiOutput *bufio.Scanner
+	apiCmd    *exec.Cmd
+	username  string
+	runOpts   RunOptions
 }
 
 func getUsername(runOpts RunOptions) (username string, err error) {
@@ -57,9 +61,22 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 	return username, nil
 }
 
+type OneshotOptions struct {
+	Username string
+	PaperKey string
+}
+
 type RunOptions struct {
 	KeybaseLocation string
 	HomeDir         string
+	Oneshot         *OneshotOptions
+}
+
+func (r RunOptions) Location() string {
+	if r.KeybaseLocation == "" {
+		return "keybase"
+	}
+	return r.KeybaseLocation
 }
 
 func (r RunOptions) Command(args ...string) *exec.Cmd {
@@ -68,51 +85,98 @@ func (r RunOptions) Command(args ...string) *exec.Cmd {
 		cmd = append(cmd, "--home", r.HomeDir)
 	}
 	cmd = append(cmd, args...)
-	return exec.Command(r.KeybaseLocation, cmd...)
+	return exec.Command(r.Location(), cmd...)
 }
 
 // Start fires up the Keybase JSON API in stdin/stdout mode
 func Start(runOpts RunOptions) (*API, error) {
+	api := &API{
+		runOpts: runOpts,
+	}
+	if err := api.startPipes(); err != nil {
+		return nil, err
+	}
+	return api, nil
+}
 
-	// Get username first
-	username, err := getUsername(runOpts)
+func (a *API) auth() (string, error) {
+	username, err := getUsername(a.runOpts)
+	if err == nil {
+		return username, nil
+	} else {
+		if a.runOpts.Oneshot == nil {
+			return "", err
+		}
+		username = ""
+	}
+	// If a paper key is specified, then login with oneshot mode (logout first)
+	if a.runOpts.Oneshot != nil {
+		if username == a.runOpts.Oneshot.Username {
+			// just get out if we are on the desired user already
+			return username, nil
+		}
+		if err := a.runOpts.Command("logout", "-f").Run(); err != nil {
+			return "", err
+		}
+		if err := a.runOpts.Command("oneshot", "--username", a.runOpts.Oneshot.Username, "--paperkey",
+			a.runOpts.Oneshot.PaperKey).Run(); err != nil {
+			return "", err
+		}
+		return username, nil
+	}
+	return "", errors.New("unable to auth")
+}
+
+func (a *API) startPipes() (err error) {
+	a.Lock()
+	defer a.Unlock()
+	if a.apiCmd != nil {
+		a.apiCmd.Process.Kill()
+	}
+	a.apiCmd = nil
+	if a.username, err = a.auth(); err != nil {
+		return err
+	}
+	a.apiCmd = a.runOpts.Command("chat", "api")
+	if a.apiInput, err = a.apiCmd.StdinPipe(); err != nil {
+		return err
+	}
+	output, err := a.apiCmd.StdoutPipe()
 	if err != nil {
-		return nil, err
+		return err
 	}
+	if err := a.apiCmd.Start(); err != nil {
+		return err
+	}
+	a.apiOutput = bufio.NewScanner(output)
+	return nil
+}
 
-	p := runOpts.Command("chat", "api")
+var errAPIDisconnected = errors.New("chat API disconnected")
 
-	input, err := p.StdinPipe()
-	if err != nil {
-		return nil, err
+func (a *API) getAPIPipes() (io.Writer, *bufio.Scanner, error) {
+	a.Lock()
+	defer a.Unlock()
+	if a.apiCmd == nil {
+		return nil, nil, errAPIDisconnected
 	}
-	output, err := p.StdoutPipe()
-	if err != nil {
-		return nil, err
-	}
-	if err := p.Start(); err != nil {
-		return nil, err
-	}
-
-	boutput := bufio.NewScanner(output)
-	return &API{
-		input:    input,
-		output:   boutput,
-		username: username,
-		runOpts:  runOpts,
-	}, nil
+	return a.apiInput, a.apiOutput, nil
 }
 
 // GetConversations reads all conversations from the current user's inbox.
 func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
-	list := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
-	if _, err := io.WriteString(a.input, list); err != nil {
+	input, output, err := a.getAPIPipes()
+	if err != nil {
 		return nil, err
 	}
-	a.output.Scan()
+	list := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
+	if _, err := io.WriteString(input, list); err != nil {
+		return nil, err
+	}
+	output.Scan()
 
 	var inbox Inbox
-	inboxRaw := a.output.Text()
+	inboxRaw := output.Text()
 	if err := json.Unmarshal([]byte(inboxRaw[:]), &inbox); err != nil {
 		return nil, err
 	}
@@ -127,14 +191,18 @@ func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, erro
 		return nil, err
 	}
 
-	read := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s}}}`, string(channelBytes))
-	if _, err := io.WriteString(a.input, read); err != nil {
+	input, output, err := a.getAPIPipes()
+	if err != nil {
 		return nil, err
 	}
-	a.output.Scan()
+	read := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s}}}`, string(channelBytes))
+	if _, err := io.WriteString(input, read); err != nil {
+		return nil, err
+	}
+	output.Scan()
 
 	var thread Thread
-	if err := json.Unmarshal([]byte(a.output.Text()), &thread); err != nil {
+	if err := json.Unmarshal([]byte(output.Text()), &thread); err != nil {
 		return nil, fmt.Errorf("unable to decode thread: %s", err.Error())
 	}
 
@@ -153,10 +221,11 @@ type sendMessageBody struct {
 }
 
 type sendMessageOptions struct {
-	Channel  Channel         `json:"channel,omitempty"`
-	Message  sendMessageBody `json:",omitempty"`
-	Filename string          `json:"filename,omitempty"`
-	Title    string          `json:"title,omitempty"`
+	Channel        Channel         `json:"channel,omitempty"`
+	ConversationID string          `json:"conversation_id,omitempty"`
+	Message        sendMessageBody `json:",omitempty"`
+	Filename       string          `json:"filename,omitempty"`
+	Title          string          `json:"title,omitempty"`
 }
 
 type sendMessageParams struct {
@@ -173,10 +242,14 @@ func (a *API) doSend(arg sendMessageArg) error {
 	if err != nil {
 		return err
 	}
-	if _, err := io.WriteString(a.input, string(bArg)); err != nil {
+	input, output, err := a.getAPIPipes()
+	if err != nil {
 		return err
 	}
-	a.output.Scan()
+	if _, err := io.WriteString(input, string(bArg)); err != nil {
+		return err
+	}
+	output.Scan()
 	return nil
 }
 
@@ -187,6 +260,21 @@ func (a *API) SendMessage(channel Channel, body string) error {
 		Params: sendMessageParams{
 			Options: sendMessageOptions{
 				Channel: channel,
+				Message: sendMessageBody{
+					Body: body,
+				},
+			},
+		},
+	}
+	return a.doSend(arg)
+}
+
+func (a *API) SendMessageByConvID(convID string, body string) error {
+	arg := sendMessageArg{
+		Method: "send",
+		Params: sendMessageParams{
+			Options: sendMessageOptions{
+				ConversationID: convID,
 				Message: sendMessageBody{
 					Body: body,
 				},
@@ -293,61 +381,66 @@ func (m NewMessageSubscription) Shutdown() {
 
 // ListenForNewTextMessages fires off a background loop to fetch incoming messages.
 func (a *API) ListenForNewTextMessages() (NewMessageSubscription, error) {
-	p := a.runOpts.Command("chat", "api-listen")
-	output, err := p.StdoutPipe()
-	if err != nil {
-		return NewMessageSubscription{}, fmt.Errorf("Failed to listen: %s", err)
-	}
-
 	newMsgCh := make(chan SubscriptionMessage, 100)
 	errorCh := make(chan error, 100)
 	shutdownCh := make(chan struct{})
-
 	sub := NewMessageSubscription{
 		newMsgsCh:  newMsgCh,
 		shutdownCh: shutdownCh,
 		errorCh:    errorCh,
 	}
-
-	boutput := bufio.NewScanner(output)
+	pause := 2 * time.Second
+	readScanner := func(boutput *bufio.Scanner) {
+		for {
+			boutput.Scan()
+			t := boutput.Text()
+			var holder MessageHolder
+			var subscriptionMessage SubscriptionMessage
+			if err := json.Unmarshal([]byte(t), &holder); err != nil {
+				errorCh <- err
+				return
+			}
+			subscriptionMessage = SubscriptionMessage{
+				Message: holder.Msg,
+				Conversation: Conversation{
+					Channel: holder.Msg.Channel,
+				},
+			}
+			newMsgCh <- subscriptionMessage
+		}
+	}
+	attempts := 0
+	maxAttempts := 1800
 	go func() {
 		for {
-			select {
-			case <-shutdownCh:
-				return
-			default:
-				if ok := boutput.Scan(); !ok {
-					if err := boutput.Err(); err != nil {
-						errorCh <- err
-						break
-					}
-					// EOF results in Err() == nill && Scan() == false
-					errorCh <- io.EOF
-					break
-				}
-				t := boutput.Text()
-
-				var holder MessageHolder
-				var subscriptionMessage SubscriptionMessage
-				if err := json.Unmarshal([]byte(t), &holder); err != nil {
-					errorCh <- err
-					continue
-				}
-				subscriptionMessage = SubscriptionMessage{
-					Message: holder.Msg,
-					Conversation: Conversation{
-						Channel: holder.Msg.Channel,
-					},
-				}
-				newMsgCh <- subscriptionMessage
+			if attempts >= maxAttempts {
+				panic("ListenForNewTextMessages: failed to auth, giving up")
 			}
+			attempts++
+			if _, err := a.auth(); err != nil {
+				log.Printf("ListenForNewTextMessages: failed to auth: %s", err)
+				time.Sleep(pause)
+				continue
+			}
+			p := a.runOpts.Command("chat", "api-listen")
+			output, err := p.StdoutPipe()
+			if err != nil {
+				log.Printf("ListenForNewTextMessages: failed to listen: %s", err)
+				time.Sleep(pause)
+				continue
+			}
+			boutput := bufio.NewScanner(output)
+			if err := p.Start(); err != nil {
+				log.Printf("ListenForNewTextMessages: failed to make listen scanner: %s", err)
+				time.Sleep(pause)
+				continue
+			}
+			attempts = 0
+			go readScanner(boutput)
+			p.Wait()
+			time.Sleep(pause)
 		}
 	}()
-
-	if err := p.Start(); err != nil {
-		return NewMessageSubscription{}, err
-	}
-
 	return sub, nil
 }
 

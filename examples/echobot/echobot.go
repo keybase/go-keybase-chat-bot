@@ -8,26 +8,15 @@ import (
 	"github.com/keybase/go-keybase-chat-bot/kbchat"
 )
 
-var kbc *kbchat.API
-
 func fail(msg string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, "fatal error: "+msg+"\n", args...)
+	fmt.Fprintf(os.Stderr, msg+"\n", args...)
 	os.Exit(3)
 }
 
-func failAndLog(msg string, args ...interface{}) {
-	if err := kbc.LogSend(fmt.Sprintf(msg, args...)); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to log send: %s\n", err)
-	}
-
-	fail(msg, args...)
-}
-
 func main() {
-	var (
-		kbLoc string
-		err   error
-	)
+	var kbLoc string
+	var kbc *kbchat.API
+	var err error
 
 	flag.StringVar(&kbLoc, "keybase", "keybase", "the location of the Keybase app")
 	flag.Parse()
@@ -38,13 +27,13 @@ func main() {
 
 	sub, err := kbc.ListenForNewTextMessages()
 	if err != nil {
-		failAndLog("Error listening: %s", err.Error())
+		fail("Error listening: %s", err.Error())
 	}
 
 	for {
 		msg, err := sub.Read()
 		if err != nil {
-			failAndLog("failed to read message: %s", err.Error())
+			fail("failed to read message: %s", err.Error())
 		}
 
 		if msg.Message.Content.Type != "text" {
@@ -56,7 +45,7 @@ func main() {
 		}
 
 		if err = kbc.SendMessage(msg.Message.Channel, msg.Message.Content.Text.Body); err != nil {
-			failAndLog("error echo'ing message: %s", err.Error())
+			fail("error echo'ing message: %s", err.Error())
 		}
 	}
 
