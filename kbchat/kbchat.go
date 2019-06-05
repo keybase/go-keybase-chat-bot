@@ -447,3 +447,24 @@ func (a *API) ListenForNewTextMessages() (NewMessageSubscription, error) {
 func (a *API) GetUsername() string {
 	return a.username
 }
+
+func (a *API) LogSend(feedback string) error {
+	feedback = "go-keybase-chat-bot log send\n" +
+		"username: " + a.GetUsername() + "\n" +
+		feedback
+
+	args := []string{
+		"log", "send",
+		"--no-confirm",
+		"--feedback", feedback,
+	}
+
+	// We're determining whether the service is already running by running status
+	// with autofork disabled.
+	if err := a.runOpts.Command("--no-auto-fork", "status"); err != nil {
+		// Assume that there's no service running, so log send as standalone
+		args = append([]string{"--standalone"}, args...)
+	}
+
+	return a.runOpts.Command(args...).Run()
+}
