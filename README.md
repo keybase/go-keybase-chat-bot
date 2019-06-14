@@ -38,7 +38,7 @@ func main() {
 	flag.StringVar(&kbLoc, "keybase", "keybase", "the location of the Keybase app")
 	flag.Parse()
 
-	if kbc, err = kbchat.Start(kbLoc); err != nil {
+	if kbc, err = kbchat.Start(kbchat.RunOptions{KeybaseLocation: kbLoc)}); err != nil {
 		fail("Error creating API: %s", err.Error())
 	}
 
@@ -75,9 +75,9 @@ get all text messages, optionally filtering for unread status
 
 Reads the messages in a channel. You can read with or without marking as read.
 
-#### `API.ListenForNextTextMessages() NewMessageSubscription`
+#### `API.ListenForNextTextMessages() NewSubscription`
 
-Returns an object that allows for a bot to enter into a loop calling `NewMessageSubscription.Read`
+Returns an object that allows for a bot to enter into a loop calling `NewSubscription.Read`
 to receive any new message across all conversations (except the bots own messages). See the following example:
 
 ```go
@@ -93,6 +93,39 @@ to receive any new message across all conversations (except the bots own message
 		}
 	}
 ```
+
+#### `API.Listen(kbc.ListenOptions{Wallet: true}) NewSubscription`
+
+Returns the same object as above, but this one will have another channel on it that also gets wallet events. You can get those just like chat messages: `NewSubscription.ReadWallet`. So if you care about both of these types of events, you might run two loops like this:
+
+```go
+	sub := kbc.Listen(kbc.ListenOptions{Wallet: true})
+	go func() {
+		for {
+			payment, err := sub.ReadWallet()
+			if err != nil {
+				fail("failed to read payment event: %s", err.Error())
+			}
+			tlfName := fmt.Sprintf("%s,%s", payment.FromUsername, "kb_monbot")
+			msg := fmt.Sprintf("thanks for the %s!", payment.AmountDescription)
+			if err = kbc.SendMessageByTlfName(tlfName, msg); err != nil {
+				fail("error thanking for payment: %s", err.Error())
+			}
+		}
+	}()
+
+	for {
+		msg, err := sub.Read()
+		if err != nil {
+			fail("failed to read message: %s", err.Error())
+		}
+
+		if err = kbc.SendMessage(msg.Conversation.Id, msg.Message.Content.Text.Body); err != nil {
+			fail("error echo'ing message: %s", err.Error())
+		}
+	}
+```
+
 
 
 ## TODO:
