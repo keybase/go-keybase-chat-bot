@@ -411,6 +411,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 	newWalletCh := make(chan SubscriptionWalletEvent, 100)
 	errorCh := make(chan error, 100)
 	shutdownCh := make(chan struct{})
+	done := make(chan struct{})
 
 	sub := NewSubscription{
 		newMsgsCh:   newMsgCh,
@@ -426,14 +427,14 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			var typeHolder TypeHolder
 			if err := json.Unmarshal([]byte(t), &typeHolder); err != nil {
 				errorCh <- err
-				return
+				break
 			}
 			switch typeHolder.Type {
 			case "chat":
 				var holder MessageHolder
 				if err := json.Unmarshal([]byte(t), &holder); err != nil {
 					errorCh <- err
-					return
+					break
 				}
 				subscriptionMessage := SubscriptionMessage{
 					Message: holder.Msg,
@@ -446,7 +447,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 				var holder PaymentHolder
 				if err := json.Unmarshal([]byte(t), &holder); err != nil {
 					errorCh <- err
-					return
+					break
 				}
 				subscriptionPayment := SubscriptionWalletEvent{
 					Payment: holder.Payment,
@@ -456,6 +457,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 				continue
 			}
 		}
+		done <- struct{}{}
 	}
 
 	attempts := 0
@@ -490,6 +492,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			}
 			attempts = 0
 			go readScanner(boutput)
+			<-done
 			p.Wait()
 			time.Sleep(pause)
 		}
