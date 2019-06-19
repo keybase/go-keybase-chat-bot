@@ -155,8 +155,7 @@ func (a *API) startPipes() (err error) {
 var errAPIDisconnected = errors.New("chat API disconnected")
 
 func (a *API) getAPIPipes() (io.Writer, *bufio.Scanner, error) {
-	a.Lock()
-	defer a.Unlock()
+	// this should only be called inside a lock
 	if a.apiCmd == nil {
 		return nil, nil, errAPIDisconnected
 	}
@@ -165,6 +164,9 @@ func (a *API) getAPIPipes() (io.Writer, *bufio.Scanner, error) {
 
 // GetConversations reads all conversations from the current user's inbox.
 func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
+	a.Lock()
+	defer a.Unlock()
+
 	input, output, err := a.getAPIPipes()
 	if err != nil {
 		return nil, err
@@ -186,6 +188,9 @@ func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 // GetTextMessages fetches all text messages from a given channel. Optionally can filter
 // ont unread status.
 func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, error) {
+	a.Lock()
+	defer a.Unlock()
+
 	channelBytes, err := json.Marshal(channel)
 	if err != nil {
 		return nil, err
@@ -238,6 +243,9 @@ type sendMessageArg struct {
 }
 
 func (a *API) doSend(arg sendMessageArg) error {
+	a.Lock()
+	defer a.Unlock()
+
 	bArg, err := json.Marshal(arg)
 	if err != nil {
 		return err
