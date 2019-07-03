@@ -154,9 +154,8 @@ func (a *API) startPipes() (err error) {
 
 var errAPIDisconnected = errors.New("chat API disconnected")
 
-func (a *API) getAPIPipes() (io.Writer, *bufio.Scanner, error) {
-	a.Lock()
-	defer a.Unlock()
+func (a *API) getAPIPipesLocked() (io.Writer, *bufio.Scanner, error) {
+	// this should only be called inside a lock
 	if a.apiCmd == nil {
 		return nil, nil, errAPIDisconnected
 	}
@@ -165,15 +164,11 @@ func (a *API) getAPIPipes() (io.Writer, *bufio.Scanner, error) {
 
 // GetConversations reads all conversations from the current user's inbox.
 func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
-	input, output, err := a.getAPIPipes()
+	apiInput := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
+	output, err := a.doFetch(apiInput)
 	if err != nil {
 		return nil, err
 	}
-	list := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
-	if _, err := io.WriteString(input, list); err != nil {
-		return nil, err
-	}
-	output.Scan()
 
 	var inbox Inbox
 	inboxRaw := output.Text()
@@ -190,16 +185,11 @@ func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, erro
 	if err != nil {
 		return nil, err
 	}
-
-	input, output, err := a.getAPIPipes()
+	apiInput := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s}}}`, string(channelBytes))
+	output, err := a.doFetch(apiInput)
 	if err != nil {
 		return nil, err
 	}
-	read := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s}}}`, string(channelBytes))
-	if _, err := io.WriteString(input, read); err != nil {
-		return nil, err
-	}
-	output.Scan()
 
 	var thread Thread
 	if err := json.Unmarshal([]byte(output.Text()), &thread); err != nil {
@@ -238,11 +228,14 @@ type sendMessageArg struct {
 }
 
 func (a *API) doSend(arg sendMessageArg) error {
+	a.Lock()
+	defer a.Unlock()
+
 	bArg, err := json.Marshal(arg)
 	if err != nil {
 		return err
 	}
-	input, output, err := a.getAPIPipes()
+	input, output, err := a.getAPIPipesLocked()
 	if err != nil {
 		return err
 	}
@@ -251,6 +244,22 @@ func (a *API) doSend(arg sendMessageArg) error {
 	}
 	output.Scan()
 	return nil
+}
+
+func (a *API) doFetch(apiInput string) (*bufio.Scanner, error) {
+	a.Lock()
+	defer a.Unlock()
+
+	input, output, err := a.getAPIPipesLocked()
+	if err != nil {
+		return nil, err
+	}
+	if _, err := io.WriteString(input, apiInput); err != nil {
+		return nil, err
+	}
+	output.Scan()
+
+	return output, nil
 }
 
 // SendMessage sends a new text message on the given channel
@@ -411,6 +420,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 	newWalletCh := make(chan SubscriptionWalletEvent, 100)
 	errorCh := make(chan error, 100)
 	shutdownCh := make(chan struct{})
+	done := make(chan struct{})
 
 	sub := NewSubscription{
 		newMsgsCh:   newMsgCh,
@@ -426,14 +436,14 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			var typeHolder TypeHolder
 			if err := json.Unmarshal([]byte(t), &typeHolder); err != nil {
 				errorCh <- err
-				return
+				break
 			}
 			switch typeHolder.Type {
 			case "chat":
 				var holder MessageHolder
 				if err := json.Unmarshal([]byte(t), &holder); err != nil {
 					errorCh <- err
-					return
+					break
 				}
 				subscriptionMessage := SubscriptionMessage{
 					Message: holder.Msg,
@@ -446,7 +456,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 				var holder PaymentHolder
 				if err := json.Unmarshal([]byte(t), &holder); err != nil {
 					errorCh <- err
-					return
+					break
 				}
 				subscriptionPayment := SubscriptionWalletEvent{
 					Payment: holder.Payment,
@@ -456,6 +466,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 				continue
 			}
 		}
+		done <- struct{}{}
 	}
 
 	attempts := 0
@@ -490,6 +501,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			}
 			attempts = 0
 			go readScanner(boutput)
+			<-done
 			p.Wait()
 			time.Sleep(pause)
 		}
