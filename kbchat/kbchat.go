@@ -154,7 +154,7 @@ func (a *API) startPipes() (err error) {
 
 var errAPIDisconnected = errors.New("chat API disconnected")
 
-func (a *API) getAPIPipes() (io.Writer, *bufio.Scanner, error) {
+func (a *API) getAPIPipesLocked() (io.Writer, *bufio.Scanner, error) {
 	// this should only be called inside a lock
 	if a.apiCmd == nil {
 		return nil, nil, errAPIDisconnected
@@ -164,18 +164,11 @@ func (a *API) getAPIPipes() (io.Writer, *bufio.Scanner, error) {
 
 // GetConversations reads all conversations from the current user's inbox.
 func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
-	a.Lock()
-	defer a.Unlock()
-
-	input, output, err := a.getAPIPipes()
+	apiInput := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
+	output, err := a.doFetch(apiInput)
 	if err != nil {
 		return nil, err
 	}
-	list := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
-	if _, err := io.WriteString(input, list); err != nil {
-		return nil, err
-	}
-	output.Scan()
 
 	var inbox Inbox
 	inboxRaw := output.Text()
@@ -188,23 +181,15 @@ func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 // GetTextMessages fetches all text messages from a given channel. Optionally can filter
 // ont unread status.
 func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, error) {
-	a.Lock()
-	defer a.Unlock()
-
 	channelBytes, err := json.Marshal(channel)
 	if err != nil {
 		return nil, err
 	}
-
-	input, output, err := a.getAPIPipes()
+	apiInput := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s}}}`, string(channelBytes))
+	output, err := a.doFetch(apiInput)
 	if err != nil {
 		return nil, err
 	}
-	read := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s}}}`, string(channelBytes))
-	if _, err := io.WriteString(input, read); err != nil {
-		return nil, err
-	}
-	output.Scan()
 
 	var thread Thread
 	if err := json.Unmarshal([]byte(output.Text()), &thread); err != nil {
@@ -250,7 +235,7 @@ func (a *API) doSend(arg sendMessageArg) error {
 	if err != nil {
 		return err
 	}
-	input, output, err := a.getAPIPipes()
+	input, output, err := a.getAPIPipesLocked()
 	if err != nil {
 		return err
 	}
@@ -259,6 +244,22 @@ func (a *API) doSend(arg sendMessageArg) error {
 	}
 	output.Scan()
 	return nil
+}
+
+func (a *API) doFetch(apiInput string) (*bufio.Scanner, error) {
+	a.Lock()
+	defer a.Unlock()
+
+	input, output, err := a.getAPIPipesLocked()
+	if err != nil {
+		return nil, err
+	}
+	if _, err := io.WriteString(input, apiInput); err != nil {
+		return nil, err
+	}
+	output.Scan()
+
+	return output, nil
 }
 
 // SendMessage sends a new text message on the given channel
