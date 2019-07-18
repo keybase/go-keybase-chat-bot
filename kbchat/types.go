@@ -16,6 +16,7 @@ type Channel struct {
 }
 
 type Conversation struct {
+	ID      string  `json:"id"`
 	Unread  bool    `json:"unread"`
 	Channel Channel `json:"channel"`
 }
@@ -89,4 +90,28 @@ type ThreadResult struct {
 
 type Thread struct {
 	Result ThreadResult `json:"result"`
+}
+
+type CommandExtendedDescription struct {
+	Title       string `json:"title"`
+	DesktopBody string `json:"desktop_body"`
+	MobileBody  string `json:"mobile_body"`
+}
+
+type Command struct {
+	Name                string                      `json:"name"`
+	Description         string                      `json:"description"`
+	Usage               string                      `json:"usage"`
+	ExtendedDescription *CommandExtendedDescription `json:"extended_description,omitempty"`
+}
+
+type CommandsAdvertisement struct {
+	Typ      string `json:"type"`
+	Commands []Command
+	TeamName string `json:"team_name,omitempty"`
+}
+
+type Advertisement struct {
+	Alias          string `json:"alias,omitempty"`
+	Advertisements []CommandsAdvertisement
 }
