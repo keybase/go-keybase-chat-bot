@@ -75,6 +75,14 @@ type Message struct {
 	MsgID          int     `json:"id"`
 }
 
+type SendResult struct {
+	MsgID int `json:"id"`
+}
+
+type SendResponse struct {
+	Result SendResult `json:"result"`
+}
+
 type TypeHolder struct {
 	Type string `json:"type"`
 }

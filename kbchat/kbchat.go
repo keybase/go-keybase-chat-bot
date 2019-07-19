@@ -228,22 +228,31 @@ type sendMessageArg struct {
 }
 
 func (a *API) doSend(arg interface{}) error {
+	_, err := a.doSendWithResponse(arg)
+	return err
+}
+
+func (a *API) doSendWithResponse(arg interface{}) (response SendResponse, err error) {
 	a.Lock()
 	defer a.Unlock()
 
 	bArg, err := json.Marshal(arg)
 	if err != nil {
-		return err
+		return SendResponse{}, err
 	}
 	input, output, err := a.getAPIPipesLocked()
 	if err != nil {
-		return err
+		return SendResponse{}, err
 	}
 	if _, err := io.WriteString(input, string(bArg)); err != nil {
-		return err
+		return SendResponse{}, err
 	}
-	output.Scan()
-	return nil
+	if output.Scan() {
+		if err := json.Unmarshal([]byte(output.Text()), &response); err != nil {
+			return SendResponse{}, fmt.Errorf("failed to decode API response: %s", err)
+		}
+	}
+	return response, nil
 }
 
 func (a *API) doFetch(apiInput string) (*bufio.Scanner, error) {
@@ -262,8 +271,7 @@ func (a *API) doFetch(apiInput string) (*bufio.Scanner, error) {
 	return output, nil
 }
 
-// SendMessage sends a new text message on the given channel
-func (a *API) SendMessage(channel Channel, body string) error {
+func (a *API) SendMessageWithResponse(channel Channel, body string) (SendResponse, error) {
 	arg := sendMessageArg{
 		Method: "send",
 		Params: sendMessageParams{
@@ -275,7 +283,13 @@ func (a *API) SendMessage(channel Channel, body string) error {
 			},
 		},
 	}
-	return a.doSend(arg)
+	return a.doSendWithResponse(arg)
+}
+
+// SendMessage sends a new text message on the given channel
+func (a *API) SendMessage(channel Channel, body string) error {
+	_, err := a.SendMessageWithResponse(channel, body)
+	return err
 }
 
 func (a *API) SendMessageByConvID(convID string, body string) error {
@@ -359,7 +373,8 @@ func (a *API) SendAttachmentByTeam(teamName string, filename string, title strin
 type reactionOptions struct {
 	ConversationID string `json:"conversation_id"`
 	Message        sendMessageBody
-	MsgID          int `json:"message_id"`
+	MsgID          int     `json:"message_id"`
+	Channel        Channel `json:"channel"`
 }
 
 type reactionParams struct {
@@ -371,23 +386,28 @@ type reactionArg struct {
 	Params reactionParams
 }
 
-func newReactionArg(convID string, msgID int, reaction string) reactionArg {
+func newReactionArg(options reactionOptions) reactionArg {
 	return reactionArg{
 		Method: "reaction",
-		Params: reactionParams{
-			Options: reactionOptions{
-				ConversationID: convID,
-				Message: sendMessageBody{
-					Body: reaction,
-				},
-				MsgID: msgID,
-			},
-		},
+		Params: reactionParams{Options: options},
 	}
 }
 
+func (a *API) ReactByChannel(channel Channel, msgID int, reaction string) error {
+	arg := newReactionArg(reactionOptions{
+		Message: sendMessageBody{Body: reaction},
+		MsgID:   msgID,
+		Channel: channel,
+	})
+	return a.doSend(arg)
+}
+
 func (a *API) ReactByConvID(convID string, msgID int, reaction string) error {
-	arg := newReactionArg(convID, msgID, reaction)
+	arg := newReactionArg(reactionOptions{
+		Message:        sendMessageBody{Body: reaction},
+		MsgID:          msgID,
+		ConversationID: convID,
+	})
 	return a.doSend(arg)
 }
 
