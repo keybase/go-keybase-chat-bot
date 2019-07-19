@@ -215,6 +215,7 @@ type sendMessageOptions struct {
 	Message        sendMessageBody `json:",omitempty"`
 	Filename       string          `json:"filename,omitempty"`
 	Title          string          `json:"title,omitempty"`
+	MsgID          int             `json:"message_id,omitempty"`
 }
 
 type sendMessageParams struct {
@@ -352,6 +353,41 @@ func (a *API) SendAttachmentByTeam(teamName string, filename string, title strin
 			},
 		},
 	}
+	return a.doSend(arg)
+}
+
+type reactionOptions struct {
+	ConversationID string `json:"conversation_id"`
+	Message        sendMessageBody
+	MsgID          int `json:"message_id"`
+}
+
+type reactionParams struct {
+	Options reactionOptions
+}
+
+type reactionArg struct {
+	Method string
+	Params reactionParams
+}
+
+func newReactionArg(convID string, msgID int, reaction string) reactionArg {
+	return reactionArg{
+		Method: "reaction",
+		Params: reactionParams{
+			Options: reactionOptions{
+				ConversationID: convID,
+				Message: sendMessageBody{
+					Body: reaction,
+				},
+				MsgID: msgID,
+			},
+		},
+	}
+}
+
+func (a *API) ReactByConvID(convID string, msgID int, reaction string) error {
+	arg := newReactionArg(convID, msgID, reaction)
 	return a.doSend(arg)
 }
 
