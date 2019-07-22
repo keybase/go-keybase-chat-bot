@@ -227,12 +227,7 @@ type sendMessageArg struct {
 	Params sendMessageParams
 }
 
-func (a *API) doSend(arg interface{}) error {
-	_, err := a.doSendWithResponse(arg)
-	return err
-}
-
-func (a *API) doSendWithResponse(arg interface{}) (response SendResponse, err error) {
+func (a *API) doSend(arg interface{}) (response SendResponse, err error) {
 	a.Lock()
 	defer a.Unlock()
 
@@ -271,7 +266,7 @@ func (a *API) doFetch(apiInput string) (*bufio.Scanner, error) {
 	return output, nil
 }
 
-func (a *API) SendMessageWithResponse(channel Channel, body string) (SendResponse, error) {
+func (a *API) SendMessage(channel Channel, body string) (SendResponse, error) {
 	arg := sendMessageArg{
 		Method: "send",
 		Params: sendMessageParams{
@@ -283,16 +278,10 @@ func (a *API) SendMessageWithResponse(channel Channel, body string) (SendRespons
 			},
 		},
 	}
-	return a.doSendWithResponse(arg)
+	return a.doSend(arg)
 }
 
-// SendMessage sends a new text message on the given channel
-func (a *API) SendMessage(channel Channel, body string) error {
-	_, err := a.SendMessageWithResponse(channel, body)
-	return err
-}
-
-func (a *API) SendMessageByConvID(convID string, body string) error {
+func (a *API) SendMessageByConvID(convID string, body string) (SendResponse, error) {
 	arg := sendMessageArg{
 		Method: "send",
 		Params: sendMessageParams{
@@ -308,7 +297,7 @@ func (a *API) SendMessageByConvID(convID string, body string) error {
 }
 
 // SendMessageByTlfName sends a message on the given TLF name
-func (a *API) SendMessageByTlfName(tlfName string, body string) error {
+func (a *API) SendMessageByTlfName(tlfName string, body string) (SendResponse, error) {
 	arg := sendMessageArg{
 		Method: "send",
 		Params: sendMessageParams{
@@ -325,7 +314,7 @@ func (a *API) SendMessageByTlfName(tlfName string, body string) error {
 	return a.doSend(arg)
 }
 
-func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *string) error {
+func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *string) (SendResponse, error) {
 	channel := "general"
 	if inChannel != nil {
 		channel = *inChannel
@@ -348,7 +337,7 @@ func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *str
 	return a.doSend(arg)
 }
 
-func (a *API) SendAttachmentByTeam(teamName string, filename string, title string, inChannel *string) error {
+func (a *API) SendAttachmentByTeam(teamName string, filename string, title string, inChannel *string) (SendResponse, error) {
 	channel := "general"
 	if inChannel != nil {
 		channel = *inChannel
@@ -393,7 +382,7 @@ func newReactionArg(options reactionOptions) reactionArg {
 	}
 }
 
-func (a *API) ReactByChannel(channel Channel, msgID int, reaction string) error {
+func (a *API) ReactByChannel(channel Channel, msgID int, reaction string) (SendResponse, error) {
 	arg := newReactionArg(reactionOptions{
 		Message: sendMessageBody{Body: reaction},
 		MsgID:   msgID,
@@ -402,7 +391,7 @@ func (a *API) ReactByChannel(channel Channel, msgID int, reaction string) error 
 	return a.doSend(arg)
 }
 
-func (a *API) ReactByConvID(convID string, msgID int, reaction string) error {
+func (a *API) ReactByConvID(convID string, msgID int, reaction string) (SendResponse, error) {
 	arg := newReactionArg(reactionOptions{
 		Message:        sendMessageBody{Body: reaction},
 		MsgID:          msgID,
@@ -429,7 +418,7 @@ func newAdvertiseMsgArg(ad Advertisement) advertiseMsgArg {
 	}
 }
 
-func (a *API) AdvertiseCommands(ad Advertisement) error {
+func (a *API) AdvertiseCommands(ad Advertisement) (SendResponse, error) {
 	return a.doSend(newAdvertiseMsgArg(ad))
 }
 
