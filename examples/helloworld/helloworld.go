@@ -27,7 +27,7 @@ func main() {
 
 	tlfName := fmt.Sprintf("%s,%s", kbc.Username(), "kb_monbot")
 	fmt.Printf("saying hello on conversation: %s\n", tlfName)
-	if err = kbc.SendMessageByTlfName(tlfName, "hello!"); err != nil {
+	if _, err = kbc.SendMessageByTlfName(tlfName, "hello!"); err != nil {
 		fail("Error sending message; %s", err.Error())
 	}
 

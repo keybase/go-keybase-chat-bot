@@ -44,7 +44,7 @@ func main() {
 			continue
 		}
 
-		if err = kbc.SendMessage(msg.Message.Channel, msg.Message.Content.Text.Body); err != nil {
+		if _, err = kbc.SendMessage(msg.Message.Channel, msg.Message.Content.Text.Body); err != nil {
 			fail("error echo'ing message: %s", err.Error())
 		}
 	}
