@@ -45,6 +45,10 @@ type Inbox struct {
 	Result Result `json:"result"`
 }
 
+type ChannelsList struct {
+	Result Result `json:"result"`
+}
+
 type MsgPaymentDetails struct {
 	ResultType int    `json:"resultTyp"` // 0 good. 1 error
 	PaymentID  string `json:"sent"`
@@ -122,4 +126,30 @@ type CommandsAdvertisement struct {
 type Advertisement struct {
 	Alias          string `json:"alias,omitempty"`
 	Advertisements []CommandsAdvertisement
+}
+
+type ListMembers struct {
+	Result ListMembersResult `json:"result"`
+	Error TeamError `json:"error"`
+}
+
+type TeamError struct {
+	Code int `json:"code"`
+	Message string `json:"message"`
+}
+
+type ListMembersResult struct {
+	Members ListMembersResultMembers `json:"members"`
+}
+
+type ListMembersResultMembers struct {
+	Owners  []ListMembersOutputMembersCategory `json:"owners"`
+	Admins  []ListMembersOutputMembersCategory `json:"admins"`
+	Writers []ListMembersOutputMembersCategory `json:"writers"`
+	Readers []ListMembersOutputMembersCategory `json:"readers"`
+}
+
+type ListMembersOutputMembersCategory struct {
+	Username string `json:"username"`
+	FullName string `json:"fullName"`
 }
