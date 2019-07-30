@@ -45,6 +45,10 @@ type Inbox struct {
 	Result Result `json:"result"`
 }
 
+type ChannelsList struct {
+	Result Result `json:"result"`
+}
+
 type MsgPaymentDetails struct {
 	ResultType int    `json:"resultTyp"` // 0 good. 1 error
 	PaymentID  string `json:"sent"`
@@ -122,4 +126,25 @@ type CommandsAdvertisement struct {
 type Advertisement struct {
 	Alias          string `json:"alias,omitempty"`
 	Advertisements []CommandsAdvertisement
+}
+
+type Error struct {
+	Code int `json:"code"`
+	Message string `json:"message"`
+}
+
+type JoinChannel struct {
+	Error Error `json:"error"`
+	Result JoinChannelResult `json:"result"`
+}
+
+type JoinChannelResult struct {
+	RateLimit RateLimit `json:"ratelimits"`
+}
+
+type RateLimit struct {
+	Tank string `json:"tank"`
+	Capacity int `json:"capacity"`
+	Reset int `json:"reset"`
+	Gas int `json:"gas"`
 }

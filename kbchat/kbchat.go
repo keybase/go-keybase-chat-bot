@@ -580,6 +580,47 @@ func (a *API) GetUsername() string {
 	return a.username
 }
 
+func (a *API) ListChannels(teamName string) ([]string, error) {
+	apiInput := fmt.Sprintf(`{"method": "listconvsonname", "params": {"options": {"topic_type": "CHAT", "members_type": "team", "name": "%s"}}}`, teamName)
+	output, err := a.doFetch(apiInput)
+	if err != nil {
+		return nil, err
+	}
+
+	var channelsList ChannelsList
+	inboxRaw := output.Text()
+	if err := json.Unmarshal([]byte(inboxRaw[:]), &channelsList); err != nil {
+		return nil, err
+	}
+
+	var channels []string
+	for _, conv := range channelsList.Result.Convs {
+		channels = append(channels, conv.Channel.TopicName)
+	}
+	return channels, nil
+}
+
+func (a *API) JoinChannel(teamName string, channelName string) (JoinChannelResult, error) {
+	empty := JoinChannelResult{}
+
+	apiInput := fmt.Sprintf(`{"method": "join", "params": {"options": {"channel": {"name": "%s", "members_type": "team", "topic_name": "%s"}}}}`, teamName, channelName)
+	output, err := a.doFetch(apiInput)
+	if err != nil {
+		return empty, err
+	}
+
+	joinChannel := JoinChannel{}
+	err = json.Unmarshal([]byte(output.Text()[:]), &joinChannel)
+	if err != nil {
+		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+	}
+	if joinChannel.Error.Message != "" {
+		return empty, fmt.Errorf("received error from keybase team api: %s", joinChannel.Error.Message)
+	}
+
+	return joinChannel.Result, nil
+}
+
 func (a *API) LogSend(feedback string) error {
 	feedback = "go-keybase-chat-bot log send\n" +
 		"username: " + a.GetUsername() + "\n" +
