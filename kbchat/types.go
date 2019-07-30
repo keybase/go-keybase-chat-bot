@@ -128,9 +128,9 @@ type Advertisement struct {
 	Advertisements []CommandsAdvertisement
 }
 
-type ListMembers struct {
-	Result ListMembersResult `json:"result"`
-	Error TeamError `json:"error"`
+type ListTeamMembers struct {
+	Result ListTeamMembersResult `json:"result"`
+	Error  TeamError             `json:"error"`
 }
 
 type TeamError struct {
@@ -138,11 +138,11 @@ type TeamError struct {
 	Message string `json:"message"`
 }
 
-type ListMembersResult struct {
-	Members ListMembersResultMembers `json:"members"`
+type ListTeamMembersResult struct {
+	Members ListTeamMembersResultMembers `json:"members"`
 }
 
-type ListMembersResultMembers struct {
+type ListTeamMembersResultMembers struct {
 	Owners  []ListMembersOutputMembersCategory `json:"owners"`
 	Admins  []ListMembersOutputMembersCategory `json:"admins"`
 	Writers []ListMembersOutputMembersCategory `json:"writers"`
@@ -152,4 +152,21 @@ type ListMembersResultMembers struct {
 type ListMembersOutputMembersCategory struct {
 	Username string `json:"username"`
 	FullName string `json:"fullName"`
+}
+
+type ListUserMemberships struct {
+	Result ListUserMembershipsResult `json:"result"`
+	Error  TeamError             `json:"error"`
+}
+
+type ListUserMembershipsResult struct {
+	Teams []ListUserMembershipsResultTeam `json:"teams"`
+}
+
+type ListUserMembershipsResultTeam struct {
+	TeamName string `json:"fq_name"`
+	IsImplicitTeam bool `json:"is_implicit_team"`
+	IsOpenTeam bool `json:"is_open_team"`
+	Role int `json:"role"`
+	MemberCount int `json:"member_count"`
 }

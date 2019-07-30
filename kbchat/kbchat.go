@@ -606,8 +606,8 @@ func (a *API) JoinChannel(teamName string, channelName string) error {
 	return err
 }
 
-func (a *API) ListMembersOfTeam(teamName string) (ListMembersResultMembers, error) {
-	empty := ListMembersResultMembers{}
+func (a *API) ListMembersOfTeam(teamName string) (ListTeamMembersResultMembers, error) {
+	empty := ListTeamMembersResultMembers{}
 
 	apiInput := fmt.Sprintf(`{"method": "list-team-memberships", "params": {"options": {"team": "%s"}}}`, teamName)
 	cmd := a.runOpts.Command("team", "api")
@@ -616,7 +616,8 @@ func (a *API) ListMembersOfTeam(teamName string) (ListMembersResultMembers, erro
 	if err != nil {
 		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
 	}
-	members := ListMembers{}
+
+	members := ListTeamMembers{}
 	err = json.Unmarshal(bytes, &members)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
@@ -626,6 +627,29 @@ func (a *API) ListMembersOfTeam(teamName string) (ListMembersResultMembers, erro
 	}
 	return members.Result.Members, nil
 }
+
+func (a *API) ListUserMemberships(username string) ([]ListUserMembershipsResultTeam, error) {
+	empty := []ListUserMembershipsResultTeam{}
+
+	apiInput := fmt.Sprintf(`{"method": "list-user-memberships", "params": {"options": {"username": "%s"}}}`, username)
+	cmd := a.runOpts.Command("team", "api")
+	cmd.Stdin = strings.NewReader(apiInput)
+	bytes, err := cmd.CombinedOutput()
+	if err != nil {
+		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
+	}
+
+	members := ListUserMemberships{}
+	err = json.Unmarshal(bytes, &members)
+	if err != nil {
+		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+	}
+	if members.Error.Message != "" {
+		return empty, fmt.Errorf("received error from keybase team api: %s", members.Error.Message)
+	}
+	return members.Result.Teams, nil
+}
+
 
 func (a *API) LogSend(feedback string) error {
 	feedback = "go-keybase-chat-bot log send\n" +
