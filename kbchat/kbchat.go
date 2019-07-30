@@ -600,56 +600,26 @@ func (a *API) ListChannels(teamName string) ([]string, error) {
 	return channels, nil
 }
 
-func (a *API) JoinChannel(teamName string, channelName string) error {
+func (a *API) JoinChannel(teamName string, channelName string) (JoinChannelResult, error) {
+	empty := JoinChannelResult{}
+
 	apiInput := fmt.Sprintf(`{"method": "join", "params": {"options": {"channel": {"name": "%s", "members_type": "team", "topic_name": "%s"}}}}`, teamName, channelName)
-	_, err := a.doFetch(apiInput)
-	return err
-}
-
-func (a *API) ListMembersOfTeam(teamName string) (ListTeamMembersResultMembers, error) {
-	empty := ListTeamMembersResultMembers{}
-
-	apiInput := fmt.Sprintf(`{"method": "list-team-memberships", "params": {"options": {"team": "%s"}}}`, teamName)
-	cmd := a.runOpts.Command("team", "api")
-	cmd.Stdin = strings.NewReader(apiInput)
-	bytes, err := cmd.CombinedOutput()
+	output, err := a.doFetch(apiInput)
 	if err != nil {
-		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
+		return empty, err
 	}
 
-	members := ListTeamMembers{}
-	err = json.Unmarshal(bytes, &members)
+	joinChannel := JoinChannel{}
+	err = json.Unmarshal([]byte(output.Text()[:]), &joinChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
 	}
-	if members.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", members.Error.Message)
+	if joinChannel.Error.Message != "" {
+		return empty, fmt.Errorf("received error from keybase team api: %s", joinChannel.Error.Message)
 	}
-	return members.Result.Members, nil
+
+	return joinChannel.Result, nil
 }
-
-func (a *API) ListUserMemberships(username string) ([]ListUserMembershipsResultTeam, error) {
-	empty := []ListUserMembershipsResultTeam{}
-
-	apiInput := fmt.Sprintf(`{"method": "list-user-memberships", "params": {"options": {"username": "%s"}}}`, username)
-	cmd := a.runOpts.Command("team", "api")
-	cmd.Stdin = strings.NewReader(apiInput)
-	bytes, err := cmd.CombinedOutput()
-	if err != nil {
-		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
-	}
-
-	members := ListUserMemberships{}
-	err = json.Unmarshal(bytes, &members)
-	if err != nil {
-		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
-	}
-	if members.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", members.Error.Message)
-	}
-	return members.Result.Teams, nil
-}
-
 
 func (a *API) LogSend(feedback string) error {
 	feedback = "go-keybase-chat-bot log send\n" +
