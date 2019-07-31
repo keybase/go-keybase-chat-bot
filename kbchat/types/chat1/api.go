@@ -107,7 +107,7 @@ func (o MsgFlipContent) DeepCopy() MsgFlipContent {
 }
 
 type MsgContent struct {
-	TypeName           string                       `codec:"typeName" json:"type"`
+	Type               string                       `codec:"typeName" json:"type"`
 	Text               *MessageText                 `codec:"text,omitempty" json:"text,omitempty"`
 	Attachment         *MessageAttachment           `codec:"attachment,omitempty" json:"attachment,omitempty"`
 	Edit               *MessageEdit                 `codec:"edit,omitempty" json:"edit,omitempty"`
@@ -125,7 +125,7 @@ type MsgContent struct {
 
 func (o MsgContent) DeepCopy() MsgContent {
 	return MsgContent{
-		TypeName: o.TypeName,
+		Type: o.Type,
 		Text: (func(x *MessageText) *MessageText {
 			if x == nil {
 				return nil
