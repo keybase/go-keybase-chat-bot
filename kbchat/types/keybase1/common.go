@@ -3,6 +3,8 @@
 
 package keybase1
 
+import "errors"
+
 type Time int64
 
 func (o Time) DeepCopy() Time {

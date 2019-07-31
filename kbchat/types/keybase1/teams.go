@@ -3,6 +3,8 @@
 
 package keybase1
 
+import "errors"
+
 type TeamRole int
 
 const (

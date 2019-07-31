@@ -3,6 +3,8 @@
 
 package keybase1
 
+import "errors"
+
 type HomeScreenItemID string
 
 func (o HomeScreenItemID) DeepCopy() HomeScreenItemID {

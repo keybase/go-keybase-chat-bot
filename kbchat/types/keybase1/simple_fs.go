@@ -3,6 +3,8 @@
 
 package keybase1
 
+import "errors"
+
 type OpID [16]byte
 
 func (o OpID) DeepCopy() OpID {

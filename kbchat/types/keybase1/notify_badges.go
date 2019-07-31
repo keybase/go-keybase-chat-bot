@@ -3,6 +3,8 @@
 
 package keybase1
 
+import "github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
+
 type ChatConversationID []byte
 
 func (o ChatConversationID) DeepCopy() ChatConversationID {

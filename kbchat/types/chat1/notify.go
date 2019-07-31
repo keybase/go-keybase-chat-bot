@@ -3,6 +3,12 @@
 
 package chat1
 
+import (
+	"errors"
+
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
+)
+
 type ChatActivitySource int
 
 const (

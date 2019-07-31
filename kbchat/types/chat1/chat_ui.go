@@ -3,6 +3,14 @@
 
 package chat1
 
+import (
+	"errors"
+
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/stellar1"
+)
+
 type UIPagination struct {
 	Next     string `codec:"next" json:"next"`
 	Previous string `codec:"previous" json:"previous"`

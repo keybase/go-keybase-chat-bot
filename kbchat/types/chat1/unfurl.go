@@ -3,6 +3,8 @@
 
 package chat1
 
+import "errors"
+
 type UnfurlType int
 
 const (

@@ -3,6 +3,8 @@
 
 package keybase1
 
+import "errors"
+
 type EkGeneration int64
 
 func (o EkGeneration) DeepCopy() EkGeneration {

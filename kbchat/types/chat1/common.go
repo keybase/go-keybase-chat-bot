@@ -3,6 +3,13 @@
 
 package chat1
 
+import (
+	"errors"
+
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
+)
+
 type ThreadID []byte
 
 func (o ThreadID) DeepCopy() ThreadID {

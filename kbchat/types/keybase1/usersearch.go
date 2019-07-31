@@ -3,6 +3,8 @@
 
 package keybase1
 
+import "errors"
+
 type APIUserServiceIDWithContact string
 
 func (o APIUserServiceIDWithContact) DeepCopy() APIUserServiceIDWithContact {

@@ -3,6 +3,8 @@
 
 package keybase1
 
+import "errors"
+
 type CurrentStatus struct {
 	Configured     bool  `codec:"configured" json:"configured"`
 	Registered     bool  `codec:"registered" json:"registered"`

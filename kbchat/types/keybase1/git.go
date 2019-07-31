@@ -3,6 +3,8 @@
 
 package keybase1
 
+import "errors"
+
 type EncryptedGitMetadata struct {
 	V   int                  `codec:"v" json:"v"`
 	E   []byte               `codec:"e" json:"e"`

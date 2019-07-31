@@ -3,6 +3,11 @@
 
 package chat1
 
+import (
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
+)
+
 type GenericPayload struct {
 	Action       string         `codec:"Action" json:"Action"`
 	InboxVers    InboxVers      `codec:"inboxVers" json:"inboxVers"`

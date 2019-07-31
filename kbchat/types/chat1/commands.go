@@ -3,6 +3,8 @@
 
 package chat1
 
+import "errors"
+
 type ConversationCommand struct {
 	Description string  `codec:"description" json:"description"`
 	Name        string  `codec:"name" json:"name"`

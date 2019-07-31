@@ -3,6 +3,13 @@
 
 package chat1
 
+import (
+	"errors"
+
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
+)
+
 type MessageBoxed struct {
 	Version          MessageBoxedVersion  `codec:"version" json:"version"`
 	ServerHeader     *MessageServerHeader `codec:"serverHeader,omitempty" json:"serverHeader,omitempty"`
