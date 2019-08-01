@@ -140,7 +140,6 @@ func (a *API) startPipes() (err error) {
 		go func() {
 			a.runOpts.Command("service").Run()
 		}()
-		time.Sleep(3 * time.Second)
 	}
 
 	if a.username, err = a.auth(); err != nil {
