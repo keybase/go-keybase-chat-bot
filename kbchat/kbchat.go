@@ -651,3 +651,21 @@ func (a *API) LogSend(feedback string) error {
 
 	return a.runOpts.Command(args...).Run()
 }
+
+func (a *API) Shutdown() error {
+	if a.runOpts.Oneshot != nil {
+		err := a.runOpts.Command("logout", "--force").Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	if a.runOpts.StartService {
+		err := a.runOpts.Command("ctl", "stop", "--shutdown").Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

@@ -105,10 +105,15 @@ func TestSendMessageByTlfName(t *testing.T) {
 	require.NoError(t, err)
 	kbLocation, err := prepWorkingDir(dir)
 	require.NoError(t, err)
+
 	kbc, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots.Alice1, StartService: true})
 	require.NoError(t, err, "error %s")
+
 	tlfName := fmt.Sprintf("%s,%s", kbc.Username(), "kb_monbot")
 	res, err := kbc.SendMessageByTlfName(tlfName, "test")
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
+
+	err = kbc.Shutdown()
+	require.NoError(t, err)
 }
