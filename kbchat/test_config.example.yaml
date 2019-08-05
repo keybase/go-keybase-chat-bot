@@ -6,7 +6,6 @@ config:
       # Alice should have an active Stellar account with a little bit of XLM in it
       username: "alice"
       paperkey: "foo bar car..."
-    }
     alice2:
       username: "alice"                # should be the same username as alice1 but...
       paperkey: "yo there paperkey..." # ...this should be a DIFFERENT paperkey than the one for alice1
@@ -15,6 +14,13 @@ config:
       username: "bob"
       paperkey: "one two three four..."
     charlie1:
-      # Charlie should be an account that does not have access to Stellar features
+      # Charlie should be an account that has not accepted the Stellar disclaimer yet
       username: "charlie"
       paperkey: "get this bread..."
+  teams:
+    acme:
+      # A real team that you add your alice1, alice2, and bob1 all into
+      teamname: "acme"
+    alicesPlayground:
+      # a team with alice in it AS ADMIN, but bob or charlie not in team
+      teamname: "alices_playground"
