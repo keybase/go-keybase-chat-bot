@@ -66,9 +66,40 @@ type Text struct {
 	ReplyTo  int          `json:"replyTo"`
 }
 
+type MessageSystem struct {
+	SystemType  MessageSystemType         `json:"systemType"`
+	Addedtoteam *MessageSystemAddedToTeam `json:"addedtoteam,omitempty"`
+}
+
+type MessageSystemType int
+
+const (
+	MessageSystemType_ADDEDTOTEAM       MessageSystemType = 0
+	MessageSystemType_INVITEADDEDTOTEAM MessageSystemType = 1
+	MessageSystemType_COMPLEXTEAM       MessageSystemType = 2
+	MessageSystemType_CREATETEAM        MessageSystemType = 3
+	MessageSystemType_GITPUSH           MessageSystemType = 4
+	MessageSystemType_CHANGEAVATAR      MessageSystemType = 5
+	MessageSystemType_CHANGERETENTION   MessageSystemType = 6
+	MessageSystemType_BULKADDTOCONV     MessageSystemType = 7
+)
+
+type MessageSystemAddedToTeam struct {
+	Team           string   `json:"team"`
+	Adder          string   `json:"adder"`
+	Addee          string   `json:"addee"`
+	Owners         []string `json:"owners"`
+	Admins         []string `json:"admins"`
+	Writers        []string `json:"writers"`
+	Readers        []string `json:"readers"`
+	Bots           []string `json:"bots"`
+	RestrictedBots []string `json:"restrictedBots"`
+}
+
 type Content struct {
-	Type string `json:"type"`
-	Text Text   `json:"text"`
+	Type   string         `json:"type"`
+	Text   Text           `json:"text"`
+	System *MessageSystem `json:"system,omitempty"`
 }
 
 type Message struct {
@@ -129,12 +160,12 @@ type Advertisement struct {
 }
 
 type Error struct {
-	Code int `json:"code"`
+	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
 type JoinChannel struct {
-	Error Error `json:"error"`
+	Error  Error             `json:"error"`
 	Result JoinChannelResult `json:"result"`
 }
 
@@ -143,8 +174,8 @@ type JoinChannelResult struct {
 }
 
 type RateLimit struct {
-	Tank string `json:"tank"`
-	Capacity int `json:"capacity"`
-	Reset int `json:"reset"`
-	Gas int `json:"gas"`
+	Tank     string `json:"tank"`
+	Capacity int    `json:"capacity"`
+	Reset    int    `json:"reset"`
+	Gas      int    `json:"gas"`
 }
