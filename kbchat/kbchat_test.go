@@ -1,7 +1,6 @@
 package kbchat
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
@@ -54,13 +53,12 @@ func randomTempDir() (string, error) {
 
 func whichKeybase() (string, error) {
 	cmd := exec.Command("which", "keybase")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
+
+	out, err := cmd.Output()
 	if err != nil {
 		return "", err
 	}
-	location := strings.TrimSpace(out.String())
+	location := strings.TrimSpace(string(out))
 	return location, nil
 }
 
