@@ -99,6 +99,10 @@ func prepWorkingDir(workingDir string) (string, error) {
 	return kbDestination, nil
 }
 
+func deleteWorkingDir(workingDir string) error {
+	return os.RemoveAll("/tmp/")
+}
+
 var kbc *API
 
 func TestMain(m *testing.M) {
@@ -125,6 +129,10 @@ func TestMain(m *testing.M) {
 	err = kbc.Shutdown()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error on service shutdown: %v\n", err)
+	}
+	err = deleteWorkingDir(dir)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error working directory teardown: %v\n", err)
 	}
 	os.Exit(code)
 }
