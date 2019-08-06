@@ -77,6 +77,8 @@ func copyFile(source, dest string) error {
 	return nil
 }
 
+// Creates the working directory and copies over the keybase binary in PATH.
+// We do this to avoid any version mismatch issues.
 func prepWorkingDir(workingDir string) (string, error) {
 	kbLocation, err := whichKeybase()
 	if err != nil {
