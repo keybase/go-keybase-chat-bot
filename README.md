@@ -38,13 +38,13 @@ func main() {
 	flag.StringVar(&kbLoc, "keybase", "keybase", "the location of the Keybase app")
 	flag.Parse()
 
-	if kbc, err = kbchat.Start(kbchat.RunOptions{KeybaseLocation: kbLoc)}); err != nil {
+	if kbc, err = kbchat.Start(kbchat.RunOptions{KeybaseLocation: kbLoc}); err != nil {
 		fail("Error creating API: %s", err.Error())
 	}
 
 	tlfName := fmt.Sprintf("%s,%s", kbc.Username(), "kb_monbot")
 	fmt.Printf("saying hello on conversation: %s\n", tlfName)
-	if err = kbc.SendMessageByTlfName(tlfName, "hello!"); err != nil {
+	if _, err = kbc.SendMessageByTlfName(tlfName, "hello!"); err != nil {
 		fail("Error sending message; %s", err.Error())
 	}
 }
@@ -53,15 +53,19 @@ func main() {
 
 ### Commands
 
-#### `Start(keybaseLocation string) *API`
+#### `Start(runOpts RunOptions) (*API, error)`
 
 This must be run first in order to start the Keybase JSON API stdin/stdout interactive mode.
 
-#### `API.SendMessageByTlfName(tlfName string, body string) error`
+#### `API.SendMessageByTlfName(tlfName string, body string) (SendResponse, error)`
 
 send a new message by specifying a TLF name
 
-#### `API.SendMessage(convID string, body string) error`
+#### `API.SendMessage(channel Channel, body string) (SendResponse, error)`
+
+send a new message by specifying a channel
+
+#### `API.SendMessageByConvID(convID string, body string) (SendResponse, error)`
 
 send a new message by specifying a conversation ID
 
@@ -69,7 +73,7 @@ send a new message by specifying a conversation ID
 
 get all conversations, optionally filtering for unread status
 
-#### `API.GetTextMessages(convID string, unreadOnly bool) ([]Message, error)`
+#### `API.GetTextMessages(channel Channel, unreadOnly bool) ([]Message, error)`
 
 get all text messages, optionally filtering for unread status
 
@@ -81,34 +85,50 @@ Returns an object that allows for a bot to enter into a loop calling `NewSubscri
 to receive any new message across all conversations (except the bots own messages). See the following example:
 
 ```go
-	sub := kbc.ListenForNewTextMessages()
+	sub, err := kbc.ListenForNewTextMessages()
+	if err != nil {
+		fail("Error listening: %s", err.Error())
+	}
+
 	for {
 		msg, err := sub.Read()
 		if err != nil {
 			fail("failed to read message: %s", err.Error())
 		}
 
-		if err = kbc.SendMessage(msg.Conversation.Id, msg.Message.Content.Text.Body); err != nil {
+		if msg.Message.Content.Type != "text" {
+			continue
+		}
+
+		if msg.Message.Sender.Username == kbc.GetUsername() {
+			continue
+		}
+
+		if _, err = kbc.SendMessage(msg.Message.Channel, msg.Message.Content.Text.Body); err != nil {
 			fail("error echo'ing message: %s", err.Error())
 		}
 	}
 ```
 
-#### `API.Listen(kbc.ListenOptions{Wallet: true}) NewSubscription`
+#### `API.Listen(kbchat.ListenOptions{Wallet: true}) NewSubscription`
 
 Returns the same object as above, but this one will have another channel on it that also gets wallet events. You can get those just like chat messages: `NewSubscription.ReadWallet`. So if you care about both of these types of events, you might run two loops like this:
 
 ```go
-	sub := kbc.Listen(kbc.ListenOptions{Wallet: true})
+	sub, err := kbc.Listen(kbchat.ListenOptions{Wallet: true})
+	if err != nil {
+		fail("Error listening: %s", err.Error())
+	}
+
 	go func() {
 		for {
 			payment, err := sub.ReadWallet()
 			if err != nil {
 				fail("failed to read payment event: %s", err.Error())
 			}
-			tlfName := fmt.Sprintf("%s,%s", payment.FromUsername, "kb_monbot")
-			msg := fmt.Sprintf("thanks for the %s!", payment.AmountDescription)
-			if err = kbc.SendMessageByTlfName(tlfName, msg); err != nil {
+			tlfName := fmt.Sprintf("%s,%s", payment.Payment.FromUsername, "kb_monbot")
+			msg := fmt.Sprintf("thanks for the %s!", payment.Payment.AmountDescription)
+			if _, err = kbc.SendMessageByTlfName(tlfName, msg); err != nil {
 				fail("error thanking for payment: %s", err.Error())
 			}
 		}
@@ -120,7 +140,15 @@ Returns the same object as above, but this one will have another channel on it t
 			fail("failed to read message: %s", err.Error())
 		}
 
-		if err = kbc.SendMessage(msg.Conversation.Id, msg.Message.Content.Text.Body); err != nil {
+		if msg.Message.Content.Type != "text" {
+			continue
+		}
+
+		if msg.Message.Sender.Username == kbc.GetUsername() {
+			continue
+		}
+
+		if _, err = kbc.SendMessage(msg.Message.Channel, msg.Message.Content.Text.Body); err != nil {
 			fail("error echo'ing message: %s", err.Error())
 		}
 	}
