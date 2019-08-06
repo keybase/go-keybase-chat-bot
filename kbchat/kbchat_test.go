@@ -100,7 +100,7 @@ func prepWorkingDir(workingDir string) (string, error) {
 }
 
 func deleteWorkingDir(workingDir string) error {
-	return os.RemoveAll("/tmp/")
+	return os.RemoveAll(workingDir)
 }
 
 var kbc *API
