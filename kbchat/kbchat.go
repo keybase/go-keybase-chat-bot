@@ -137,9 +137,7 @@ func (a *API) startPipes() (err error) {
 	a.apiCmd = nil
 
 	if a.runOpts.StartService {
-		go func() {
-			a.runOpts.Command("service").Run()
-		}()
+		a.runOpts.Command("service").Start()
 	}
 
 	if a.username, err = a.auth(); err != nil {

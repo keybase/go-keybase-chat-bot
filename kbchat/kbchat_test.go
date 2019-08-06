@@ -3,6 +3,7 @@ package kbchat
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -96,22 +97,39 @@ func prepWorkingDir(workingDir string) (string, error) {
 	return kbDestination, nil
 }
 
-func TestSendMessageByTlfName(t *testing.T) {
+var kbc *API
+
+func TestMain(m *testing.M) {
 	config, err := readAndParseConfig()
-	require.NoError(t, err)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error in reading config: %v\n", err)
+	}
 	dir, err := randomTempDir()
-	require.NoError(t, err)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error in generating directory: %v\n", err)
+	}
 	kbLocation, err := prepWorkingDir(dir)
-	require.NoError(t, err)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error in preparing working directory: %v\n", err)
+	}
+	kbc, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots.Alice1, StartService: true})
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error in starting service: %v\n", err)
+	}
 
-	kbc, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots.Alice1, StartService: true})
-	require.NoError(t, err, "error %s")
+	flag.Parse()
+	code := m.Run()
 
+	err = kbc.Shutdown()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error on service shutdown: %v\n", err)
+	}
+	os.Exit(code)
+}
+
+func TestSendMessageByTlfName(t *testing.T) {
 	tlfName := fmt.Sprintf("%s,%s", kbc.Username(), "kb_monbot")
 	res, err := kbc.SendMessageByTlfName(tlfName, "test")
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
-
-	err = kbc.Shutdown()
-	require.NoError(t, err)
 }
