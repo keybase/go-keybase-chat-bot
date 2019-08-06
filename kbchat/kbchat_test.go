@@ -104,9 +104,11 @@ func deleteWorkingDir(workingDir string) error {
 }
 
 var kbc *API
+var config Config
 
 func TestMain(m *testing.M) {
-	config, err := readAndParseConfig()
+	var err error
+	config, err = readAndParseConfig()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in reading config: %v\n", err)
 	}
@@ -137,9 +139,46 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+func TestGetUsername(t *testing.T) {
+	require.Equal(t, kbc.GetUsername(), config.Bots.Alice1.Username)
+}
+
+func TestGetConversations(t *testing.T) {
+	conversations, err := kbc.GetConversations(false)
+	require.NoError(t, err)
+	require.Greater(t, len(conversations), 0)
+}
+
+func TestGetTextMessages(t *testing.T) {
+	channel := Channel{
+		Name: fmt.Sprintf("%s,%s", config.Bots.Alice1.Username, config.Bots.Charlie1.Username),
+	}
+	messages, err := kbc.GetTextMessages(channel, false)
+	require.NoError(t, err)
+	require.Greater(t, len(messages), 0)
+}
+
+func TestSendMessage(t *testing.T) {}
+
+func TestSendMessageByConvID(t *testing.T) {}
+
 func TestSendMessageByTlfName(t *testing.T) {
 	tlfName := fmt.Sprintf("%s,%s", kbc.Username(), "kb_monbot")
 	res, err := kbc.SendMessageByTlfName(tlfName, "test")
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
 }
+
+func TestSendMessageByTeamName(t *testing.T) {}
+
+func TestSendAttachmentByTeam(t *testing.T) {}
+
+func TestReactByChannel(t *testing.T) {}
+
+func TestReactByConvID(t *testing.T) {}
+
+func TestAdvertiseCommands(t *testing.T) {}
+
+func TestListChannels(t *testing.T) {}
+
+func TestJoinChannel(t *testing.T) {}
