@@ -4,7 +4,7 @@ Script Keybase Chat in Go!
 
 This module is a side-project/work in progress and may change or have crashers, but feel free to play with it. As long as you're logged in as a Keybase user, you can use this module to script basic chat commands.
 
-# Installation
+## Installation
 
 Make sure to [install Keybase](https://keybase.io/download).
 
@@ -154,13 +154,16 @@ Returns the same object as above, but this one will have another channel on it t
 	}
 ```
 
-
-
 ## TODO:
-  - attachment handling (posting/getting)
-  - edit/delete
-  - many other things!
 
-### Contributions
+- attachment handling (posting/getting)
+- edit/delete
+- many other things!
+
+## Contributions
 
 - welcomed!
+
+### Testing
+
+You'll need to have a few demo bot accounts and teams to run the suite of tests. Make a copy of `kbchat/test_config.example.yaml`, rename it to `kbchat/test_config.yaml`, and replace the example data with your own. Tests can then be run inside of `kbchat/` with `go test`.
