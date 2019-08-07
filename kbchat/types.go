@@ -139,7 +139,7 @@ type JoinChannel struct {
 }
 
 type JoinChannelResult struct {
-	RateLimit RateLimit `json:"ratelimits"`
+	RateLimit []RateLimit `json:"ratelimits"`
 }
 
 type RateLimit struct {
