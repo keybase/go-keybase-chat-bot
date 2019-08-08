@@ -356,7 +356,7 @@ func TestListenForNewTextMessages(t *testing.T) {
 
 	go func() {
 		for i := 0; i < 5; i++ {
-			time.Sleep(3 * time.Second)
+			time.Sleep(time.Second)
 			_, err := bob.SendMessage(channel, text+" "+strconv.Itoa(i))
 			require.NoError(t, err)
 		}
