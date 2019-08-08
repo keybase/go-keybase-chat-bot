@@ -70,6 +70,7 @@ type RunOptions struct {
 	KeybaseLocation string
 	HomeDir         string
 	Oneshot         *OneshotOptions
+	StartService    bool
 }
 
 func (r RunOptions) Location() string {
@@ -121,6 +122,7 @@ func (a *API) auth() (string, error) {
 			a.runOpts.Oneshot.PaperKey).Run(); err != nil {
 			return "", err
 		}
+		username = a.runOpts.Oneshot.Username
 		return username, nil
 	}
 	return "", errors.New("unable to auth")
@@ -133,6 +135,11 @@ func (a *API) startPipes() (err error) {
 		a.apiCmd.Process.Kill()
 	}
 	a.apiCmd = nil
+
+	if a.runOpts.StartService {
+		a.runOpts.Command("service").Start()
+	}
+
 	if a.username, err = a.auth(); err != nil {
 		return err
 	}
@@ -640,4 +647,22 @@ func (a *API) LogSend(feedback string) error {
 	}
 
 	return a.runOpts.Command(args...).Run()
+}
+
+func (a *API) Shutdown() error {
+	if a.runOpts.Oneshot != nil {
+		err := a.runOpts.Command("logout", "--force").Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	if a.runOpts.StartService {
+		err := a.runOpts.Command("ctl", "stop", "--shutdown").Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
