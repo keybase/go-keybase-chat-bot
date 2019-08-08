@@ -369,4 +369,6 @@ func TestListenForNewTextMessages(t *testing.T) {
 		require.Equal(t, msg.Message.Sender.Username, bob.GetUsername())
 		require.Equal(t, msg.Message.Content.Text.Body, text+" "+strconv.Itoa(i))
 	}
+
+	sub.Shutdown()
 }
