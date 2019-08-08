@@ -50,6 +50,10 @@ type AccountAssetLocal struct {
 	Desc                   string           `codec:"desc" json:"desc"`
 	InfoUrl                string           `codec:"infoUrl" json:"infoUrl"`
 	InfoUrlText            string           `codec:"infoUrlText" json:"infoUrlText"`
+	ShowDepositButton      bool             `codec:"showDepositButton" json:"showDepositButton"`
+	DepositButtonText      string           `codec:"depositButtonText" json:"depositButtonText"`
+	ShowWithdrawButton     bool             `codec:"showWithdrawButton" json:"showWithdrawButton"`
+	WithdrawButtonText     string           `codec:"withdrawButtonText" json:"withdrawButtonText"`
 }
 
 func (o AccountAssetLocal) DeepCopy() AccountAssetLocal {
@@ -75,9 +79,13 @@ func (o AccountAssetLocal) DeepCopy() AccountAssetLocal {
 			}
 			return ret
 		})(o.Reserves),
-		Desc:        o.Desc,
-		InfoUrl:     o.InfoUrl,
-		InfoUrlText: o.InfoUrlText,
+		Desc:               o.Desc,
+		InfoUrl:            o.InfoUrl,
+		InfoUrlText:        o.InfoUrlText,
+		ShowDepositButton:  o.ShowDepositButton,
+		DepositButtonText:  o.DepositButtonText,
+		ShowWithdrawButton: o.ShowWithdrawButton,
+		WithdrawButtonText: o.WithdrawButtonText,
 	}
 }
 
@@ -698,12 +706,14 @@ func (o InflationDestinationResultLocal) DeepCopy() InflationDestinationResultLo
 type AirdropDetails struct {
 	IsPromoted bool   `codec:"isPromoted" json:"isPromoted"`
 	Details    string `codec:"details" json:"details"`
+	Disclaimer string `codec:"disclaimer" json:"disclaimer"`
 }
 
 func (o AirdropDetails) DeepCopy() AirdropDetails {
 	return AirdropDetails{
 		IsPromoted: o.IsPromoted,
 		Details:    o.Details,
+		Disclaimer: o.Disclaimer,
 	}
 }
 
@@ -1171,6 +1181,7 @@ type ValidateStellarURIResultLocal struct {
 	DisplayAmountFiat     string           `codec:"displayAmountFiat" json:"displayAmountFiat"`
 	AvailableToSendNative string           `codec:"availableToSendNative" json:"availableToSendNative"`
 	AvailableToSendFiat   string           `codec:"availableToSendFiat" json:"availableToSendFiat"`
+	Signed                bool             `codec:"signed" json:"signed"`
 }
 
 func (o ValidateStellarURIResultLocal) DeepCopy() ValidateStellarURIResultLocal {
@@ -1190,6 +1201,7 @@ func (o ValidateStellarURIResultLocal) DeepCopy() ValidateStellarURIResultLocal 
 		DisplayAmountFiat:     o.DisplayAmountFiat,
 		AvailableToSendNative: o.AvailableToSendNative,
 		AvailableToSendFiat:   o.AvailableToSendFiat,
+		Signed:                o.Signed,
 	}
 }
 

@@ -2,3 +2,15 @@
 //   Input file: avdl/keybase1/notify_service.avdl
 
 package keybase1
+
+type HttpSrvInfo struct {
+	Address string `codec:"address" json:"address"`
+	Token   string `codec:"token" json:"token"`
+}
+
+func (o HttpSrvInfo) DeepCopy() HttpSrvInfo {
+	return HttpSrvInfo{
+		Address: o.Address,
+		Token:   o.Token,
+	}
+}

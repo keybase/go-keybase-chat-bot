@@ -1641,6 +1641,7 @@ type TeamSigChainState struct {
 	ObsoleteInvites         map[TeamInviteID]TeamInvite                       `codec:"obsoleteInvites" json:"obsoleteInvites"`
 	Open                    bool                                              `codec:"open" json:"open"`
 	OpenTeamJoinAs          TeamRole                                          `codec:"openTeamJoinAs" json:"openTeamJoinAs"`
+	Bots                    map[UserVersion]TeamBotSettings                   `codec:"bots" json:"bots"`
 	TlfIDs                  []TLFID                                           `codec:"tlfIDs" json:"tlfIDs"`
 	TlfLegacyUpgrade        map[TeamApplication]TeamLegacyTLFUpgradeChainInfo `codec:"tlfLegacyUpgrade" json:"tlfLegacyUpgrade"`
 	HeadMerkle              *MerkleRootV2                                     `codec:"headMerkle,omitempty" json:"headMerkle,omitempty"`
@@ -1785,6 +1786,18 @@ func (o TeamSigChainState) DeepCopy() TeamSigChainState {
 		})(o.ObsoleteInvites),
 		Open:           o.Open,
 		OpenTeamJoinAs: o.OpenTeamJoinAs.DeepCopy(),
+		Bots: (func(x map[UserVersion]TeamBotSettings) map[UserVersion]TeamBotSettings {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[UserVersion]TeamBotSettings, len(x))
+			for k, v := range x {
+				kCopy := k.DeepCopy()
+				vCopy := v.DeepCopy()
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.Bots),
 		TlfIDs: (func(x []TLFID) []TLFID {
 			if x == nil {
 				return nil
@@ -2493,6 +2506,7 @@ type LoadTeamArg struct {
 	StaleOK                   bool           `codec:"staleOK" json:"staleOK"`
 	AllowNameLookupBurstCache bool           `codec:"allowNameLookupBurstCache" json:"allowNameLookupBurstCache"`
 	SkipAudit                 bool           `codec:"skipAudit" json:"skipAudit"`
+	SkipNeedHiddenRotateCheck bool           `codec:"skipNeedHiddenRotateCheck" json:"skipNeedHiddenRotateCheck"`
 }
 
 func (o LoadTeamArg) DeepCopy() LoadTeamArg {
@@ -2508,6 +2522,7 @@ func (o LoadTeamArg) DeepCopy() LoadTeamArg {
 		StaleOK:                   o.StaleOK,
 		AllowNameLookupBurstCache: o.AllowNameLookupBurstCache,
 		SkipAudit:                 o.SkipAudit,
+		SkipNeedHiddenRotateCheck: o.SkipNeedHiddenRotateCheck,
 	}
 }
 
@@ -2847,6 +2862,42 @@ func (o TeamSettings) DeepCopy() TeamSettings {
 	return TeamSettings{
 		Open:   o.Open,
 		JoinAs: o.JoinAs.DeepCopy(),
+	}
+}
+
+type TeamBotSettings struct {
+	Cmds     bool     `codec:"cmds" json:"cmds"`
+	Mentions bool     `codec:"mentions" json:"mentions"`
+	Triggers []string `codec:"triggers" json:"triggers"`
+	Convs    []string `codec:"convs" json:"convs"`
+}
+
+func (o TeamBotSettings) DeepCopy() TeamBotSettings {
+	return TeamBotSettings{
+		Cmds:     o.Cmds,
+		Mentions: o.Mentions,
+		Triggers: (func(x []string) []string {
+			if x == nil {
+				return nil
+			}
+			ret := make([]string, len(x))
+			for i, v := range x {
+				vCopy := v
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Triggers),
+		Convs: (func(x []string) []string {
+			if x == nil {
+				return nil
+			}
+			ret := make([]string, len(x))
+			for i, v := range x {
+				vCopy := v
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Convs),
 	}
 }
 

@@ -24,6 +24,7 @@ type PaymentDirectPost struct {
 	SignedTransaction  string                `codec:"signedTransaction" json:"signedTransaction"`
 	QuickReturn        bool                  `codec:"quickReturn" json:"quickReturn"`
 	ChatConversationID *ChatConversationID   `codec:"chatConversationID,omitempty" json:"chatConversationID,omitempty"`
+	BatchID            string                `codec:"batchID" json:"batchID"`
 }
 
 func (o PaymentDirectPost) DeepCopy() PaymentDirectPost {
@@ -48,6 +49,7 @@ func (o PaymentDirectPost) DeepCopy() PaymentDirectPost {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.ChatConversationID),
+		BatchID: o.BatchID,
 	}
 }
 
@@ -63,6 +65,7 @@ type PaymentRelayPost struct {
 	SignedTransaction  string                `codec:"signedTransaction" json:"signedTransaction"`
 	QuickReturn        bool                  `codec:"quickReturn" json:"quickReturn"`
 	ChatConversationID *ChatConversationID   `codec:"chatConversationID,omitempty" json:"chatConversationID,omitempty"`
+	BatchID            string                `codec:"batchID" json:"batchID"`
 }
 
 func (o PaymentRelayPost) DeepCopy() PaymentRelayPost {
@@ -90,6 +93,7 @@ func (o PaymentRelayPost) DeepCopy() PaymentRelayPost {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.ChatConversationID),
+		BatchID: o.BatchID,
 	}
 }
 
@@ -209,6 +213,7 @@ type PaymentMultiPost struct {
 	FromDeviceID      keybase1.DeviceID `codec:"fromDeviceID" json:"fromDeviceID"`
 	SignedTransaction string            `codec:"signedTransaction" json:"signedTransaction"`
 	Operations        []PaymentOp       `codec:"operations" json:"operations"`
+	BatchID           string            `codec:"batchID" json:"batchID"`
 }
 
 func (o PaymentMultiPost) DeepCopy() PaymentMultiPost {
@@ -226,6 +231,7 @@ func (o PaymentMultiPost) DeepCopy() PaymentMultiPost {
 			}
 			return ret
 		})(o.Operations),
+		BatchID: o.BatchID,
 	}
 }
 

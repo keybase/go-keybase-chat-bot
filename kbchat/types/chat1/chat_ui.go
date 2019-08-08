@@ -1401,6 +1401,102 @@ func (o UITextDecoration) DeepCopy() UITextDecoration {
 	}
 }
 
+type UIChatThreadStatusTyp int
+
+const (
+	UIChatThreadStatusTyp_NONE       UIChatThreadStatusTyp = 0
+	UIChatThreadStatusTyp_SERVER     UIChatThreadStatusTyp = 1
+	UIChatThreadStatusTyp_VALIDATING UIChatThreadStatusTyp = 2
+	UIChatThreadStatusTyp_VALIDATED  UIChatThreadStatusTyp = 3
+)
+
+func (o UIChatThreadStatusTyp) DeepCopy() UIChatThreadStatusTyp { return o }
+
+var UIChatThreadStatusTypMap = map[string]UIChatThreadStatusTyp{
+	"NONE":       0,
+	"SERVER":     1,
+	"VALIDATING": 2,
+	"VALIDATED":  3,
+}
+
+var UIChatThreadStatusTypRevMap = map[UIChatThreadStatusTyp]string{
+	0: "NONE",
+	1: "SERVER",
+	2: "VALIDATING",
+	3: "VALIDATED",
+}
+
+func (e UIChatThreadStatusTyp) String() string {
+	if v, ok := UIChatThreadStatusTypRevMap[e]; ok {
+		return v
+	}
+	return ""
+}
+
+type UIChatThreadStatus struct {
+	Typ__        UIChatThreadStatusTyp `codec:"typ" json:"typ"`
+	Validating__ *int                  `codec:"validating,omitempty" json:"validating,omitempty"`
+}
+
+func (o *UIChatThreadStatus) Typ() (ret UIChatThreadStatusTyp, err error) {
+	switch o.Typ__ {
+	case UIChatThreadStatusTyp_VALIDATING:
+		if o.Validating__ == nil {
+			err = errors.New("unexpected nil value for Validating__")
+			return ret, err
+		}
+	}
+	return o.Typ__, nil
+}
+
+func (o UIChatThreadStatus) Validating() (res int) {
+	if o.Typ__ != UIChatThreadStatusTyp_VALIDATING {
+		panic("wrong case accessed")
+	}
+	if o.Validating__ == nil {
+		return
+	}
+	return *o.Validating__
+}
+
+func NewUIChatThreadStatusWithNone() UIChatThreadStatus {
+	return UIChatThreadStatus{
+		Typ__: UIChatThreadStatusTyp_NONE,
+	}
+}
+
+func NewUIChatThreadStatusWithServer() UIChatThreadStatus {
+	return UIChatThreadStatus{
+		Typ__: UIChatThreadStatusTyp_SERVER,
+	}
+}
+
+func NewUIChatThreadStatusWithValidating(v int) UIChatThreadStatus {
+	return UIChatThreadStatus{
+		Typ__:        UIChatThreadStatusTyp_VALIDATING,
+		Validating__: &v,
+	}
+}
+
+func NewUIChatThreadStatusWithValidated() UIChatThreadStatus {
+	return UIChatThreadStatus{
+		Typ__: UIChatThreadStatusTyp_VALIDATED,
+	}
+}
+
+func (o UIChatThreadStatus) DeepCopy() UIChatThreadStatus {
+	return UIChatThreadStatus{
+		Typ__: o.Typ__.DeepCopy(),
+		Validating__: (func(x *int) *int {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.Validating__),
+	}
+}
+
 type UIChatSearchConvHit struct {
 	ConvID   string       `codec:"convID" json:"convID"`
 	TeamType TeamType     `codec:"teamType" json:"teamType"`
