@@ -23,8 +23,19 @@ type Bots struct {
 	Charlie1 *OneshotOptions
 }
 
+type Team struct {
+	Teamname string
+	Channel  string
+}
+
+type Teams struct {
+	Acme             Team
+	AlicesPlayground Team
+}
+
 type Config struct {
 	Bots
+	Teams
 }
 
 func readAndParseConfig() (Config, error) {
@@ -105,6 +116,8 @@ func deleteWorkingDir(workingDir string) error {
 
 var kbc *API
 var config Config
+var channel Channel
+var teamChannel Channel
 
 func TestMain(m *testing.M) {
 	var err error
@@ -123,6 +136,17 @@ func TestMain(m *testing.M) {
 	kbc, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots.Alice1, StartService: true})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in starting service: %v\n", err)
+	}
+
+	channel = Channel{
+		Name: fmt.Sprintf("%s,%s", config.Bots.Alice1.Username, config.Bots.Charlie1.Username),
+	}
+	teamChannel = Channel{
+		Name:        config.Teams.Acme.Teamname,
+		Public:      false,
+		MembersType: "team",
+		TopicName:   config.Teams.Acme.Channel,
+		TopicType:   "chat",
 	}
 
 	flag.Parse()
@@ -150,35 +174,166 @@ func TestGetConversations(t *testing.T) {
 }
 
 func TestGetTextMessages(t *testing.T) {
-	channel := Channel{
-		Name: fmt.Sprintf("%s,%s", config.Bots.Alice1.Username, config.Bots.Charlie1.Username),
-	}
 	messages, err := kbc.GetTextMessages(channel, false)
 	require.NoError(t, err)
 	require.Greater(t, len(messages), 0)
 }
 
-func TestSendMessage(t *testing.T) {}
+func TestSendMessage(t *testing.T) {
+	text := "test SendMessage"
 
-func TestSendMessageByConvID(t *testing.T) {}
+	// Send the message
+	res, err := kbc.SendMessage(channel, text)
+	require.NoError(t, err)
+	require.Greater(t, res.Result.MsgID, 0)
+
+	// Read it to confirm it sent
+	messages, err := kbc.GetTextMessages(channel, false)
+	require.NoError(t, err)
+	sentMessage := messages[0]
+	require.Equal(t, sentMessage.Content.Type, "text")
+	require.Equal(t, sentMessage.Content.Text.Body, text)
+	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+}
+
+func TestSendMessageByConvID(t *testing.T) {
+	text := "test SendMessageByConvID"
+
+	// Retrieve conversation ID
+	messages, err := kbc.GetTextMessages(channel, false)
+	convID := messages[0].ConversationID
+
+	// Send the message
+	res, err := kbc.SendMessageByConvID(convID, text)
+	require.NoError(t, err)
+	require.Greater(t, res.Result.MsgID, 0)
+
+	// Read it to confirm it sent
+	messages, err = kbc.GetTextMessages(channel, false)
+	require.NoError(t, err)
+	sentMessage := messages[0]
+	require.Equal(t, sentMessage.Content.Type, "text")
+	require.Equal(t, sentMessage.Content.Text.Body, text)
+	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+}
 
 func TestSendMessageByTlfName(t *testing.T) {
-	tlfName := fmt.Sprintf("%s,%s", kbc.Username(), "kb_monbot")
-	res, err := kbc.SendMessageByTlfName(tlfName, "test")
+	text := "test SendMessageByTlfName"
+
+	// Send the message
+	res, err := kbc.SendMessageByTlfName(channel.Name, text)
+	require.NoError(t, err)
+	require.Greater(t, res.Result.MsgID, 0)
+
+	// Read it to confirm it sent
+	messages, err := kbc.GetTextMessages(channel, false)
+	require.NoError(t, err)
+	sentMessage := messages[0]
+	require.Equal(t, sentMessage.Content.Type, "text")
+	require.Equal(t, sentMessage.Content.Text.Body, text)
+	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+}
+
+func TestSendMessageByTeamName(t *testing.T) {
+	text := "test SendMessageByTeamName"
+
+	// Send the message
+	res, err := kbc.SendMessageByTeamName(teamChannel.Name, text, &teamChannel.TopicName)
+	require.NoError(t, err)
+	require.Greater(t, res.Result.MsgID, 0)
+
+	// Read it to confirm it sent
+	messages, err := kbc.GetTextMessages(teamChannel, false)
+	fmt.Printf("messages = %+v\n", messages)
+	require.NoError(t, err)
+	sentMessage := messages[0]
+	fmt.Printf("sentMessage = %+v\n", sentMessage)
+	require.Equal(t, sentMessage.Content.Type, "text")
+	require.Equal(t, sentMessage.Content.Text.Body, text)
+	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+}
+
+func TestSendAttachmentByTeam(t *testing.T) {
+	// Create a test file
+	fileName := "kb-attachment.txt"
+	location := path.Join(os.TempDir(), fileName)
+	data := []byte("My super cool attachment")
+	err := ioutil.WriteFile(location, data, 0644)
+	require.NoError(t, err)
+
+	// Send the message
+	title := "test SendAttachmentByTeam"
+	res, err := kbc.SendAttachmentByTeam(teamChannel.Name, location, title, &teamChannel.TopicName)
+	require.NoError(t, err)
+	require.Greater(t, res.Result.MsgID, 0)
+
+	// Types don't support attachments yet, so we can't read it
+	// Read it to confirm it sent
+	// messages, err := kbc.GetTextMessages(teamChannel, false)
+	// require.NoError(t, err)
+	// sentMessage := messages[0]
+	// require.Equal(t, sentMessage.Content.Type, "attachment")
+	// require.Equal(t, sentMessage.Content.Attachment.Object.Title, title)
+	// require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+}
+
+func TestReactByChannel(t *testing.T) {
+	react := ":cool:"
+	// Get last message, we'll react to it
+	messages, err := kbc.GetTextMessages(channel, false)
+	require.NoError(t, err)
+	lastMessageID := messages[0].MsgID
+
+	// Send the react
+	res, err := kbc.ReactByChannel(channel, lastMessageID, react)
+	require.NoError(t, err)
+	require.Greater(t, res.Result.MsgID, 0)
+
+	// No great way to confirm reaction yet
+}
+
+func TestReactByConvID(t *testing.T) {
+	react := ":cool:"
+
+	// Get last message, we'll react to it
+	messages, err := kbc.GetTextMessages(channel, false)
+	require.NoError(t, err)
+	lastMessageID := messages[0].MsgID
+
+	// Retrieve conversation ID
+	messages, err = kbc.GetTextMessages(channel, false)
+	convID := messages[0].ConversationID
+
+	// Send the react
+	res, err := kbc.ReactByConvID(convID, lastMessageID, react)
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
 }
 
-func TestSendMessageByTeamName(t *testing.T) {}
-
-func TestSendAttachmentByTeam(t *testing.T) {}
-
-func TestReactByChannel(t *testing.T) {}
-
-func TestReactByConvID(t *testing.T) {}
-
 func TestAdvertiseCommands(t *testing.T) {}
 
-func TestListChannels(t *testing.T) {}
+func TestListChannels(t *testing.T) {
+	channels, err := kbc.ListChannels(teamChannel.Name)
+	require.NoError(t, err)
+	require.Greater(t, len(channels), 0)
+	channelFound := false
+	for _, channel := range channels {
+		if channel == teamChannel.TopicName {
+			channelFound = true
+			break
+		}
+	}
+	require.True(t, channelFound)
+}
 
-func TestJoinChannel(t *testing.T) {}
+func TestJoinAndLeaveChannel(t *testing.T) {
+	_, err := kbc.LeaveChannel(teamChannel.Name, teamChannel.TopicName)
+	require.NoError(t, err)
+	_, err = kbc.LeaveChannel(teamChannel.Name, teamChannel.TopicName)
+	require.Error(t, err)
+	_, err = kbc.JoinChannel(teamChannel.Name, teamChannel.TopicName)
+	require.NoError(t, err)
+	_, err = kbc.JoinChannel(teamChannel.Name, teamChannel.TopicName)
+	// We don't get an error when trying to join an already joined channel
+	require.NoError(t, err)
+}

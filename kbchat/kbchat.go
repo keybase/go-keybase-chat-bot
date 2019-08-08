@@ -632,6 +632,27 @@ func (a *API) JoinChannel(teamName string, channelName string) (JoinChannelResul
 	return joinChannel.Result, nil
 }
 
+func (a *API) LeaveChannel(teamName string, channelName string) (LeaveChannelResult, error) {
+	empty := LeaveChannelResult{}
+
+	apiInput := fmt.Sprintf(`{"method": "leave", "params": {"options": {"channel": {"name": "%s", "members_type": "team", "topic_name": "%s"}}}}`, teamName, channelName)
+	output, err := a.doFetch(apiInput)
+	if err != nil {
+		return empty, err
+	}
+
+	leaveChannel := LeaveChannel{}
+	err = json.Unmarshal([]byte(output.Text()[:]), &leaveChannel)
+	if err != nil {
+		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+	}
+	if leaveChannel.Error.Message != "" {
+		return empty, fmt.Errorf("received error from keybase team api: %s", leaveChannel.Error.Message)
+	}
+
+	return leaveChannel.Result, nil
+}
+
 func (a *API) LogSend(feedback string) error {
 	feedback = "go-keybase-chat-bot log send\n" +
 		"username: " + a.GetUsername() + "\n" +
