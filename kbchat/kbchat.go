@@ -17,7 +17,7 @@ import (
 type API struct {
 	sync.Mutex
 	apiInput  io.Writer
-	apiOutput *bufio.Scanner
+	apiOutput *bufio.Reader
 	apiCmd    *exec.Cmd
 	username  string
 	runOpts   RunOptions
@@ -154,13 +154,13 @@ func (a *API) startPipes() (err error) {
 	if err := a.apiCmd.Start(); err != nil {
 		return err
 	}
-	a.apiOutput = bufio.NewScanner(output)
+	a.apiOutput = bufio.NewReader(output)
 	return nil
 }
 
 var errAPIDisconnected = errors.New("chat API disconnected")
 
-func (a *API) getAPIPipesLocked() (io.Writer, *bufio.Scanner, error) {
+func (a *API) getAPIPipesLocked() (io.Writer, *bufio.Reader, error) {
 	// this should only be called inside a lock
 	if a.apiCmd == nil {
 		return nil, nil, errAPIDisconnected
@@ -177,8 +177,11 @@ func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 	}
 
 	var inbox Inbox
-	inboxRaw := output.Text()
-	if err := json.Unmarshal([]byte(inboxRaw[:]), &inbox); err != nil {
+	inboxRaw, err := output.ReadBytes('\n')
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(inboxRaw, &inbox); err != nil {
 		return nil, err
 	}
 	return inbox.Result.Convs, nil
@@ -198,7 +201,12 @@ func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, erro
 	}
 
 	var thread Thread
-	if err := json.Unmarshal([]byte(output.Text()), &thread); err != nil {
+
+	messagesRaw, err := output.ReadBytes('\n')
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(messagesRaw, &thread); err != nil {
 		return nil, fmt.Errorf("unable to decode thread: %s", err.Error())
 	}
 
@@ -249,15 +257,17 @@ func (a *API) doSend(arg interface{}) (response SendResponse, err error) {
 	if _, err := io.WriteString(input, string(bArg)); err != nil {
 		return SendResponse{}, err
 	}
-	if output.Scan() {
-		if err := json.Unmarshal([]byte(output.Text()), &response); err != nil {
-			return SendResponse{}, fmt.Errorf("failed to decode API response: %s", err)
-		}
+	responseRaw, err := output.ReadBytes('\n')
+	if err != nil {
+		return SendResponse{}, err
+	}
+	if err := json.Unmarshal(responseRaw, &response); err != nil {
+		return SendResponse{}, fmt.Errorf("failed to decode API response: %s", err)
 	}
 	return response, nil
 }
 
-func (a *API) doFetch(apiInput string) (*bufio.Scanner, error) {
+func (a *API) doFetch(apiInput string) (*bufio.Reader, error) {
 	a.Lock()
 	defer a.Unlock()
 
@@ -268,7 +278,7 @@ func (a *API) doFetch(apiInput string) (*bufio.Scanner, error) {
 	if _, err := io.WriteString(input, apiInput); err != nil {
 		return nil, err
 	}
-	output.Scan()
+	// output.ReadString('\n')
 
 	return output, nil
 }
@@ -595,8 +605,12 @@ func (a *API) ListChannels(teamName string) ([]string, error) {
 	}
 
 	var channelsList ChannelsList
-	inboxRaw := output.Text()
-	if err := json.Unmarshal([]byte(inboxRaw[:]), &channelsList); err != nil {
+	inboxRaw, err := output.ReadBytes('\n')
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(inboxRaw, &channelsList); err != nil {
 		return nil, err
 	}
 
@@ -617,7 +631,11 @@ func (a *API) JoinChannel(teamName string, channelName string) (JoinChannelResul
 	}
 
 	joinChannel := JoinChannel{}
-	err = json.Unmarshal([]byte(output.Text()[:]), &joinChannel)
+	joinRaw, err := output.ReadBytes('\n')
+	if err != nil {
+		return empty, err
+	}
+	err = json.Unmarshal(joinRaw, &joinChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
 	}
