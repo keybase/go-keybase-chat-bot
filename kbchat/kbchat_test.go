@@ -18,38 +18,38 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Bots struct {
+type bots struct {
 	Alice1   *OneshotOptions
 	Alice2   *OneshotOptions
 	Bob1     *OneshotOptions
 	Charlie1 *OneshotOptions
 }
 
-type Team struct {
+type team struct {
 	Teamname string
 	Channel  string
 }
 
-type Teams struct {
-	Acme             Team
-	AlicesPlayground Team
+type teams struct {
+	Acme             team
+	AlicesPlayground team
 }
 
-type Config struct {
-	Bots
-	Teams
+type botConfig struct {
+	Bots  bots
+	Teams teams
 }
 
-func readAndParseConfig() (Config, error) {
-	var config Config
+func readAndParseConfig() (botConfig, error) {
+	var config botConfig
 	data, err := ioutil.ReadFile("test_config.yaml")
 	if err != nil {
-		return Config{}, err
+		return botConfig{}, err
 	}
 
 	err = yaml.Unmarshal(data, &config)
 	if err != nil {
-		return Config{}, err
+		return botConfig{}, err
 	}
 
 	return config, nil
@@ -117,7 +117,7 @@ func deleteWorkingDir(workingDir string) error {
 }
 
 var alice *API
-var config Config
+var config botConfig
 var channel Channel
 var teamChannel Channel
 
