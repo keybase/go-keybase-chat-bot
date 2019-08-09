@@ -118,7 +118,7 @@ func deleteWorkingDir(workingDir string) error {
 
 var alice *API
 var config botConfig
-var channel Channel
+var oneOnOneChannel Channel
 var teamChannel Channel
 
 func TestMain(m *testing.M) {
@@ -140,7 +140,7 @@ func TestMain(m *testing.M) {
 		fmt.Fprintf(os.Stderr, "Error in starting service: %v\n", err)
 	}
 
-	channel = Channel{
+	oneOnOneChannel = Channel{
 		Name: fmt.Sprintf("%s,%s", config.Bots.Alice1.Username, config.Bots.Charlie1.Username),
 	}
 	teamChannel = Channel{
@@ -176,7 +176,7 @@ func TestGetConversations(t *testing.T) {
 }
 
 func TestGetTextMessages(t *testing.T) {
-	messages, err := alice.GetTextMessages(channel, false)
+	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
 	require.Greater(t, len(messages), 0)
 }
@@ -185,12 +185,12 @@ func TestSendMessage(t *testing.T) {
 	text := "test SendMessage"
 
 	// Send the message
-	res, err := alice.SendMessage(channel, text)
+	res, err := alice.SendMessage(oneOnOneChannel, text)
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
 
 	// Read it to confirm it sent
-	messages, err := alice.GetTextMessages(channel, false)
+	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
 	sentMessage := messages[0]
 	require.Equal(t, sentMessage.Content.Type, "text")
@@ -202,7 +202,8 @@ func TestSendMessageByConvID(t *testing.T) {
 	text := "test SendMessageByConvID"
 
 	// Retrieve conversation ID
-	messages, err := alice.GetTextMessages(channel, false)
+	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
+	require.NoError(t, err)
 	convID := messages[0].ConversationID
 
 	// Send the message
@@ -211,7 +212,7 @@ func TestSendMessageByConvID(t *testing.T) {
 	require.Greater(t, res.Result.MsgID, 0)
 
 	// Read it to confirm it sent
-	messages, err = alice.GetTextMessages(channel, false)
+	messages, err = alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
 	sentMessage := messages[0]
 	require.Equal(t, sentMessage.Content.Type, "text")
@@ -223,12 +224,12 @@ func TestSendMessageByTlfName(t *testing.T) {
 	text := "test SendMessageByTlfName"
 
 	// Send the message
-	res, err := alice.SendMessageByTlfName(channel.Name, text)
+	res, err := alice.SendMessageByTlfName(oneOnOneChannel.Name, text)
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
 
 	// Read it to confirm it sent
-	messages, err := alice.GetTextMessages(channel, false)
+	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
 	sentMessage := messages[0]
 	require.Equal(t, sentMessage.Content.Type, "text")
@@ -280,12 +281,12 @@ func TestSendAttachmentByTeam(t *testing.T) {
 func TestReactByChannel(t *testing.T) {
 	react := ":cool:"
 	// Get last message, we'll react to it
-	messages, err := alice.GetTextMessages(channel, false)
+	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
 	lastMessageID := messages[0].MsgID
 
 	// Send the react
-	res, err := alice.ReactByChannel(channel, lastMessageID, react)
+	res, err := alice.ReactByChannel(oneOnOneChannel, lastMessageID, react)
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
 
@@ -296,12 +297,12 @@ func TestReactByConvID(t *testing.T) {
 	react := ":cool:"
 
 	// Get last message, we'll react to it
-	messages, err := alice.GetTextMessages(channel, false)
+	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
 	lastMessageID := messages[0].MsgID
 
 	// Retrieve conversation ID
-	messages, err = alice.GetTextMessages(channel, false)
+	messages, err = alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
 	convID := messages[0].ConversationID
 
@@ -335,7 +336,7 @@ func TestJoinAndLeaveChannel(t *testing.T) {
 	_, err = alice.JoinChannel(teamChannel.Name, teamChannel.TopicName)
 	require.NoError(t, err)
 	_, err = alice.JoinChannel(teamChannel.Name, teamChannel.TopicName)
-	// We don't get an error when trying to join an already joined channel
+	// We don't get an error when trying to join an already joined oneOnOneChannel
 	require.NoError(t, err)
 }
 
@@ -375,7 +376,7 @@ func TestListenForNewTextMessages(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		time.Sleep(time.Second)
 		message := strconv.Itoa(i)
-		_, err := bob.SendMessage(channel, message)
+		_, err := bob.SendMessage(oneOnOneChannel, message)
 		require.NoError(t, err)
 	}
 }
