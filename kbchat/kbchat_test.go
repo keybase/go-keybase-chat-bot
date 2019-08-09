@@ -17,26 +17,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type bots struct {
-	Alice1   *OneshotOptions
-	Alice2   *OneshotOptions
-	Bob1     *OneshotOptions
-	Charlie1 *OneshotOptions
-}
-
 type team struct {
 	Teamname string
 	Channel  string
 }
 
-type teams struct {
-	Acme             team
-	AlicesPlayground team
-}
-
 type botConfig struct {
-	Bots  bots
-	Teams teams
+	Bots  map[string]*OneshotOptions
+	Teams map[string]team
 }
 
 func readAndParseConfig() (botConfig, error) {
@@ -129,19 +117,19 @@ func testSetup() (alice *API, config botConfig, dir string, oneOnOneChannel Chan
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in preparing working directory: %v\n", err)
 	}
-	alice, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots.Alice1, StartService: true})
+	alice, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots["alice1"], StartService: true})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in starting service: %v\n", err)
 	}
 
 	oneOnOneChannel = Channel{
-		Name: fmt.Sprintf("%s,%s", config.Bots.Alice1.Username, config.Bots.Charlie1.Username),
+		Name: fmt.Sprintf("%s,%s", config.Bots["alice1"].Username, config.Bots["charlie1"].Username),
 	}
 	teamChannel = Channel{
-		Name:        config.Teams.Acme.Teamname,
+		Name:        config.Teams["acme"].Teamname,
 		Public:      false,
 		MembersType: "team",
-		TopicName:   config.Teams.Acme.Channel,
+		TopicName:   config.Teams["acme"].Channel,
 		TopicType:   "chat",
 	}
 
@@ -161,7 +149,7 @@ func testTeardown(alice *API, dir string) {
 
 func TestGetUsername(t *testing.T) {
 	alice, config, dir, _, _ := testSetup()
-	require.Equal(t, alice.GetUsername(), config.Bots.Alice1.Username)
+	require.Equal(t, alice.GetUsername(), config.Bots["alice1"].Username)
 	testTeardown(alice, dir)
 }
 
@@ -364,7 +352,7 @@ func TestListenForNewTextMessages(t *testing.T) {
 	require.NoError(t, err)
 	kbLocation, err := prepWorkingDir(dir)
 	require.NoError(t, err)
-	bob, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots.Bob1, StartService: true})
+	bob, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots["bob1"], StartService: true})
 	require.NoError(t, err)
 
 	sub, err := alice.ListenForNewTextMessages()
