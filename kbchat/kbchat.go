@@ -177,11 +177,7 @@ func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 	}
 
 	var inbox Inbox
-	inboxRaw, err := output.ReadBytes('\n')
-	if err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(inboxRaw, &inbox); err != nil {
+	if err := json.Unmarshal(output, &inbox); err != nil {
 		return nil, err
 	}
 	return inbox.Result.Convs, nil
@@ -202,11 +198,7 @@ func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, erro
 
 	var thread Thread
 
-	messagesRaw, err := output.ReadBytes('\n')
-	if err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(messagesRaw, &thread); err != nil {
+	if err := json.Unmarshal(output, &thread); err != nil {
 		return nil, fmt.Errorf("unable to decode thread: %s", err.Error())
 	}
 
@@ -267,7 +259,7 @@ func (a *API) doSend(arg interface{}) (response SendResponse, err error) {
 	return response, nil
 }
 
-func (a *API) doFetch(apiInput string) (*bufio.Reader, error) {
+func (a *API) doFetch(apiInput string) ([]byte, error) {
 	a.Lock()
 	defer a.Unlock()
 
@@ -278,9 +270,12 @@ func (a *API) doFetch(apiInput string) (*bufio.Reader, error) {
 	if _, err := io.WriteString(input, apiInput); err != nil {
 		return nil, err
 	}
-	// output.ReadString('\n')
+	byteOutput, err := output.ReadBytes('\n')
+	if err != nil {
+		return nil, err
+	}
 
-	return output, nil
+	return byteOutput, nil
 }
 
 func (a *API) SendMessage(channel Channel, body string) (SendResponse, error) {
@@ -605,12 +600,7 @@ func (a *API) ListChannels(teamName string) ([]string, error) {
 	}
 
 	var channelsList ChannelsList
-	inboxRaw, err := output.ReadBytes('\n')
-	if err != nil {
-		return nil, err
-	}
-
-	if err := json.Unmarshal(inboxRaw, &channelsList); err != nil {
+	if err := json.Unmarshal(output, &channelsList); err != nil {
 		return nil, err
 	}
 
@@ -631,11 +621,7 @@ func (a *API) JoinChannel(teamName string, channelName string) (JoinChannelResul
 	}
 
 	joinChannel := JoinChannel{}
-	joinRaw, err := output.ReadBytes('\n')
-	if err != nil {
-		return empty, err
-	}
-	err = json.Unmarshal(joinRaw, &joinChannel)
+	err = json.Unmarshal(output, &joinChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
 	}
