@@ -3,7 +3,6 @@ package kbchat
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -116,18 +115,13 @@ func deleteWorkingDir(workingDir string) error {
 	return os.RemoveAll(workingDir)
 }
 
-var alice *API
-var config botConfig
-var oneOnOneChannel Channel
-var teamChannel Channel
-
-func TestMain(m *testing.M) {
+func testSetup() (alice *API, config botConfig, dir string, oneOnOneChannel Channel, teamChannel Channel) {
 	var err error
 	config, err = readAndParseConfig()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in reading config: %v\n", err)
 	}
-	dir, err := randomTempDir()
+	dir, err = randomTempDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in generating directory: %v\n", err)
 	}
@@ -151,10 +145,11 @@ func TestMain(m *testing.M) {
 		TopicType:   "chat",
 	}
 
-	flag.Parse()
-	code := m.Run()
+	return alice, config, dir, oneOnOneChannel, teamChannel
+}
 
-	err = alice.Shutdown()
+func testTeardown(alice *API, dir string) {
+	err := alice.Shutdown()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error on service shutdown: %v\n", err)
 	}
@@ -162,26 +157,32 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error working directory teardown: %v\n", err)
 	}
-	os.Exit(code)
 }
 
 func TestGetUsername(t *testing.T) {
+	alice, config, dir, _, _ := testSetup()
 	require.Equal(t, alice.GetUsername(), config.Bots.Alice1.Username)
+	testTeardown(alice, dir)
 }
 
 func TestGetConversations(t *testing.T) {
+	alice, _, dir, _, _ := testSetup()
 	conversations, err := alice.GetConversations(false)
 	require.NoError(t, err)
 	require.Greater(t, len(conversations), 0)
+	testTeardown(alice, dir)
 }
 
 func TestGetTextMessages(t *testing.T) {
+	alice, _, dir, oneOnOneChannel, _ := testSetup()
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
 	require.Greater(t, len(messages), 0)
+	testTeardown(alice, dir)
 }
 
 func TestSendMessage(t *testing.T) {
+	alice, _, dir, oneOnOneChannel, _ := testSetup()
 	text := "test SendMessage"
 
 	// Send the message
@@ -196,9 +197,11 @@ func TestSendMessage(t *testing.T) {
 	require.Equal(t, sentMessage.Content.Type, "text")
 	require.Equal(t, sentMessage.Content.Text.Body, text)
 	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+	testTeardown(alice, dir)
 }
 
 func TestSendMessageByConvID(t *testing.T) {
+	alice, _, dir, oneOnOneChannel, _ := testSetup()
 	text := "test SendMessageByConvID"
 
 	// Retrieve conversation ID
@@ -218,9 +221,11 @@ func TestSendMessageByConvID(t *testing.T) {
 	require.Equal(t, sentMessage.Content.Type, "text")
 	require.Equal(t, sentMessage.Content.Text.Body, text)
 	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+	testTeardown(alice, dir)
 }
 
 func TestSendMessageByTlfName(t *testing.T) {
+	alice, _, dir, oneOnOneChannel, _ := testSetup()
 	text := "test SendMessageByTlfName"
 
 	// Send the message
@@ -235,9 +240,11 @@ func TestSendMessageByTlfName(t *testing.T) {
 	require.Equal(t, sentMessage.Content.Type, "text")
 	require.Equal(t, sentMessage.Content.Text.Body, text)
 	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+	testTeardown(alice, dir)
 }
 
 func TestSendMessageByTeamName(t *testing.T) {
+	alice, _, dir, _, teamChannel := testSetup()
 	text := "test SendMessageByTeamName"
 
 	// Send the message
@@ -252,9 +259,11 @@ func TestSendMessageByTeamName(t *testing.T) {
 	require.Equal(t, sentMessage.Content.Type, "text")
 	require.Equal(t, sentMessage.Content.Text.Body, text)
 	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+	testTeardown(alice, dir)
 }
 
 func TestSendAttachmentByTeam(t *testing.T) {
+	alice, _, dir, _, teamChannel := testSetup()
 	// Create a test file
 	fileName := "kb-attachment.txt"
 	location := path.Join(os.TempDir(), fileName)
@@ -276,9 +285,11 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	// require.Equal(t, sentMessage.Content.Type, "attachment")
 	// require.Equal(t, sentMessage.Content.Attachment.Object.Title, title)
 	// require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+	testTeardown(alice, dir)
 }
 
 func TestReactByChannel(t *testing.T) {
+	alice, _, dir, oneOnOneChannel, _ := testSetup()
 	react := ":cool:"
 	// Get last message, we'll react to it
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
@@ -291,9 +302,11 @@ func TestReactByChannel(t *testing.T) {
 	require.Greater(t, res.Result.MsgID, 0)
 
 	// No great way to confirm reaction yet
+	testTeardown(alice, dir)
 }
 
 func TestReactByConvID(t *testing.T) {
+	alice, _, dir, oneOnOneChannel, _ := testSetup()
 	react := ":cool:"
 
 	// Get last message, we'll react to it
@@ -310,11 +323,13 @@ func TestReactByConvID(t *testing.T) {
 	res, err := alice.ReactByConvID(convID, lastMessageID, react)
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
+	testTeardown(alice, dir)
 }
 
 func TestAdvertiseCommands(t *testing.T) {}
 
 func TestListChannels(t *testing.T) {
+	alice, _, dir, _, teamChannel := testSetup()
 	channels, err := alice.ListChannels(teamChannel.Name)
 	require.NoError(t, err)
 	require.Greater(t, len(channels), 0)
@@ -326,9 +341,11 @@ func TestListChannels(t *testing.T) {
 		}
 	}
 	require.True(t, channelFound)
+	testTeardown(alice, dir)
 }
 
 func TestJoinAndLeaveChannel(t *testing.T) {
+	alice, _, dir, _, teamChannel := testSetup()
 	_, err := alice.LeaveChannel(teamChannel.Name, teamChannel.TopicName)
 	require.NoError(t, err)
 	_, err = alice.LeaveChannel(teamChannel.Name, teamChannel.TopicName)
@@ -338,9 +355,11 @@ func TestJoinAndLeaveChannel(t *testing.T) {
 	_, err = alice.JoinChannel(teamChannel.Name, teamChannel.TopicName)
 	// We don't get an error when trying to join an already joined oneOnOneChannel
 	require.NoError(t, err)
+	testTeardown(alice, dir)
 }
 
 func TestListenForNewTextMessages(t *testing.T) {
+	alice, config, dir, oneOnOneChannel, _ := testSetup()
 	dir, err := randomTempDir()
 	require.NoError(t, err)
 	kbLocation, err := prepWorkingDir(dir)
@@ -371,6 +390,8 @@ func TestListenForNewTextMessages(t *testing.T) {
 		for _, value := range receivedMessages {
 			require.True(t, value)
 		}
+
+		testTeardown(alice, dir)
 	}()
 
 	for i := 0; i < 5; i++ {
@@ -379,4 +400,5 @@ func TestListenForNewTextMessages(t *testing.T) {
 		_, err := bob.SendMessage(oneOnOneChannel, message)
 		require.NoError(t, err)
 	}
+
 }
