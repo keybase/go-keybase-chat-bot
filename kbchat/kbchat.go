@@ -642,7 +642,7 @@ func (a *API) LeaveChannel(teamName string, channelName string) (LeaveChannelRes
 	}
 
 	leaveChannel := LeaveChannel{}
-	err = json.Unmarshal([]byte(output.Text()[:]), &leaveChannel)
+	err = json.Unmarshal(output, &leaveChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
 	}

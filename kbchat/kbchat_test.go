@@ -246,10 +246,8 @@ func TestSendMessageByTeamName(t *testing.T) {
 
 	// Read it to confirm it sent
 	messages, err := alice.GetTextMessages(teamChannel, false)
-	fmt.Printf("messages = %+v\n", messages)
 	require.NoError(t, err)
 	sentMessage := messages[0]
-	fmt.Printf("sentMessage = %+v\n", sentMessage)
 	require.Equal(t, sentMessage.Content.Type, "text")
 	require.Equal(t, sentMessage.Content.Text.Body, text)
 	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
@@ -352,23 +350,32 @@ func TestListenForNewTextMessages(t *testing.T) {
 	sub, err := alice.ListenForNewTextMessages()
 	require.NoError(t, err)
 
-	text := "testing listen"
-
 	go func() {
+		receivedMessages := map[string]bool{
+			"0": false,
+			"1": false,
+			"2": false,
+			"3": false,
+			"4": false,
+		}
+
 		for i := 0; i < 5; i++ {
-			time.Sleep(time.Second)
-			_, err := bob.SendMessage(channel, text+" "+strconv.Itoa(i))
+			msg, err := sub.Read()
 			require.NoError(t, err)
+			require.Equal(t, msg.Message.Content.Type, "text")
+			require.Equal(t, msg.Message.Sender.Username, bob.GetUsername())
+			receivedMessages[msg.Message.Content.Text.Body] = true
+		}
+
+		for _, value := range receivedMessages {
+			require.True(t, value)
 		}
 	}()
 
 	for i := 0; i < 5; i++ {
-		msg, err := sub.Read()
+		time.Sleep(time.Second)
+		message := strconv.Itoa(i)
+		_, err := bob.SendMessage(channel, message)
 		require.NoError(t, err)
-		require.Equal(t, msg.Message.Content.Type, "text")
-		require.Equal(t, msg.Message.Sender.Username, bob.GetUsername())
-		require.Equal(t, msg.Message.Content.Text.Body, text+" "+strconv.Itoa(i))
 	}
-
-	sub.Shutdown()
 }
