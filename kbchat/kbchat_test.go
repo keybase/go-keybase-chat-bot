@@ -191,10 +191,10 @@ func TestSendMessage(t *testing.T) {
 	// Read it to confirm it sent
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
-	sentMessage := messages[0]
-	require.Equal(t, sentMessage.Content.Type, "text")
-	require.Equal(t, sentMessage.Content.Text.Body, text)
-	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+	readMessage := messages[0]
+	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
 }
 
 func TestSendMessageByConvID(t *testing.T) {
@@ -215,10 +215,10 @@ func TestSendMessageByConvID(t *testing.T) {
 	// Read it to confirm it sent
 	messages, err = alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
-	sentMessage := messages[0]
-	require.Equal(t, sentMessage.Content.Type, "text")
-	require.Equal(t, sentMessage.Content.Text.Body, text)
-	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+	readMessage := messages[0]
+	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
 }
 
 func TestSendMessageByTlfName(t *testing.T) {
@@ -234,10 +234,10 @@ func TestSendMessageByTlfName(t *testing.T) {
 	// Read it to confirm it sent
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
-	sentMessage := messages[0]
-	require.Equal(t, sentMessage.Content.Type, "text")
-	require.Equal(t, sentMessage.Content.Text.Body, text)
-	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+	readMessage := messages[0]
+	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
 }
 
 func TestSendMessageByTeamName(t *testing.T) {
@@ -253,10 +253,10 @@ func TestSendMessageByTeamName(t *testing.T) {
 	// Read it to confirm it sent
 	messages, err := alice.GetTextMessages(teamChannel, false)
 	require.NoError(t, err)
-	sentMessage := messages[0]
-	require.Equal(t, sentMessage.Content.Type, "text")
-	require.Equal(t, sentMessage.Content.Text.Body, text)
-	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
+	readMessage := messages[0]
+	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
 }
 
 func TestSendAttachmentByTeam(t *testing.T) {
@@ -274,15 +274,6 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	res, err := alice.SendAttachmentByTeam(teamChannel.Name, location, title, &teamChannel.TopicName)
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
-
-	// Types don't support attachments yet, so we can't read it
-	// Read it to confirm it sent
-	// messages, err := alice.GetTextMessages(teamChannel, false)
-	// require.NoError(t, err)
-	// sentMessage := messages[0]
-	// require.Equal(t, sentMessage.Content.Type, "attachment")
-	// require.Equal(t, sentMessage.Content.Attachment.Object.Title, title)
-	// require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
 }
 
 func TestReactByChannel(t *testing.T) {
