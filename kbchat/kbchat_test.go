@@ -156,6 +156,23 @@ func testTeardown(bot *API, dir string) {
 	}
 }
 
+func getMostRecentMessage(bot *API, channel Channel) Message {
+	messages, err := bot.GetTextMessages(channel, false)
+	if err != nil {
+		panic(err)
+	}
+	return messages[0]
+}
+
+func getConvIDForChannel(bot *API, channel Channel) string {
+	messages, err := bot.GetTextMessages(channel, false)
+	if err != nil {
+		panic(err)
+	}
+	convID := messages[0].ConversationID
+	return convID
+}
+
 func TestGetUsername(t *testing.T) {
 	alice, config, dir, _, _ := testSetup("alice1", nil)
 	defer testTeardown(alice, dir)
@@ -189,9 +206,7 @@ func TestSendMessage(t *testing.T) {
 	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
-	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
-	require.NoError(t, err)
-	readMessage := messages[0]
+	readMessage := getMostRecentMessage(alice, oneOnOneChannel)
 	require.Equal(t, readMessage.Content.Type, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
@@ -202,10 +217,7 @@ func TestSendMessageByConvID(t *testing.T) {
 	defer testTeardown(alice, dir)
 	text := "test SendMessageByConvID " + randomString()
 
-	// Retrieve conversation ID
-	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
-	require.NoError(t, err)
-	convID := messages[0].ConversationID
+	convID := getConvIDForChannel(alice, oneOnOneChannel)
 
 	// Send the message
 	res, err := alice.SendMessageByConvID(convID, text)
@@ -213,9 +225,7 @@ func TestSendMessageByConvID(t *testing.T) {
 	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
-	messages, err = alice.GetTextMessages(oneOnOneChannel, false)
-	require.NoError(t, err)
-	readMessage := messages[0]
+	readMessage := getMostRecentMessage(alice, oneOnOneChannel)
 	require.Equal(t, readMessage.Content.Type, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
@@ -232,9 +242,7 @@ func TestSendMessageByTlfName(t *testing.T) {
 	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
-	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
-	require.NoError(t, err)
-	readMessage := messages[0]
+	readMessage := getMostRecentMessage(alice, oneOnOneChannel)
 	require.Equal(t, readMessage.Content.Type, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
@@ -251,9 +259,7 @@ func TestSendMessageByTeamName(t *testing.T) {
 	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
-	messages, err := alice.GetTextMessages(teamChannel, false)
-	require.NoError(t, err)
-	readMessage := messages[0]
+	readMessage := getMostRecentMessage(alice, teamChannel)
 	require.Equal(t, readMessage.Content.Type, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
@@ -262,10 +268,11 @@ func TestSendMessageByTeamName(t *testing.T) {
 func TestSendAttachmentByTeam(t *testing.T) {
 	alice, _, dir, _, teamChannel := testSetup("alice1", nil)
 	defer testTeardown(alice, dir)
+
 	// Create a test file
 	fileName := "kb-attachment.txt"
 	location := path.Join(os.TempDir(), fileName)
-	data := []byte("My super cool attachment")
+	data := []byte("My super cool attachment" + randomString())
 	err := ioutil.WriteFile(location, data, 0644)
 	require.NoError(t, err)
 
@@ -279,13 +286,10 @@ func TestSendAttachmentByTeam(t *testing.T) {
 func TestReactByChannel(t *testing.T) {
 	alice, _, dir, oneOnOneChannel, _ := testSetup("alice1", nil)
 	defer testTeardown(alice, dir)
-	react := ":cool:"
-	// Get last message, we'll react to it
-	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
-	require.NoError(t, err)
-	lastMessageID := messages[0].MsgID
 
-	// Send the react
+	react := ":cool:"
+	lastMessageID := getMostRecentMessage(alice, oneOnOneChannel).MsgID
+
 	res, err := alice.ReactByChannel(oneOnOneChannel, lastMessageID, react)
 	require.NoError(t, err)
 	require.True(t, res.Result.MsgID > 0)
@@ -296,15 +300,8 @@ func TestReactByConvID(t *testing.T) {
 	defer testTeardown(alice, dir)
 	react := ":cool:"
 
-	// Get last message, we'll react to it
-	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
-	require.NoError(t, err)
-	lastMessageID := messages[0].MsgID
-
-	// Retrieve conversation ID
-	messages, err = alice.GetTextMessages(oneOnOneChannel, false)
-	require.NoError(t, err)
-	convID := messages[0].ConversationID
+	lastMessageID := getMostRecentMessage(alice, oneOnOneChannel).MsgID
+	convID := getConvIDForChannel(alice, oneOnOneChannel)
 
 	// Send the react
 	res, err := alice.ReactByConvID(convID, lastMessageID, react)
