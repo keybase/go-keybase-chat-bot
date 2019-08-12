@@ -17,14 +17,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type team struct {
-	Teamname string
-	Channel  string
-}
-
 type botConfig struct {
 	Bots  map[string]*OneshotOptions
-	Teams map[string]team
+	Teams map[string]Channel
 }
 
 func readAndParseConfig() botConfig {
@@ -107,71 +102,83 @@ func deleteWorkingDir(workingDir string) error {
 	return os.RemoveAll(workingDir)
 }
 
-func testSetup() (alice *API, config botConfig, dir string, oneOnOneChannel Channel, teamChannel Channel) {
-	var err error
+type testSetupOptions struct {
+	OneOnOnePartner string
+	TeamName        string
+}
+
+func testSetup(botName string, options *testSetupOptions) (bot *API, config botConfig, dir string, oneOnOneChannel Channel, teamChannel Channel) {
+	var oneOnOnePartner string
+	var teamName string
+	if options == nil {
+		oneOnOnePartner = "charlie1"
+		teamName = "acme"
+	} else {
+		oneOnOnePartner = options.OneOnOnePartner
+		teamName = options.TeamName
+	}
+
 	config = readAndParseConfig()
 	dir = randomTempDir()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in generating directory: %v\n", err)
-	}
 	kbLocation, err := prepWorkingDir(dir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in preparing working directory: %v\n", err)
+		panic(err)
 	}
-	alice, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots["alice1"], StartService: true})
+	bot, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots[botName], StartService: true})
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in starting service: %v\n", err)
+		panic(err)
 	}
 
 	oneOnOneChannel = Channel{
-		Name: fmt.Sprintf("%s,%s", config.Bots["alice1"].Username, config.Bots["charlie1"].Username),
+		Name: fmt.Sprintf("%s,%s", config.Bots[botName].Username, oneOnOnePartner),
 	}
 	teamChannel = Channel{
-		Name:        config.Teams["acme"].Teamname,
+		Name:        config.Teams[teamName].Name,
 		Public:      false,
 		MembersType: "team",
-		TopicName:   config.Teams["acme"].Channel,
+		TopicName:   config.Teams[teamName].TopicName,
 		TopicType:   "chat",
 	}
 
-	return alice, config, dir, oneOnOneChannel, teamChannel
+	return bot, config, dir, oneOnOneChannel, teamChannel
 }
 
-func testTeardown(alice *API, dir string) {
-	err := alice.Shutdown()
+func testTeardown(bot *API, dir string) {
+	err := bot.Shutdown()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error on service shutdown: %v\n", err)
+		panic(err)
 	}
 	err = deleteWorkingDir(dir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error working directory teardown: %v\n", err)
+		panic(err)
 	}
 }
 
 func TestGetUsername(t *testing.T) {
-	alice, config, dir, _, _ := testSetup()
+	alice, config, dir, _, _ := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	require.Equal(t, alice.GetUsername(), config.Bots["alice1"].Username)
-	testTeardown(alice, dir)
 }
 
 func TestGetConversations(t *testing.T) {
-	alice, _, dir, _, _ := testSetup()
+	alice, _, dir, _, _ := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	conversations, err := alice.GetConversations(false)
 	require.NoError(t, err)
 	require.Greater(t, len(conversations), 0)
-	testTeardown(alice, dir)
 }
 
 func TestGetTextMessages(t *testing.T) {
-	alice, _, dir, oneOnOneChannel, _ := testSetup()
+	alice, _, dir, oneOnOneChannel, _ := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
 	require.Greater(t, len(messages), 0)
-	testTeardown(alice, dir)
 }
 
 func TestSendMessage(t *testing.T) {
-	alice, _, dir, oneOnOneChannel, _ := testSetup()
+	alice, _, dir, oneOnOneChannel, _ := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	text := "test SendMessage " + randomString()
 
 	// Send the message
@@ -186,11 +193,11 @@ func TestSendMessage(t *testing.T) {
 	require.Equal(t, sentMessage.Content.Type, "text")
 	require.Equal(t, sentMessage.Content.Text.Body, text)
 	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
-	testTeardown(alice, dir)
 }
 
 func TestSendMessageByConvID(t *testing.T) {
-	alice, _, dir, oneOnOneChannel, _ := testSetup()
+	alice, _, dir, oneOnOneChannel, _ := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	text := "test SendMessageByConvID " + randomString()
 
 	// Retrieve conversation ID
@@ -210,11 +217,11 @@ func TestSendMessageByConvID(t *testing.T) {
 	require.Equal(t, sentMessage.Content.Type, "text")
 	require.Equal(t, sentMessage.Content.Text.Body, text)
 	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
-	testTeardown(alice, dir)
 }
 
 func TestSendMessageByTlfName(t *testing.T) {
-	alice, _, dir, oneOnOneChannel, _ := testSetup()
+	alice, _, dir, oneOnOneChannel, _ := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	text := "test SendMessageByTlfName " + randomString()
 
 	// Send the message
@@ -229,11 +236,11 @@ func TestSendMessageByTlfName(t *testing.T) {
 	require.Equal(t, sentMessage.Content.Type, "text")
 	require.Equal(t, sentMessage.Content.Text.Body, text)
 	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
-	testTeardown(alice, dir)
 }
 
 func TestSendMessageByTeamName(t *testing.T) {
-	alice, _, dir, _, teamChannel := testSetup()
+	alice, _, dir, _, teamChannel := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	text := "test SendMessageByTeamName " + randomString()
 
 	// Send the message
@@ -248,11 +255,11 @@ func TestSendMessageByTeamName(t *testing.T) {
 	require.Equal(t, sentMessage.Content.Type, "text")
 	require.Equal(t, sentMessage.Content.Text.Body, text)
 	require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
-	testTeardown(alice, dir)
 }
 
 func TestSendAttachmentByTeam(t *testing.T) {
-	alice, _, dir, _, teamChannel := testSetup()
+	alice, _, dir, _, teamChannel := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	// Create a test file
 	fileName := "kb-attachment.txt"
 	location := path.Join(os.TempDir(), fileName)
@@ -274,11 +281,11 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	// require.Equal(t, sentMessage.Content.Type, "attachment")
 	// require.Equal(t, sentMessage.Content.Attachment.Object.Title, title)
 	// require.Equal(t, sentMessage.MsgID, res.Result.MsgID)
-	testTeardown(alice, dir)
 }
 
 func TestReactByChannel(t *testing.T) {
-	alice, _, dir, oneOnOneChannel, _ := testSetup()
+	alice, _, dir, oneOnOneChannel, _ := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	react := ":cool:"
 	// Get last message, we'll react to it
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
@@ -289,13 +296,11 @@ func TestReactByChannel(t *testing.T) {
 	res, err := alice.ReactByChannel(oneOnOneChannel, lastMessageID, react)
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
-
-	// No great way to confirm reaction yet
-	testTeardown(alice, dir)
 }
 
 func TestReactByConvID(t *testing.T) {
-	alice, _, dir, oneOnOneChannel, _ := testSetup()
+	alice, _, dir, oneOnOneChannel, _ := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	react := ":cool:"
 
 	// Get last message, we'll react to it
@@ -312,13 +317,13 @@ func TestReactByConvID(t *testing.T) {
 	res, err := alice.ReactByConvID(convID, lastMessageID, react)
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
-	testTeardown(alice, dir)
 }
 
 func TestAdvertiseCommands(t *testing.T) {}
 
 func TestListChannels(t *testing.T) {
-	alice, _, dir, _, teamChannel := testSetup()
+	alice, _, dir, _, teamChannel := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	channels, err := alice.ListChannels(teamChannel.Name)
 	require.NoError(t, err)
 	require.Greater(t, len(channels), 0)
@@ -330,11 +335,11 @@ func TestListChannels(t *testing.T) {
 		}
 	}
 	require.True(t, channelFound)
-	testTeardown(alice, dir)
 }
 
 func TestJoinAndLeaveChannel(t *testing.T) {
-	alice, _, dir, _, teamChannel := testSetup()
+	alice, _, dir, _, teamChannel := testSetup("alice1", nil)
+	defer testTeardown(alice, dir)
 	_, err := alice.LeaveChannel(teamChannel.Name, teamChannel.TopicName)
 	require.NoError(t, err)
 	_, err = alice.LeaveChannel(teamChannel.Name, teamChannel.TopicName)
@@ -344,21 +349,19 @@ func TestJoinAndLeaveChannel(t *testing.T) {
 	_, err = alice.JoinChannel(teamChannel.Name, teamChannel.TopicName)
 	// We don't get an error when trying to join an already joined oneOnOneChannel
 	require.NoError(t, err)
-	testTeardown(alice, dir)
 }
 
 func TestListenForNewTextMessages(t *testing.T) {
-	alice, config, dir, oneOnOneChannel, _ := testSetup()
-	bobDir := randomTempDir()
-	kbLocation, err := prepWorkingDir(bobDir)
-	require.NoError(t, err)
-	bob, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: bobDir, Oneshot: config.Bots["bob1"], StartService: true})
-	require.NoError(t, err)
+	alice, _, aliceDir, oneOnOneChannel, _ := testSetup("alice1", nil)
+	bob, _, bobDir, _, _ := testSetup("bob1", nil)
 
 	sub, err := alice.ListenForNewTextMessages()
 	require.NoError(t, err)
 
 	go func() {
+		defer testTeardown(alice, aliceDir)
+		defer testTeardown(bob, bobDir)
+
 		receivedMessages := map[string]bool{
 			"0": false,
 			"1": false,
@@ -378,8 +381,6 @@ func TestListenForNewTextMessages(t *testing.T) {
 		for _, value := range receivedMessages {
 			require.True(t, value)
 		}
-
-		testTeardown(alice, dir)
 	}()
 
 	for i := 0; i < 5; i++ {
@@ -388,5 +389,4 @@ func TestListenForNewTextMessages(t *testing.T) {
 		_, err := bob.SendMessage(oneOnOneChannel, message)
 		require.NoError(t, err)
 	}
-
 }
