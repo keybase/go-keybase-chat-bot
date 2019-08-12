@@ -122,10 +122,12 @@ func testSetup(botName string, options *testSetupOptions) (bot *API, config botC
 	dir = randomTempDir()
 	kbLocation, err := prepWorkingDir(dir)
 	if err != nil {
+		deleteWorkingDir(dir)
 		panic(err)
 	}
 	bot, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots[botName], StartService: true})
 	if err != nil {
+		testTeardown(bot, dir)
 		panic(err)
 	}
 
@@ -354,39 +356,42 @@ func TestJoinAndLeaveChannel(t *testing.T) {
 func TestListenForNewTextMessages(t *testing.T) {
 	alice, _, aliceDir, oneOnOneChannel, _ := testSetup("alice1", nil)
 	bob, _, bobDir, _, _ := testSetup("bob1", nil)
+	defer testTeardown(alice, aliceDir)
+	defer testTeardown(bob, bobDir)
 
 	sub, err := alice.ListenForNewTextMessages()
 	require.NoError(t, err)
 
+	done := make(chan bool)
 	go func() {
-		defer testTeardown(alice, aliceDir)
-		defer testTeardown(bob, bobDir)
-
-		receivedMessages := map[string]bool{
-			"0": false,
-			"1": false,
-			"2": false,
-			"3": false,
-			"4": false,
-		}
-
 		for i := 0; i < 5; i++ {
-			msg, err := sub.Read()
+			time.Sleep(time.Second)
+			message := strconv.Itoa(i)
+			_, err := bob.SendMessage(oneOnOneChannel, message)
 			require.NoError(t, err)
-			require.Equal(t, msg.Message.Content.Type, "text")
-			require.Equal(t, msg.Message.Sender.Username, bob.GetUsername())
-			receivedMessages[msg.Message.Content.Text.Body] = true
 		}
-
-		for _, value := range receivedMessages {
-			require.True(t, value)
-		}
+		done <- true
 	}()
 
-	for i := 0; i < 5; i++ {
-		time.Sleep(time.Second)
-		message := strconv.Itoa(i)
-		_, err := bob.SendMessage(oneOnOneChannel, message)
-		require.NoError(t, err)
+	receivedMessages := map[string]bool{
+		"0": false,
+		"1": false,
+		"2": false,
+		"3": false,
+		"4": false,
 	}
+
+	for i := 0; i < 5; i++ {
+		msg, err := sub.Read()
+		require.NoError(t, err)
+		require.Equal(t, msg.Message.Content.Type, "text")
+		require.Equal(t, msg.Message.Sender.Username, bob.GetUsername())
+		receivedMessages[msg.Message.Content.Text.Body] = true
+	}
+
+	for _, value := range receivedMessages {
+		require.True(t, value)
+	}
+
+	<-done
 }
