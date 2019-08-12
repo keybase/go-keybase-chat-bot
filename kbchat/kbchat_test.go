@@ -167,7 +167,7 @@ func TestGetConversations(t *testing.T) {
 	defer testTeardown(alice, dir)
 	conversations, err := alice.GetConversations(false)
 	require.NoError(t, err)
-	require.Greater(t, len(conversations), 0)
+	require.True(t, len(conversations) > 0)
 }
 
 func TestGetTextMessages(t *testing.T) {
@@ -175,7 +175,7 @@ func TestGetTextMessages(t *testing.T) {
 	defer testTeardown(alice, dir)
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
 	require.NoError(t, err)
-	require.Greater(t, len(messages), 0)
+	require.True(t, len(messages) > 0)
 }
 
 func TestSendMessage(t *testing.T) {
@@ -186,7 +186,7 @@ func TestSendMessage(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessage(oneOnOneChannel, text)
 	require.NoError(t, err)
-	require.Greater(t, res.Result.MsgID, 0)
+	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
@@ -210,7 +210,7 @@ func TestSendMessageByConvID(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessageByConvID(convID, text)
 	require.NoError(t, err)
-	require.Greater(t, res.Result.MsgID, 0)
+	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
 	messages, err = alice.GetTextMessages(oneOnOneChannel, false)
@@ -229,7 +229,7 @@ func TestSendMessageByTlfName(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessageByTlfName(oneOnOneChannel.Name, text)
 	require.NoError(t, err)
-	require.Greater(t, res.Result.MsgID, 0)
+	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
@@ -248,7 +248,7 @@ func TestSendMessageByTeamName(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessageByTeamName(teamChannel.Name, text, &teamChannel.TopicName)
 	require.NoError(t, err)
-	require.Greater(t, res.Result.MsgID, 0)
+	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
 	messages, err := alice.GetTextMessages(teamChannel, false)
@@ -273,7 +273,7 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	title := "test SendAttachmentByTeam " + randomString()
 	res, err := alice.SendAttachmentByTeam(teamChannel.Name, location, title, &teamChannel.TopicName)
 	require.NoError(t, err)
-	require.Greater(t, res.Result.MsgID, 0)
+	require.True(t, res.Result.MsgID > 0)
 }
 
 func TestReactByChannel(t *testing.T) {
@@ -288,7 +288,7 @@ func TestReactByChannel(t *testing.T) {
 	// Send the react
 	res, err := alice.ReactByChannel(oneOnOneChannel, lastMessageID, react)
 	require.NoError(t, err)
-	require.Greater(t, res.Result.MsgID, 0)
+	require.True(t, res.Result.MsgID > 0)
 }
 
 func TestReactByConvID(t *testing.T) {
@@ -309,7 +309,7 @@ func TestReactByConvID(t *testing.T) {
 	// Send the react
 	res, err := alice.ReactByConvID(convID, lastMessageID, react)
 	require.NoError(t, err)
-	require.Greater(t, res.Result.MsgID, 0)
+	require.True(t, res.Result.MsgID > 0)
 }
 
 func TestAdvertiseCommands(t *testing.T) {}
@@ -319,7 +319,7 @@ func TestListChannels(t *testing.T) {
 	defer testTeardown(alice, dir)
 	channels, err := alice.ListChannels(teamChannel.Name)
 	require.NoError(t, err)
-	require.Greater(t, len(channels), 0)
+	require.True(t, len(channels) > 0)
 	channelFound := false
 	for _, channel := range channels {
 		if channel == teamChannel.TopicName {
