@@ -27,29 +27,33 @@ type botConfig struct {
 	Teams map[string]team
 }
 
-func readAndParseConfig() (botConfig, error) {
+func readAndParseConfig() botConfig {
 	var config botConfig
 	data, err := ioutil.ReadFile("test_config.yaml")
 	if err != nil {
-		return botConfig{}, err
+		panic(err)
 	}
 
 	err = yaml.Unmarshal(data, &config)
 	if err != nil {
-		return botConfig{}, err
+		panic(err)
 	}
 
-	return config, nil
+	return config
 }
 
-func randomTempDir() (string, error) {
+func randomString() string {
 	bytes := make([]byte, 16)
 	_, err := rand.Read(bytes)
 	if err != nil {
-		return "", err
+		panic(err)
 	}
-	dir := path.Join(os.TempDir(), "keybase_bot_"+hex.EncodeToString(bytes))
-	return dir, nil
+	return hex.EncodeToString(bytes)
+}
+
+func randomTempDir() string {
+	dir := path.Join(os.TempDir(), "keybase_bot_"+randomString())
+	return dir
 }
 
 func whichKeybase() (string, error) {
@@ -105,11 +109,8 @@ func deleteWorkingDir(workingDir string) error {
 
 func testSetup() (alice *API, config botConfig, dir string, oneOnOneChannel Channel, teamChannel Channel) {
 	var err error
-	config, err = readAndParseConfig()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in reading config: %v\n", err)
-	}
-	dir, err = randomTempDir()
+	config = readAndParseConfig()
+	dir = randomTempDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in generating directory: %v\n", err)
 	}
@@ -171,7 +172,7 @@ func TestGetTextMessages(t *testing.T) {
 
 func TestSendMessage(t *testing.T) {
 	alice, _, dir, oneOnOneChannel, _ := testSetup()
-	text := "test SendMessage"
+	text := "test SendMessage " + randomString()
 
 	// Send the message
 	res, err := alice.SendMessage(oneOnOneChannel, text)
@@ -190,7 +191,7 @@ func TestSendMessage(t *testing.T) {
 
 func TestSendMessageByConvID(t *testing.T) {
 	alice, _, dir, oneOnOneChannel, _ := testSetup()
-	text := "test SendMessageByConvID"
+	text := "test SendMessageByConvID " + randomString()
 
 	// Retrieve conversation ID
 	messages, err := alice.GetTextMessages(oneOnOneChannel, false)
@@ -214,7 +215,7 @@ func TestSendMessageByConvID(t *testing.T) {
 
 func TestSendMessageByTlfName(t *testing.T) {
 	alice, _, dir, oneOnOneChannel, _ := testSetup()
-	text := "test SendMessageByTlfName"
+	text := "test SendMessageByTlfName " + randomString()
 
 	// Send the message
 	res, err := alice.SendMessageByTlfName(oneOnOneChannel.Name, text)
@@ -233,7 +234,7 @@ func TestSendMessageByTlfName(t *testing.T) {
 
 func TestSendMessageByTeamName(t *testing.T) {
 	alice, _, dir, _, teamChannel := testSetup()
-	text := "test SendMessageByTeamName"
+	text := "test SendMessageByTeamName " + randomString()
 
 	// Send the message
 	res, err := alice.SendMessageByTeamName(teamChannel.Name, text, &teamChannel.TopicName)
@@ -260,7 +261,7 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	require.NoError(t, err)
 
 	// Send the message
-	title := "test SendAttachmentByTeam"
+	title := "test SendAttachmentByTeam " + randomString()
 	res, err := alice.SendAttachmentByTeam(teamChannel.Name, location, title, &teamChannel.TopicName)
 	require.NoError(t, err)
 	require.Greater(t, res.Result.MsgID, 0)
@@ -348,11 +349,10 @@ func TestJoinAndLeaveChannel(t *testing.T) {
 
 func TestListenForNewTextMessages(t *testing.T) {
 	alice, config, dir, oneOnOneChannel, _ := testSetup()
-	dir, err := randomTempDir()
+	bobDir := randomTempDir()
+	kbLocation, err := prepWorkingDir(bobDir)
 	require.NoError(t, err)
-	kbLocation, err := prepWorkingDir(dir)
-	require.NoError(t, err)
-	bob, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots["bob1"], StartService: true})
+	bob, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: bobDir, Oneshot: config.Bots["bob1"], StartService: true})
 	require.NoError(t, err)
 
 	sub, err := alice.ListenForNewTextMessages()
