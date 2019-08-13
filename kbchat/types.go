@@ -11,7 +11,7 @@ type Channel struct {
 	Name        string `json:"name"`
 	Public      bool   `json:"public"`
 	TopicType   string `json:"topic_type"`
-	TopicName   string `json:"topic_name" yaml:"topic_name"`
+	TopicName   string `json:"topic_name"`
 	MembersType string `json:"members_type"`
 }
 

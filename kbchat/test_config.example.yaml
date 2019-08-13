@@ -22,8 +22,8 @@ config:
       # A real team that you add your alice1, alice2, and bob1 all into
       name: "acme"
       # The channel to use
-      topic_name: "mysupercoolchannel"
+      topicname: "mysupercoolchannel"
     alicesPlayground:
       # a team with alice in it AS ADMIN, but bob or charlie not in team
       name: "alices_playground"
-      topic_name: "alice_time"
+      topicname: "alice_time"
