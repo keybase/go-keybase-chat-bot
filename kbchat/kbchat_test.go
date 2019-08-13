@@ -122,12 +122,12 @@ func testSetup(botName string, options *testSetupOptions) (bot *API, config botC
 	dir = randomTempDir()
 	kbLocation, err := prepWorkingDir(dir)
 	if err != nil {
-		deleteWorkingDir(dir)
+		defer deleteWorkingDir(dir)
 		panic(err)
 	}
 	bot, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots[botName], StartService: true})
 	if err != nil {
-		testTeardown(bot, dir)
+		defer testTeardown(bot, dir)
 		panic(err)
 	}
 
