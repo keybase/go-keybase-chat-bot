@@ -43,65 +43,41 @@ func randomTempDir(t *testing.T) string {
 	return path.Join(os.TempDir(), "keybase_bot_"+randomString(t))
 }
 
-func whichKeybase() (string, error) {
+func whichKeybase(t *testing.T) string {
 	cmd := exec.Command("which", "keybase")
 	out, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
+	require.NoError(t, err)
 	location := strings.TrimSpace(string(out))
-	return location, nil
+	return location
 }
 
-func copyFile(source, dest string) error {
+func copyFile(t *testing.T, source, dest string) {
 	sourceData, err := ioutil.ReadFile(source)
-	if err != nil {
-		return err
-	}
+	require.NoError(t, err)
 	err = ioutil.WriteFile(dest, sourceData, 0777)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	require.NoError(t, err)
 }
 
 // Creates the working directory and copies over the keybase binary in PATH.
 // We do this to avoid any version mismatch issues.
-func prepWorkingDir(workingDir string) (string, error) {
-	kbLocation, err := whichKeybase()
-	if err != nil {
-		return "", err
-	}
+func prepWorkingDir(t *testing.T, workingDir string) string {
+	kbLocation := whichKeybase(t)
 
-	err = os.Mkdir(workingDir, 0777)
-	if err != nil {
-		return "", err
-	}
+	err := os.Mkdir(workingDir, 0777)
+	require.NoError(t, err)
 	kbDestination := path.Join(workingDir, "keybase")
 
-	err = copyFile(kbLocation, kbDestination)
-	if err != nil {
-		return "", err
-	}
+	copyFile(t, kbLocation, kbDestination)
 
-	return kbDestination, nil
+	return kbDestination
 }
 
 func testBotSetup(t *testing.T, botName string) (bot *API, dir string) {
 	config := readAndParseTestConfig(t)
 	dir = randomTempDir(t)
-	kbLocation, err := prepWorkingDir(dir)
-	if err != nil {
-		defer os.RemoveAll(dir)
-		panic(err)
-	}
-	bot, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots[botName], StartService: true})
-	if err != nil {
-		defer testBotTeardown(t, bot, dir)
-		panic(err)
-	}
-
+	kbLocation := prepWorkingDir(t, dir)
+	bot, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots[botName], StartService: true})
+	require.NoError(t, err)
 	return bot, dir
 }
 
