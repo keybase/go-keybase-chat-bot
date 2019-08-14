@@ -2,10 +2,10 @@
 
 config:
   bots:
-    alice1:
+    alice:
       username: "alice"
       paperkey: "foo bar car..."
-    bob1:
+    bob:
       username: "bob"
       paperkey: "one two three four..."
   teams:
