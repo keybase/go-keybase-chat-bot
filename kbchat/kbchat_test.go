@@ -1,15 +1,11 @@
 package kbchat
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path"
 	"strconv"
-	"strings"
 	"testing"
 	"time"
 
@@ -30,46 +26,6 @@ func readAndParseTestConfig(t *testing.T) (config keybaseTestConfig) {
 	require.NoError(t, err)
 
 	return config
-}
-
-func randomString(t *testing.T) string {
-	bytes := make([]byte, 16)
-	_, err := rand.Read(bytes)
-	require.NoError(t, err)
-	return hex.EncodeToString(bytes)
-}
-
-func randomTempDir(t *testing.T) string {
-	return path.Join(os.TempDir(), "keybase_bot_"+randomString(t))
-}
-
-func whichKeybase(t *testing.T) string {
-	cmd := exec.Command("which", "keybase")
-	out, err := cmd.Output()
-	require.NoError(t, err)
-	location := strings.TrimSpace(string(out))
-	return location
-}
-
-func copyFile(t *testing.T, source, dest string) {
-	sourceData, err := ioutil.ReadFile(source)
-	require.NoError(t, err)
-	err = ioutil.WriteFile(dest, sourceData, 0777)
-	require.NoError(t, err)
-}
-
-// Creates the working directory and copies over the keybase binary in PATH.
-// We do this to avoid any version mismatch issues.
-func prepWorkingDir(t *testing.T, workingDir string) string {
-	kbLocation := whichKeybase(t)
-
-	err := os.Mkdir(workingDir, 0777)
-	require.NoError(t, err)
-	kbDestination := path.Join(workingDir, "keybase")
-
-	copyFile(t, kbLocation, kbDestination)
-
-	return kbDestination
 }
 
 func testBotSetup(t *testing.T, botName string) (bot *API, dir string) {
@@ -108,19 +64,15 @@ func testBotTeardown(t *testing.T, bot *API, dir string) {
 	require.NoError(t, err)
 }
 
-func getMostRecentMessage(bot *API, channel Channel) Message {
+func getMostRecentMessage(t *testing.T, bot *API, channel Channel) Message {
 	messages, err := bot.GetTextMessages(channel, false)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 	return messages[0]
 }
 
-func getConvIDForChannel(bot *API, channel Channel) string {
+func getConvIDForChannel(t *testing.T, bot *API, channel Channel) string {
 	messages, err := bot.GetTextMessages(channel, false)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 	convID := messages[0].ConversationID
 	return convID
 }
@@ -161,7 +113,7 @@ func TestSendMessage(t *testing.T) {
 	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
-	readMessage := getMostRecentMessage(alice, channel)
+	readMessage := getMostRecentMessage(t, alice, channel)
 	require.Equal(t, readMessage.Content.Type, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
@@ -172,7 +124,7 @@ func TestSendMessageByConvID(t *testing.T) {
 	defer testBotTeardown(t, alice, dir)
 	text := "test SendMessageByConvID " + randomString(t)
 	channel := getOneOnOneChatChannel(t, "alice", "bob")
-	convID := getConvIDForChannel(alice, channel)
+	convID := getConvIDForChannel(t, alice, channel)
 
 	// Send the message
 	res, err := alice.SendMessageByConvID(convID, text)
@@ -180,7 +132,7 @@ func TestSendMessageByConvID(t *testing.T) {
 	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
-	readMessage := getMostRecentMessage(alice, channel)
+	readMessage := getMostRecentMessage(t, alice, channel)
 	require.Equal(t, readMessage.Content.Type, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
@@ -198,7 +150,7 @@ func TestSendMessageByTlfName(t *testing.T) {
 	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
-	readMessage := getMostRecentMessage(alice, channel)
+	readMessage := getMostRecentMessage(t, alice, channel)
 	require.Equal(t, readMessage.Content.Type, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
@@ -216,7 +168,7 @@ func TestSendMessageByTeamName(t *testing.T) {
 	require.True(t, res.Result.MsgID > 0)
 
 	// Read it to confirm it sent
-	readMessage := getMostRecentMessage(alice, channel)
+	readMessage := getMostRecentMessage(t, alice, channel)
 	require.Equal(t, readMessage.Content.Type, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
@@ -247,7 +199,7 @@ func TestReactByChannel(t *testing.T) {
 	channel := getOneOnOneChatChannel(t, "alice", "bob")
 
 	react := ":cool:"
-	lastMessageID := getMostRecentMessage(alice, channel).MsgID
+	lastMessageID := getMostRecentMessage(t, alice, channel).MsgID
 
 	res, err := alice.ReactByChannel(channel, lastMessageID, react)
 	require.NoError(t, err)
@@ -260,8 +212,8 @@ func TestReactByConvID(t *testing.T) {
 	react := ":cool:"
 	channel := getOneOnOneChatChannel(t, "alice", "bob")
 
-	lastMessageID := getMostRecentMessage(alice, channel).MsgID
-	convID := getConvIDForChannel(alice, channel)
+	lastMessageID := getMostRecentMessage(t, alice, channel).MsgID
+	convID := getConvIDForChannel(t, alice, channel)
 
 	// Send the react
 	res, err := alice.ReactByConvID(convID, lastMessageID, react)
