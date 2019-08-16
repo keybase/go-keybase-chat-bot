@@ -1,184 +1,300 @@
 package kbchat
 
 import (
-	"crypto/rand"
-	"encoding/hex"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path"
-	"strings"
+	"strconv"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 )
 
-type Bots struct {
-	Alice1   *OneshotOptions
-	Alice2   *OneshotOptions
-	Bob1     *OneshotOptions
-	Charlie1 *OneshotOptions
+type keybaseTestConfig struct {
+	Bots  map[string]*OneshotOptions
+	Teams map[string]Channel
 }
 
-type Config struct {
-	Bots
-}
-
-func readAndParseConfig() (Config, error) {
-	var config Config
+func readAndParseTestConfig(t *testing.T) (config keybaseTestConfig) {
 	data, err := ioutil.ReadFile("test_config.yaml")
-	if err != nil {
-		return Config{}, err
-	}
+	require.NoError(t, err)
 
 	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		return Config{}, err
-	}
+	require.NoError(t, err)
 
-	return config, nil
+	return config
 }
 
-func randomTempDir() (string, error) {
-	bytes := make([]byte, 16)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		return "", err
-	}
-	dir := path.Join(os.TempDir(), "keybase_bot_"+hex.EncodeToString(bytes))
-	return dir, nil
+func testBotSetup(t *testing.T, botName string) (bot *API, dir string) {
+	config := readAndParseTestConfig(t)
+	dir = randomTempDir(t)
+	kbLocation := prepWorkingDir(t, dir)
+	bot, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots[botName], StartService: true})
+	require.NoError(t, err)
+	return bot, dir
 }
 
-func whichKeybase() (string, error) {
-	cmd := exec.Command("which", "keybase")
-
-	out, err := cmd.Output()
-	if err != nil {
-		return "", err
+func getOneOnOneChatChannel(t *testing.T, botName, oneOnOnePartner string) Channel {
+	config := readAndParseTestConfig(t)
+	oneOnOneChannel := Channel{
+		Name: fmt.Sprintf("%s,%s", config.Bots[botName].Username, config.Bots[oneOnOnePartner].Username),
 	}
-	location := strings.TrimSpace(string(out))
-	return location, nil
+	return oneOnOneChannel
 }
 
-func copyFile(source, dest string) error {
-	sourceData, err := ioutil.ReadFile(source)
-	if err != nil {
-		return err
+func getTeamChatChannel(t *testing.T, teamName string) Channel {
+	config := readAndParseTestConfig(t)
+	teamChannel := Channel{
+		Name:        config.Teams[teamName].Name,
+		Public:      false,
+		MembersType: "team",
+		TopicName:   config.Teams[teamName].TopicName,
+		TopicType:   "chat",
 	}
-
-	err = ioutil.WriteFile(dest, sourceData, 0777)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return teamChannel
 }
 
-// Creates the working directory and copies over the keybase binary in PATH.
-// We do this to avoid any version mismatch issues.
-func prepWorkingDir(workingDir string) (string, error) {
-	kbLocation, err := whichKeybase()
-	if err != nil {
-		return "", err
-	}
-
-	err = os.Mkdir(workingDir, 0777)
-	if err != nil {
-		return "", err
-	}
-	kbDestination := path.Join(workingDir, "keybase")
-
-	err = copyFile(kbLocation, kbDestination)
-	if err != nil {
-		return "", err
-	}
-
-	return kbDestination, nil
+func testBotTeardown(t *testing.T, bot *API, dir string) {
+	err := bot.Shutdown()
+	require.NoError(t, err)
+	err = os.RemoveAll(dir)
+	require.NoError(t, err)
 }
 
-func deleteWorkingDir(workingDir string) error {
-	return os.RemoveAll(workingDir)
+func getMostRecentMessage(t *testing.T, bot *API, channel Channel) Message {
+	messages, err := bot.GetTextMessages(channel, false)
+	require.NoError(t, err)
+	return messages[0]
 }
 
-var kbc *API
-var config Config
-
-func TestMain(m *testing.M) {
-	var err error
-	config, err = readAndParseConfig()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in reading config: %v\n", err)
-	}
-	dir, err := randomTempDir()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in generating directory: %v\n", err)
-	}
-	kbLocation, err := prepWorkingDir(dir)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in preparing working directory: %v\n", err)
-	}
-	kbc, err = Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots.Alice1, StartService: true})
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in starting service: %v\n", err)
-	}
-
-	flag.Parse()
-	code := m.Run()
-
-	err = kbc.Shutdown()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error on service shutdown: %v\n", err)
-	}
-	err = deleteWorkingDir(dir)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error working directory teardown: %v\n", err)
-	}
-	os.Exit(code)
+func getConvIDForChannel(t *testing.T, bot *API, channel Channel) string {
+	messages, err := bot.GetTextMessages(channel, false)
+	require.NoError(t, err)
+	convID := messages[0].ConversationID
+	return convID
 }
 
 func TestGetUsername(t *testing.T) {
-	require.Equal(t, kbc.GetUsername(), config.Bots.Alice1.Username)
+	config := readAndParseTestConfig(t)
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	require.Equal(t, alice.GetUsername(), config.Bots["alice"].Username)
 }
 
 func TestGetConversations(t *testing.T) {
-	conversations, err := kbc.GetConversations(false)
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	conversations, err := alice.GetConversations(false)
 	require.NoError(t, err)
-	require.Greater(t, len(conversations), 0)
+	require.True(t, len(conversations) > 0)
 }
 
 func TestGetTextMessages(t *testing.T) {
-	channel := Channel{
-		Name: fmt.Sprintf("%s,%s", config.Bots.Alice1.Username, config.Bots.Charlie1.Username),
-	}
-	messages, err := kbc.GetTextMessages(channel, false)
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+	messages, err := alice.GetTextMessages(channel, false)
 	require.NoError(t, err)
-	require.Greater(t, len(messages), 0)
+	require.True(t, len(messages) > 0)
 }
 
-func TestSendMessage(t *testing.T) {}
+func TestSendMessage(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+	text := "test SendMessage " + randomString(t)
 
-func TestSendMessageByConvID(t *testing.T) {}
+	// Send the message
+	res, err := alice.SendMessage(channel, text)
+	require.NoError(t, err)
+	require.True(t, res.Result.MsgID > 0)
+
+	// Read it to confirm it sent
+	readMessage := getMostRecentMessage(t, alice, channel)
+	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
+}
+
+func TestSendMessageByConvID(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	text := "test SendMessageByConvID " + randomString(t)
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+	convID := getConvIDForChannel(t, alice, channel)
+
+	// Send the message
+	res, err := alice.SendMessageByConvID(convID, text)
+	require.NoError(t, err)
+	require.True(t, res.Result.MsgID > 0)
+
+	// Read it to confirm it sent
+	readMessage := getMostRecentMessage(t, alice, channel)
+	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
+}
 
 func TestSendMessageByTlfName(t *testing.T) {
-	tlfName := fmt.Sprintf("%s,%s", kbc.Username(), "kb_monbot")
-	res, err := kbc.SendMessageByTlfName(tlfName, "test")
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	text := "test SendMessageByTlfName " + randomString(t)
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+
+	// Send the message
+	res, err := alice.SendMessageByTlfName(channel.Name, text)
 	require.NoError(t, err)
-	require.Greater(t, res.Result.MsgID, 0)
+	require.True(t, res.Result.MsgID > 0)
+
+	// Read it to confirm it sent
+	readMessage := getMostRecentMessage(t, alice, channel)
+	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
 }
 
-func TestSendMessageByTeamName(t *testing.T) {}
+func TestSendMessageByTeamName(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	text := "test SendMessageByTeamName " + randomString(t)
+	channel := getTeamChatChannel(t, "acme")
 
-func TestSendAttachmentByTeam(t *testing.T) {}
+	// Send the message
+	res, err := alice.SendMessageByTeamName(channel.Name, text, &channel.TopicName)
+	require.NoError(t, err)
+	require.True(t, res.Result.MsgID > 0)
 
-func TestReactByChannel(t *testing.T) {}
+	// Read it to confirm it sent
+	readMessage := getMostRecentMessage(t, alice, channel)
+	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
+}
 
-func TestReactByConvID(t *testing.T) {}
+func TestSendAttachmentByTeam(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	channel := getTeamChatChannel(t, "acme")
+
+	// Create a test file
+	fileName := "kb-attachment.txt"
+	location := path.Join(os.TempDir(), fileName)
+	data := []byte("My super cool attachment" + randomString(t))
+	err := ioutil.WriteFile(location, data, 0644)
+	require.NoError(t, err)
+
+	// Send the message
+	title := "test SendAttachmentByTeam " + randomString(t)
+	res, err := alice.SendAttachmentByTeam(channel.Name, location, title, &channel.TopicName)
+	require.NoError(t, err)
+	require.True(t, res.Result.MsgID > 0)
+}
+
+func TestReactByChannel(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+
+	react := ":cool:"
+	lastMessageID := getMostRecentMessage(t, alice, channel).MsgID
+
+	res, err := alice.ReactByChannel(channel, lastMessageID, react)
+	require.NoError(t, err)
+	require.True(t, res.Result.MsgID > 0)
+}
+
+func TestReactByConvID(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	react := ":cool:"
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+
+	lastMessageID := getMostRecentMessage(t, alice, channel).MsgID
+	convID := getConvIDForChannel(t, alice, channel)
+
+	// Send the react
+	res, err := alice.ReactByConvID(convID, lastMessageID, react)
+	require.NoError(t, err)
+	require.True(t, res.Result.MsgID > 0)
+}
 
 func TestAdvertiseCommands(t *testing.T) {}
 
-func TestListChannels(t *testing.T) {}
+func TestListChannels(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	teamChannel := getTeamChatChannel(t, "acme")
+	channels, err := alice.ListChannels(teamChannel.Name)
+	require.NoError(t, err)
+	require.True(t, len(channels) > 0)
+	channelFound := false
+	for _, channel := range channels {
+		if channel == teamChannel.TopicName {
+			channelFound = true
+			break
+		}
+	}
+	require.True(t, channelFound)
+}
 
-func TestJoinChannel(t *testing.T) {}
+func TestJoinAndLeaveChannel(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	channel := getTeamChatChannel(t, "acme")
+	_, err := alice.LeaveChannel(channel.Name, channel.TopicName)
+	require.NoError(t, err)
+	_, err = alice.LeaveChannel(channel.Name, channel.TopicName)
+	require.Error(t, err)
+	_, err = alice.JoinChannel(channel.Name, channel.TopicName)
+	require.NoError(t, err)
+	_, err = alice.JoinChannel(channel.Name, channel.TopicName)
+	// We don't get an error when trying to join an already joined oneOnOneChannel
+	require.NoError(t, err)
+}
+
+func TestListenForNewTextMessages(t *testing.T) {
+	alice, aliceDir := testBotSetup(t, "alice")
+	bob, bobDir := testBotSetup(t, "bob")
+	defer testBotTeardown(t, alice, aliceDir)
+	defer testBotTeardown(t, bob, bobDir)
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+
+	sub, err := alice.ListenForNewTextMessages()
+	require.NoError(t, err)
+
+	done := make(chan bool)
+	go func() {
+		for i := 0; i < 5; i++ {
+			time.Sleep(time.Second)
+			message := strconv.Itoa(i)
+			_, err := bob.SendMessage(channel, message)
+			require.NoError(t, err)
+		}
+		done <- true
+	}()
+
+	receivedMessages := map[string]bool{
+		"0": false,
+		"1": false,
+		"2": false,
+		"3": false,
+		"4": false,
+	}
+
+	for i := 0; i < 5; i++ {
+		msg, err := sub.Read()
+		require.NoError(t, err)
+		require.Equal(t, msg.Message.Content.Type, "text")
+		require.Equal(t, msg.Message.Sender.Username, bob.GetUsername())
+		receivedMessages[msg.Message.Content.Text.Body] = true
+	}
+
+	for _, value := range receivedMessages {
+		require.True(t, value)
+	}
+
+	<-done
+}
