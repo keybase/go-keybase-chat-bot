@@ -52,20 +52,8 @@ type Content struct {
 	Text Text   `json:"text"`
 }
 
-type Message struct {
-	Content        Content           `json:"content"`
-	Sender         chat1.MsgSender   `json:"sender"`
-	Channel        chat1.ChatChannel `json:"channel"`
-	ConversationID string            `json:"conversation_id"`
-	MsgID          int               `json:"id"`
-}
-
-type SendResult struct {
-	MsgID int `json:"id"`
-}
-
 type SendResponse struct {
-	Result SendResult `json:"result"`
+	Result chat1.SendRes `json:"result"`
 }
 
 type TypeHolder struct {
@@ -73,8 +61,8 @@ type TypeHolder struct {
 }
 
 type MessageHolder struct {
-	Msg    Message `json:"msg"`
-	Source string  `json:"source"`
+	Msg    chat1.MsgSummary `json:"msg"`
+	Source string           `json:"source"`
 }
 
 type ThreadResult struct {

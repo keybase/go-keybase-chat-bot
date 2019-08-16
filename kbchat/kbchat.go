@@ -191,7 +191,7 @@ func (a *API) GetConversations(unreadOnly bool) ([]chat1.ConvSummary, error) {
 
 // GetTextMessages fetches all text messages from a given channel. Optionally can filter
 // ont unread status.
-func (a *API) GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]Message, error) {
+func (a *API) GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]chat1.MsgSummary, error) {
 	channelBytes, err := json.Marshal(channel)
 	if err != nil {
 		return nil, err
@@ -208,9 +208,9 @@ func (a *API) GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]Mes
 		return nil, fmt.Errorf("unable to decode thread: %s", err.Error())
 	}
 
-	var res []Message
+	var res []chat1.MsgSummary
 	for _, msg := range thread.Result.Messages {
-		if msg.Msg.Content.Type == "text" {
+		if msg.Msg.Content.TypeName == "text" {
 			res = append(res, msg.Msg)
 		}
 	}
@@ -228,7 +228,7 @@ type sendMessageOptions struct {
 	Message        sendMessageBody   `json:",omitempty"`
 	Filename       string            `json:"filename,omitempty"`
 	Title          string            `json:"title,omitempty"`
-	MsgID          int               `json:"message_id,omitempty"`
+	MsgID          chat1.MessageID   `json:"message_id,omitempty"`
 }
 
 type sendMessageParams struct {
@@ -380,7 +380,7 @@ func (a *API) SendAttachmentByTeam(teamName string, filename string, title strin
 type reactionOptions struct {
 	ConversationID string `json:"conversation_id"`
 	Message        sendMessageBody
-	MsgID          int               `json:"message_id"`
+	MsgID          chat1.MessageID   `json:"message_id"`
 	Channel        chat1.ChatChannel `json:"channel"`
 }
 
@@ -400,7 +400,7 @@ func newReactionArg(options reactionOptions) reactionArg {
 	}
 }
 
-func (a *API) ReactByChannel(channel chat1.ChatChannel, msgID int, reaction string) (SendResponse, error) {
+func (a *API) ReactByChannel(channel chat1.ChatChannel, msgID chat1.MessageID, reaction string) (SendResponse, error) {
 	arg := newReactionArg(reactionOptions{
 		Message: sendMessageBody{Body: reaction},
 		MsgID:   msgID,
@@ -409,7 +409,7 @@ func (a *API) ReactByChannel(channel chat1.ChatChannel, msgID int, reaction stri
 	return a.doSend(arg)
 }
 
-func (a *API) ReactByConvID(convID string, msgID int, reaction string) (SendResponse, error) {
+func (a *API) ReactByConvID(convID string, msgID chat1.MessageID, reaction string) (SendResponse, error) {
 	arg := newReactionArg(reactionOptions{
 		Message:        sendMessageBody{Body: reaction},
 		MsgID:          msgID,
@@ -446,7 +446,7 @@ func (a *API) Username() string {
 
 // SubscriptionMessage contains a message and conversation object
 type SubscriptionMessage struct {
-	Message      Message
+	Message      chat1.MsgSummary
 	Conversation chat1.ConvSummary
 }
 
@@ -532,7 +532,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 				subscriptionMessage := SubscriptionMessage{
 					Message: holder.Msg,
 					Conversation: chat1.ConvSummary{
-						Id:      holder.Msg.ConversationID,
+						Id:      holder.Msg.ConvID,
 						Channel: holder.Msg.Channel,
 					},
 				}

@@ -65,7 +65,7 @@ func testBotTeardown(t *testing.T, bot *API, dir string) {
 	require.NoError(t, err)
 }
 
-func getMostRecentMessage(t *testing.T, bot *API, channel chat1.ChatChannel) Message {
+func getMostRecentMessage(t *testing.T, bot *API, channel chat1.ChatChannel) chat1.MsgSummary {
 	messages, err := bot.GetTextMessages(channel, false)
 	require.NoError(t, err)
 	return messages[0]
@@ -74,7 +74,7 @@ func getMostRecentMessage(t *testing.T, bot *API, channel chat1.ChatChannel) Mes
 func getConvIDForChannel(t *testing.T, bot *API, channel chat1.ChatChannel) string {
 	messages, err := bot.GetTextMessages(channel, false)
 	require.NoError(t, err)
-	convID := messages[0].ConversationID
+	convID := messages[0].ConvID
 	return convID
 }
 
@@ -111,13 +111,13 @@ func TestSendMessage(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessage(channel, text)
 	require.NoError(t, err)
-	require.True(t, res.Result.MsgID > 0)
+	require.True(t, *res.Result.MessageID > 0)
 
 	// Read it to confirm it sent
 	readMessage := getMostRecentMessage(t, alice, channel)
-	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.TypeName, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
-	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
+	require.Equal(t, readMessage.Id, *res.Result.MessageID)
 }
 
 func TestSendMessageByConvID(t *testing.T) {
@@ -130,13 +130,13 @@ func TestSendMessageByConvID(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessageByConvID(convID, text)
 	require.NoError(t, err)
-	require.True(t, res.Result.MsgID > 0)
+	require.True(t, *res.Result.MessageID > 0)
 
 	// Read it to confirm it sent
 	readMessage := getMostRecentMessage(t, alice, channel)
-	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.TypeName, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
-	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
+	require.Equal(t, readMessage.Id, *res.Result.MessageID)
 }
 
 func TestSendMessageByTlfName(t *testing.T) {
@@ -148,13 +148,13 @@ func TestSendMessageByTlfName(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessageByTlfName(channel.Name, text)
 	require.NoError(t, err)
-	require.True(t, res.Result.MsgID > 0)
+	require.True(t, *res.Result.MessageID > 0)
 
 	// Read it to confirm it sent
 	readMessage := getMostRecentMessage(t, alice, channel)
-	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.TypeName, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
-	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
+	require.Equal(t, readMessage.Id, *res.Result.MessageID)
 }
 
 func TestSendMessageByTeamName(t *testing.T) {
@@ -166,13 +166,13 @@ func TestSendMessageByTeamName(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessageByTeamName(channel.Name, text, &channel.TopicName)
 	require.NoError(t, err)
-	require.True(t, res.Result.MsgID > 0)
+	require.True(t, *res.Result.MessageID > 0)
 
 	// Read it to confirm it sent
 	readMessage := getMostRecentMessage(t, alice, channel)
-	require.Equal(t, readMessage.Content.Type, "text")
+	require.Equal(t, readMessage.Content.TypeName, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
-	require.Equal(t, readMessage.MsgID, res.Result.MsgID)
+	require.Equal(t, readMessage.Id, *res.Result.MessageID)
 }
 
 func TestSendAttachmentByTeam(t *testing.T) {
@@ -191,7 +191,7 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	title := "test SendAttachmentByTeam " + randomString(t)
 	res, err := alice.SendAttachmentByTeam(channel.Name, location, title, &channel.TopicName)
 	require.NoError(t, err)
-	require.True(t, res.Result.MsgID > 0)
+	require.True(t, *res.Result.MessageID > 0)
 }
 
 func TestReactByChannel(t *testing.T) {
@@ -200,11 +200,11 @@ func TestReactByChannel(t *testing.T) {
 	channel := getOneOnOneChatChannel(t, "alice", "bob")
 
 	react := ":cool:"
-	lastMessageID := getMostRecentMessage(t, alice, channel).MsgID
+	lastMessageID := getMostRecentMessage(t, alice, channel).Id
 
 	res, err := alice.ReactByChannel(channel, lastMessageID, react)
 	require.NoError(t, err)
-	require.True(t, res.Result.MsgID > 0)
+	require.True(t, *res.Result.MessageID > 0)
 }
 
 func TestReactByConvID(t *testing.T) {
@@ -213,13 +213,13 @@ func TestReactByConvID(t *testing.T) {
 	react := ":cool:"
 	channel := getOneOnOneChatChannel(t, "alice", "bob")
 
-	lastMessageID := getMostRecentMessage(t, alice, channel).MsgID
+	lastMessageID := getMostRecentMessage(t, alice, channel).Id
 	convID := getConvIDForChannel(t, alice, channel)
 
 	// Send the react
 	res, err := alice.ReactByConvID(convID, lastMessageID, react)
 	require.NoError(t, err)
-	require.True(t, res.Result.MsgID > 0)
+	require.True(t, *res.Result.MessageID > 0)
 }
 
 func TestAdvertiseCommands(t *testing.T) {}
@@ -288,7 +288,7 @@ func TestListenForNewTextMessages(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		msg, err := sub.Read()
 		require.NoError(t, err)
-		require.Equal(t, msg.Message.Content.Type, "text")
+		require.Equal(t, msg.Message.Content.TypeName, "text")
 		require.Equal(t, msg.Message.Sender.Username, bob.GetUsername())
 		receivedMessages[msg.Message.Content.Text.Body] = true
 	}
