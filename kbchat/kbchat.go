@@ -11,6 +11,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
 )
 
 // API is the main object used for communicating with the Keybase JSON API
@@ -189,7 +191,7 @@ func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 
 // GetTextMessages fetches all text messages from a given channel. Optionally can filter
 // ont unread status.
-func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, error) {
+func (a *API) GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]Message, error) {
 	channelBytes, err := json.Marshal(channel)
 	if err != nil {
 		return nil, err
@@ -221,12 +223,12 @@ type sendMessageBody struct {
 }
 
 type sendMessageOptions struct {
-	Channel        Channel         `json:"channel,omitempty"`
-	ConversationID string          `json:"conversation_id,omitempty"`
-	Message        sendMessageBody `json:",omitempty"`
-	Filename       string          `json:"filename,omitempty"`
-	Title          string          `json:"title,omitempty"`
-	MsgID          int             `json:"message_id,omitempty"`
+	Channel        chat1.ChatChannel `json:"channel,omitempty"`
+	ConversationID string            `json:"conversation_id,omitempty"`
+	Message        sendMessageBody   `json:",omitempty"`
+	Filename       string            `json:"filename,omitempty"`
+	Title          string            `json:"title,omitempty"`
+	MsgID          int               `json:"message_id,omitempty"`
 }
 
 type sendMessageParams struct {
@@ -282,7 +284,7 @@ func (a *API) doFetch(apiInput string) ([]byte, error) {
 	return byteOutput, nil
 }
 
-func (a *API) SendMessage(channel Channel, body string) (SendResponse, error) {
+func (a *API) SendMessage(channel chat1.ChatChannel, body string) (SendResponse, error) {
 	arg := sendMessageArg{
 		Method: "send",
 		Params: sendMessageParams{
@@ -318,7 +320,7 @@ func (a *API) SendMessageByTlfName(tlfName string, body string) (SendResponse, e
 		Method: "send",
 		Params: sendMessageParams{
 			Options: sendMessageOptions{
-				Channel: Channel{
+				Channel: chat1.ChatChannel{
 					Name: tlfName,
 				},
 				Message: sendMessageBody{
@@ -339,7 +341,7 @@ func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *str
 		Method: "send",
 		Params: sendMessageParams{
 			Options: sendMessageOptions{
-				Channel: Channel{
+				Channel: chat1.ChatChannel{
 					MembersType: "team",
 					Name:        teamName,
 					TopicName:   channel,
@@ -362,7 +364,7 @@ func (a *API) SendAttachmentByTeam(teamName string, filename string, title strin
 		Method: "attach",
 		Params: sendMessageParams{
 			Options: sendMessageOptions{
-				Channel: Channel{
+				Channel: chat1.ChatChannel{
 					MembersType: "team",
 					Name:        teamName,
 					TopicName:   channel,
@@ -378,8 +380,8 @@ func (a *API) SendAttachmentByTeam(teamName string, filename string, title strin
 type reactionOptions struct {
 	ConversationID string `json:"conversation_id"`
 	Message        sendMessageBody
-	MsgID          int     `json:"message_id"`
-	Channel        Channel `json:"channel"`
+	MsgID          int               `json:"message_id"`
+	Channel        chat1.ChatChannel `json:"channel"`
 }
 
 type reactionParams struct {
@@ -398,7 +400,7 @@ func newReactionArg(options reactionOptions) reactionArg {
 	}
 }
 
-func (a *API) ReactByChannel(channel Channel, msgID int, reaction string) (SendResponse, error) {
+func (a *API) ReactByChannel(channel chat1.ChatChannel, msgID int, reaction string) (SendResponse, error) {
 	arg := newReactionArg(reactionOptions{
 		Message: sendMessageBody{Body: reaction},
 		MsgID:   msgID,

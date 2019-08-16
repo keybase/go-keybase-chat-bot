@@ -1,5 +1,7 @@
 package kbchat
 
+import "github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
+
 type Sender struct {
 	Uid        string `json:"uid"`
 	Username   string `json:"username"`
@@ -7,18 +9,10 @@ type Sender struct {
 	DeviceName string `json:"device_name"`
 }
 
-type Channel struct {
-	Name        string `json:"name"`
-	Public      bool   `json:"public"`
-	TopicType   string `json:"topic_type"`
-	TopicName   string `json:"topic_name"`
-	MembersType string `json:"members_type"`
-}
-
 type Conversation struct {
-	ID      string  `json:"id"`
-	Unread  bool    `json:"unread"`
-	Channel Channel `json:"channel"`
+	ID      string            `json:"id"`
+	Unread  bool              `json:"unread"`
+	Channel chat1.ChatChannel `json:"channel"`
 }
 
 type PaymentHolder struct {
@@ -72,11 +66,11 @@ type Content struct {
 }
 
 type Message struct {
-	Content        Content `json:"content"`
-	Sender         Sender  `json:"sender"`
-	Channel        Channel `json:"channel"`
-	ConversationID string  `json:"conversation_id"`
-	MsgID          int     `json:"id"`
+	Content        Content           `json:"content"`
+	Sender         Sender            `json:"sender"`
+	Channel        chat1.ChatChannel `json:"channel"`
+	ConversationID string            `json:"conversation_id"`
+	MsgID          int               `json:"id"`
 }
 
 type SendResult struct {

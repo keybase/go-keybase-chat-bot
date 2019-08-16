@@ -9,13 +9,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 )
 
 type keybaseTestConfig struct {
 	Bots  map[string]*OneshotOptions
-	Teams map[string]Channel
+	Teams map[string]chat1.ChatChannel
 }
 
 func readAndParseTestConfig(t *testing.T) (config keybaseTestConfig) {
@@ -37,17 +38,17 @@ func testBotSetup(t *testing.T, botName string) (bot *API, dir string) {
 	return bot, dir
 }
 
-func getOneOnOneChatChannel(t *testing.T, botName, oneOnOnePartner string) Channel {
+func getOneOnOneChatChannel(t *testing.T, botName, oneOnOnePartner string) chat1.ChatChannel {
 	config := readAndParseTestConfig(t)
-	oneOnOneChannel := Channel{
+	oneOnOneChannel := chat1.ChatChannel{
 		Name: fmt.Sprintf("%s,%s", config.Bots[botName].Username, config.Bots[oneOnOnePartner].Username),
 	}
 	return oneOnOneChannel
 }
 
-func getTeamChatChannel(t *testing.T, teamName string) Channel {
+func getTeamChatChannel(t *testing.T, teamName string) chat1.ChatChannel {
 	config := readAndParseTestConfig(t)
-	teamChannel := Channel{
+	teamChannel := chat1.ChatChannel{
 		Name:        config.Teams[teamName].Name,
 		Public:      false,
 		MembersType: "team",
@@ -64,13 +65,13 @@ func testBotTeardown(t *testing.T, bot *API, dir string) {
 	require.NoError(t, err)
 }
 
-func getMostRecentMessage(t *testing.T, bot *API, channel Channel) Message {
+func getMostRecentMessage(t *testing.T, bot *API, channel chat1.ChatChannel) Message {
 	messages, err := bot.GetTextMessages(channel, false)
 	require.NoError(t, err)
 	return messages[0]
 }
 
-func getConvIDForChannel(t *testing.T, bot *API, channel Channel) string {
+func getConvIDForChannel(t *testing.T, bot *API, channel chat1.ChatChannel) string {
 	messages, err := bot.GetTextMessages(channel, false)
 	require.NoError(t, err)
 	convID := messages[0].ConversationID
