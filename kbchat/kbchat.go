@@ -617,8 +617,8 @@ func (a *API) ListChannels(teamName string) ([]string, error) {
 	return channels, nil
 }
 
-func (a *API) JoinChannel(teamName string, channelName string) (JoinChannelResult, error) {
-	empty := JoinChannelResult{}
+func (a *API) JoinChannel(teamName string, channelName string) (chat1.EmptyRes, error) {
+	empty := chat1.EmptyRes{}
 
 	apiInput := fmt.Sprintf(`{"method": "join", "params": {"options": {"channel": {"name": "%s", "members_type": "team", "topic_name": "%s"}}}}`, teamName, channelName)
 	output, err := a.doFetch(apiInput)
@@ -638,8 +638,8 @@ func (a *API) JoinChannel(teamName string, channelName string) (JoinChannelResul
 	return joinChannel.Result, nil
 }
 
-func (a *API) LeaveChannel(teamName string, channelName string) (LeaveChannelResult, error) {
-	empty := LeaveChannelResult{}
+func (a *API) LeaveChannel(teamName string, channelName string) (chat1.EmptyRes, error) {
+	empty := chat1.EmptyRes{}
 
 	apiInput := fmt.Sprintf(`{"method": "leave", "params": {"options": {"channel": {"name": "%s", "members_type": "team", "topic_name": "%s"}}}}`, teamName, channelName)
 	output, err := a.doFetch(apiInput)

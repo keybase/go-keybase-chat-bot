@@ -103,26 +103,11 @@ type Error struct {
 }
 
 type JoinChannel struct {
-	Error  Error             `json:"error"`
-	Result JoinChannelResult `json:"result"`
-}
-
-type JoinChannelResult struct {
-	RateLimit []RateLimit `json:"ratelimits"`
+	Error  Error          `json:"error"`
+	Result chat1.EmptyRes `json:"result"`
 }
 
 type LeaveChannel struct {
-	Error  Error              `json:"error"`
-	Result LeaveChannelResult `json:"result"`
-}
-
-type LeaveChannelResult struct {
-	RateLimit []RateLimit `json:"ratelimits"`
-}
-
-type RateLimit struct {
-	Tank     string `json:"tank"`
-	Capacity int    `json:"capacity"`
-	Reset    int    `json:"reset"`
-	Gas      int    `json:"gas"`
+	Error  Error          `json:"error"`
+	Result chat1.EmptyRes `json:"result"`
 }
