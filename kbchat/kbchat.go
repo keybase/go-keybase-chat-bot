@@ -524,16 +524,16 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			}
 			switch typeHolder.Type {
 			case "chat":
-				var holder MessageHolder
-				if err := json.Unmarshal([]byte(t), &holder); err != nil {
+				var notification chat1.MsgNotification
+				if err := json.Unmarshal([]byte(t), &notification); err != nil {
 					errorCh <- err
 					break
 				}
 				subscriptionMessage := SubscriptionMessage{
-					Message: holder.Msg,
+					Message: *notification.Msg,
 					Conversation: chat1.ConvSummary{
-						Id:      holder.Msg.ConvID,
-						Channel: holder.Msg.Channel,
+						Id:      notification.Msg.ConvID,
+						Channel: notification.Msg.Channel,
 					},
 				}
 				newMsgCh <- subscriptionMessage

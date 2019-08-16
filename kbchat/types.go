@@ -38,14 +38,6 @@ type TypeHolder struct {
 	Type string `json:"type"`
 }
 
-type MessageHolder struct {
-	Msg    chat1.MsgSummary `json:"msg"`
-	Source string           `json:"source"`
-}
-
-type ThreadResult struct {
-	Messages []MessageHolder `json:"messages"`
-}
 type Thread struct {
 	Result chat1.Thread `json:"result"`
 }
