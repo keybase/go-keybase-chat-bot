@@ -175,7 +175,7 @@ func (a *API) getAPIPipesLocked() (io.Writer, *bufio.Reader, error) {
 }
 
 // GetConversations reads all conversations from the current user's inbox.
-func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
+func (a *API) GetConversations(unreadOnly bool) ([]chat1.ConvSummary, error) {
 	apiInput := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
 	output, err := a.doFetch(apiInput)
 	if err != nil {
@@ -447,7 +447,7 @@ func (a *API) Username() string {
 // SubscriptionMessage contains a message and conversation object
 type SubscriptionMessage struct {
 	Message      Message
-	Conversation Conversation
+	Conversation chat1.ConvSummary
 }
 
 type SubscriptionWalletEvent struct {
@@ -531,8 +531,8 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 				}
 				subscriptionMessage := SubscriptionMessage{
 					Message: holder.Msg,
-					Conversation: Conversation{
-						ID:      holder.Msg.ConversationID,
+					Conversation: chat1.ConvSummary{
+						Id:      holder.Msg.ConversationID,
 						Channel: holder.Msg.Channel,
 					},
 				}

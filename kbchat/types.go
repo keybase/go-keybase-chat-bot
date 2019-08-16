@@ -2,12 +2,6 @@ package kbchat
 
 import "github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
 
-type Conversation struct {
-	ID      string            `json:"id"`
-	Unread  bool              `json:"unread"`
-	Channel chat1.ChatChannel `json:"channel"`
-}
-
 type PaymentHolder struct {
 	Payment Payment `json:"notification"`
 }
@@ -25,7 +19,7 @@ type Payment struct {
 }
 
 type Result struct {
-	Convs []Conversation `json:"conversations"`
+	Convs []chat1.ConvSummary `json:"conversations"`
 }
 
 type Inbox struct {
