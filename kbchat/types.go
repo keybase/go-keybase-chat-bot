@@ -50,28 +50,9 @@ type Thread struct {
 	Result chat1.Thread `json:"result"`
 }
 
-type CommandExtendedDescription struct {
-	Title       string `json:"title"`
-	DesktopBody string `json:"desktop_body"`
-	MobileBody  string `json:"mobile_body"`
-}
-
-type Command struct {
-	Name                string                      `json:"name"`
-	Description         string                      `json:"description"`
-	Usage               string                      `json:"usage"`
-	ExtendedDescription *CommandExtendedDescription `json:"extended_description,omitempty"`
-}
-
-type CommandsAdvertisement struct {
-	Typ      string `json:"type"`
-	Commands []Command
-	TeamName string `json:"team_name,omitempty"`
-}
-
 type Advertisement struct {
 	Alias          string `json:"alias,omitempty"`
-	Advertisements []CommandsAdvertisement
+	Advertisements []chat1.AdvertiseCommandsParam
 }
 
 type Error struct {
