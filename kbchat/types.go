@@ -68,9 +68,8 @@ type MessageHolder struct {
 type ThreadResult struct {
 	Messages []MessageHolder `json:"messages"`
 }
-
 type Thread struct {
-	Result ThreadResult `json:"result"`
+	Result chat1.Thread `json:"result"`
 }
 
 type CommandExtendedDescription struct {
