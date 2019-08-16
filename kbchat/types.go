@@ -30,28 +30,6 @@ type ChannelsList struct {
 	Result Result `json:"result"`
 }
 
-type MsgPaymentDetails struct {
-	ResultType int    `json:"resultTyp"` // 0 good. 1 error
-	PaymentID  string `json:"sent"`
-}
-
-type MsgPayment struct {
-	Username    string            `json:"username"`
-	PaymentText string            `json:"paymentText"`
-	Details     MsgPaymentDetails `json:"result"`
-}
-
-type Text struct {
-	Body     string       `json:"body"`
-	Payments []MsgPayment `json:"payments"`
-	ReplyTo  int          `json:"replyTo"`
-}
-
-type Content struct {
-	Type string `json:"type"`
-	Text Text   `json:"text"`
-}
-
 type SendResponse struct {
 	Result chat1.SendRes `json:"result"`
 }
