@@ -19,20 +19,8 @@ type ListMembersOutputMembersCategory struct {
 }
 
 type ListUserMemberships struct {
-	Result ListUserMembershipsResult `json:"result"`
-	Error  Error                     `json:"error"`
-}
-
-type ListUserMembershipsResult struct {
-	Teams []ListUserMembershipsResultTeam `json:"teams"`
-}
-
-type ListUserMembershipsResultTeam struct {
-	TeamName       string `json:"fq_name"`
-	IsImplicitTeam bool   `json:"is_implicit_team"`
-	IsOpenTeam     bool   `json:"is_open_team"`
-	Role           int    `json:"role"`
-	MemberCount    int    `json:"member_count"`
+	Result keybase1.AnnotatedTeamList `json:"result"`
+	Error  Error                      `json:"error"`
 }
 
 func (a *API) ListMembersOfTeam(teamName string) (keybase1.TeamMembersDetails, error) {
@@ -57,8 +45,8 @@ func (a *API) ListMembersOfTeam(teamName string) (keybase1.TeamMembersDetails, e
 	return members.Result.Members, nil
 }
 
-func (a *API) ListUserMemberships(username string) ([]ListUserMembershipsResultTeam, error) {
-	empty := []ListUserMembershipsResultTeam{}
+func (a *API) ListUserMemberships(username string) ([]keybase1.AnnotatedMemberInfo, error) {
+	empty := []keybase1.AnnotatedMemberInfo{}
 
 	apiInput := fmt.Sprintf(`{"method": "list-user-memberships", "params": {"options": {"username": "%s"}}}`, username)
 	cmd := a.runOpts.Command("team", "api")
