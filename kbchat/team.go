@@ -4,22 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )
 
 type ListTeamMembers struct {
-	Result ListTeamMembersResult `json:"result"`
-	Error  Error                 `json:"error"`
-}
-
-type ListTeamMembersResult struct {
-	Members ListTeamMembersResultMembers `json:"members"`
-}
-
-type ListTeamMembersResultMembers struct {
-	Owners  []ListMembersOutputMembersCategory `json:"owners"`
-	Admins  []ListMembersOutputMembersCategory `json:"admins"`
-	Writers []ListMembersOutputMembersCategory `json:"writers"`
-	Readers []ListMembersOutputMembersCategory `json:"readers"`
+	Result keybase1.TeamDetails `json:"result"`
+	Error  Error                `json:"error"`
 }
 
 type ListMembersOutputMembersCategory struct {
@@ -44,8 +35,8 @@ type ListUserMembershipsResultTeam struct {
 	MemberCount    int    `json:"member_count"`
 }
 
-func (a *API) ListMembersOfTeam(teamName string) (ListTeamMembersResultMembers, error) {
-	empty := ListTeamMembersResultMembers{}
+func (a *API) ListMembersOfTeam(teamName string) (keybase1.TeamMembersDetails, error) {
+	empty := keybase1.TeamMembersDetails{}
 
 	apiInput := fmt.Sprintf(`{"method": "list-team-memberships", "params": {"options": {"team": "%s"}}}`, teamName)
 	cmd := a.runOpts.Command("team", "api")
