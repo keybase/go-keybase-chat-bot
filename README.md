@@ -71,11 +71,11 @@ send a new message by specifying a channel
 
 send a new message by specifying a conversation ID
 
-#### `API.GetConversations(unreadOnly bool) ([]Conversation, error)`
+#### `API.GetConversations(unreadOnly bool) ([]chat1.ConvSummary, error)`
 
 get all conversations, optionally filtering for unread status
 
-#### `API.GetTextMessages(channel Channel, unreadOnly bool) ([]Message, error)`
+#### `API.GetTextMessages(channel Channel, unreadOnly bool) ([]chat1.MsgSummary, error)`
 
 get all text messages, optionally filtering for unread status
 
@@ -177,6 +177,32 @@ To enable use of these pre-commit hooks:
   - `brew install pre-commit`
 - Remove any existing pre-commit hooks via `rm .git/hooks/pre-commit`
 - Configure via `pre-commit install`
+
+### Types
+
+Most of the types the bot uses are generated from definitions defined in the [`protocol/`](https://github.com/keybase/client/tree/master/protocol) directory inside the Keybase client repo. This ensures that the types that the bot uses are consistent across bots and always up to date with the output of the API.
+
+To build the types for the Go bot, you'll need to clone the `client` repo in the same parent directory that contains `go-keybase-chat-bot/`.
+
+```shell
+git clone https://github.com/keybase/client
+```
+
+and install the nessecary dependencies for compiling the protocol files. This requires [node.js](https://nodejs.org) and [Yarn](https://yarnpkg.com).
+
+```shell
+cd client/protocol
+yarn install
+```
+
+Then you can generate the types by using the provided Makefile in this Go bot repo.
+
+```shell
+cd ../../go-keybase-chat-bot
+make
+```
+
+Should you need to remove all the types for some reason, you can run `make clean`.
 
 ### Testing
 
