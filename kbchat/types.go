@@ -1,21 +1,12 @@
 package kbchat
 
-import "github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
+import (
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/stellar1"
+)
 
 type PaymentHolder struct {
-	Payment Payment `json:"notification"`
-}
-
-type Payment struct {
-	TxID              string `json:"txID"`
-	StatusDescription string `json:"statusDescription"`
-	FromAccountID     string `json:"fromAccountID"`
-	FromUsername      string `json:"fromUsername"`
-	ToAccountID       string `json:"toAccountID"`
-	ToUsername        string `json:"toUsername"`
-	AmountDescription string `json:"amountDescription"`
-	WorthAtSendTime   string `json:"worthAtSendTime"`
-	ExternalTxURL     string `json:"externalTxURL"`
+	Payment stellar1.PaymentDetailsLocal `json:"notification"`
 }
 
 type Result struct {

@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/stellar1"
 )
 
 // API is the main object used for communicating with the Keybase JSON API
@@ -451,7 +452,7 @@ type SubscriptionMessage struct {
 }
 
 type SubscriptionWalletEvent struct {
-	Payment Payment
+	Payment stellar1.PaymentDetailsLocal
 }
 
 // NewSubscription has methods to control the background message fetcher loop
