@@ -7,3 +7,6 @@ types:
 	$(AVDLC) -b -l go -t -o kbchat/types/gregor1 $(PROTOCOL_PATH)/avdl/gregor1/*.avdl
 	$(AVDLC) -b -l go -t -o kbchat/types/chat1 $(PROTOCOL_PATH)/avdl/chat1/*.avdl
 	$(AVDLC) -b -l go -t -o kbchat/types/stellar1 $(PROTOCOL_PATH)/avdl/stellar1/*.avdl
+
+clean:
+	rm -rf kbchat/types/
