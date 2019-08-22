@@ -164,6 +164,18 @@ Returns the same object as above, but this one will have another channel on it t
 
 - welcomed!
 
+### Precommit hooks
+
+We check all git commits with pre-commit hooks generated via
+[pre-commit.com](http://pre-commit.com) pre-commit hooks.
+To enable use of these pre-commit hooks:
+
+- [Install](http://pre-commit.com/#install) the `pre-commit` utility. For some common cases:
+  - `pip install pre-commit`
+  - `brew install pre-commit`
+- Remove any existing pre-commit hooks via `rm .git/hooks/pre-commit`
+- Configure via `pre-commit install`
+
 ### Testing
 
 You'll need to have a few demo bot accounts and teams to run the suite of tests. Make a copy of `kbchat/test_config.example.yaml`, rename it to `kbchat/test_config.yaml`, and replace the example data with your own. Tests can then be run inside of `kbchat/` with `go test`.
