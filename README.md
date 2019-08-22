@@ -63,7 +63,7 @@ This must be run first in order to start the Keybase JSON API stdin/stdout inter
 
 send a new message by specifying a TLF name
 
-#### `API.SendMessage(channel Channel, body string) (SendResponse, error)`
+#### `API.SendMessage(channel chat1.ChatChannel, body string) (SendResponse, error)`
 
 send a new message by specifying a channel
 
@@ -75,7 +75,7 @@ send a new message by specifying a conversation ID
 
 get all conversations, optionally filtering for unread status
 
-#### `API.GetTextMessages(channel Channel, unreadOnly bool) ([]chat1.MsgSummary, error)`
+#### `API.GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]chat1.MsgSummary, error)`
 
 get all text messages, optionally filtering for unread status
 
@@ -142,7 +142,7 @@ Returns the same object as above, but this one will have another channel on it t
 			fail("failed to read message: %s", err.Error())
 		}
 
-		if msg.Message.Content.Type != "text" {
+		if msg.Message.Content.TypeName != "text" {
 			continue
 		}
 
