@@ -8,7 +8,7 @@ import (
 
 type ListTeamMembers struct {
 	Result ListTeamMembersResult `json:"result"`
-	Error  Error             `json:"error"`
+	Error  Error                 `json:"error"`
 }
 
 type ListTeamMembersResult struct {
@@ -29,7 +29,7 @@ type ListMembersOutputMembersCategory struct {
 
 type ListUserMemberships struct {
 	Result ListUserMembershipsResult `json:"result"`
-	Error  Error             `json:"error"`
+	Error  Error                     `json:"error"`
 }
 
 type ListUserMembershipsResult struct {
@@ -37,11 +37,11 @@ type ListUserMembershipsResult struct {
 }
 
 type ListUserMembershipsResultTeam struct {
-	TeamName string `json:"fq_name"`
-	IsImplicitTeam bool `json:"is_implicit_team"`
-	IsOpenTeam bool `json:"is_open_team"`
-	Role int `json:"role"`
-	MemberCount int `json:"member_count"`
+	TeamName       string `json:"fq_name"`
+	IsImplicitTeam bool   `json:"is_implicit_team"`
+	IsOpenTeam     bool   `json:"is_open_team"`
+	Role           int    `json:"role"`
+	MemberCount    int    `json:"member_count"`
 }
 
 func (a *API) ListMembersOfTeam(teamName string) (ListTeamMembersResultMembers, error) {
