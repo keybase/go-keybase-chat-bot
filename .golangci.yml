@@ -9,3 +9,6 @@ linters:
     - gofmt
     - gocritic
     - unconvert
+run:
+  skip-dirs:
+    - kbchat/types/
