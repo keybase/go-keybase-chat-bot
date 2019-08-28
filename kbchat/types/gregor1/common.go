@@ -3,8 +3,6 @@
 
 package gregor1
 
-import ()
-
 type TimeOrOffset struct {
 	Time_   Time         `codec:"time" json:"time"`
 	Offset_ DurationMsec `codec:"offset" json:"offset"`

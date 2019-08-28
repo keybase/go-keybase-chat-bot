@@ -3,8 +3,6 @@
 
 package keybase1
 
-import ()
-
 type TrackToken string
 
 func (o TrackToken) DeepCopy() TrackToken {

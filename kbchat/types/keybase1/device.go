@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type DeviceDetail struct {
 	Device          Device  `codec:"device" json:"device"`
 	Eldest          bool    `codec:"eldest" json:"eldest"`

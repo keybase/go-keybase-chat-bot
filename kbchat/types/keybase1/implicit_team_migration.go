@@ -2,7 +2,3 @@
 //   Input file: ../client/protocol/avdl/keybase1/implicit_team_migration.avdl
 
 package keybase1
-
-import (
-	context "golang.org/x/net/context"
-)

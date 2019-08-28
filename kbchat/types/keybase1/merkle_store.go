@@ -3,8 +3,6 @@
 
 package keybase1
 
-import ()
-
 type MerkleStoreSupportedVersion int
 
 func (o MerkleStoreSupportedVersion) DeepCopy() MerkleStoreSupportedVersion {

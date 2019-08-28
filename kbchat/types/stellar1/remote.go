@@ -5,8 +5,8 @@ package stellar1
 
 import (
 	"errors"
+
 	keybase1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
-	context "golang.org/x/net/context"
 )
 
 type ChatConversationID string

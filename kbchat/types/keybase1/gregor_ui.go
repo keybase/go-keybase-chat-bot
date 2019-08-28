@@ -3,11 +3,6 @@
 
 package keybase1
 
-import (
-	gregor1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
-	context "golang.org/x/net/context"
-)
-
 type PushReason int
 
 const (

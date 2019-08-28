@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type AuthenticityType int
 
 const (

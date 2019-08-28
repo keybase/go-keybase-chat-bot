@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type Session struct {
 	Uid             UID    `codec:"uid" json:"uid"`
 	Username        string `codec:"username" json:"username"`

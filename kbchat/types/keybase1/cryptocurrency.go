@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type RegisterAddressRes struct {
 	Type   string `codec:"type" json:"type"`
 	Family string `codec:"family" json:"family"`

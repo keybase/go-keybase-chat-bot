@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type PassphraseStream struct {
 	PassphraseStream []byte `codec:"passphraseStream" json:"passphraseStream"`
 	Generation       int    `codec:"generation" json:"generation"`

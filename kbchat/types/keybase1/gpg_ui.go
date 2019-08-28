@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type SelectKeyRes struct {
 	KeyID        string `codec:"keyID" json:"keyID"`
 	DoSecretPush bool   `codec:"doSecretPush" json:"doSecretPush"`

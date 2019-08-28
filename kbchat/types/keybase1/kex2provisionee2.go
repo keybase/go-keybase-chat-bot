@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type Hello2Res struct {
 	EncryptionKey KID      `codec:"encryptionKey" json:"encryptionKey"`
 	SigPayload    HelloRes `codec:"sigPayload" json:"sigPayload"`

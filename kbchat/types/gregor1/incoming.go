@@ -3,10 +3,6 @@
 
 package gregor1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type SyncResult struct {
 	Msgs []InBandMessage `codec:"msgs" json:"msgs"`
 	Hash []byte          `codec:"hash" json:"hash"`

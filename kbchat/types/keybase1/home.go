@@ -5,7 +5,6 @@ package keybase1
 
 import (
 	"errors"
-	context "golang.org/x/net/context"
 )
 
 type HomeScreenItemID string

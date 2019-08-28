@@ -3,8 +3,6 @@
 
 package stellar1
 
-import ()
-
 type PaymentStatusMsg struct {
 	AccountID AccountID            `codec:"accountID" json:"accountID"`
 	KbTxID    KeybaseTransactionID `codec:"kbTxID" json:"kbTxID"`

@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type IdentifyProofBreak struct {
 	RemoteProof RemoteProof     `codec:"remoteProof" json:"remoteProof"`
 	Lcr         LinkCheckResult `codec:"lcr" json:"lcr"`

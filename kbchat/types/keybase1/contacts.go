@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type ContactComponent struct {
 	Label       string          `codec:"label" json:"label"`
 	PhoneNumber *RawPhoneNumber `codec:"phoneNumber,omitempty" json:"phoneNumber,omitempty"`

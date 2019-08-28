@@ -2,7 +2,3 @@
 //   Input file: ../client/protocol/avdl/keybase1/stream_ui.avdl
 
 package keybase1
-
-import (
-	context "golang.org/x/net/context"
-)

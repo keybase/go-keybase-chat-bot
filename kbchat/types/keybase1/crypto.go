@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type ED25519PublicKey [32]byte
 
 func (o ED25519PublicKey) DeepCopy() ED25519PublicKey {

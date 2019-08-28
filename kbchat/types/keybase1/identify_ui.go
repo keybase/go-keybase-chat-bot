@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type ProofResult struct {
 	State  ProofState  `codec:"state" json:"state"`
 	Status ProofStatus `codec:"status" json:"status"`

@@ -2,7 +2,3 @@
 //   Input file: ../client/protocol/avdl/gregor1/auth_internal.avdl
 
 package gregor1
-
-import (
-	context "golang.org/x/net/context"
-)

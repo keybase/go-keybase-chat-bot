@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type NotificationChannels struct {
 	Session          bool `codec:"session" json:"session"`
 	Users            bool `codec:"users" json:"users"`

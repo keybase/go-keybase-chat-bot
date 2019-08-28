@@ -5,6 +5,7 @@ package chat1
 
 import (
 	"errors"
+
 	gregor1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
 	keybase1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )

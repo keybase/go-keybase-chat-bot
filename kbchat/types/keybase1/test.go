@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 // Result from calling test(..).
 type Test struct {
 	Reply string `codec:"reply" json:"reply"`

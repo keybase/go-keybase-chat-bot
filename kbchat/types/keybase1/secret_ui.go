@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type SecretEntryArg struct {
 	Desc       string `codec:"desc" json:"desc"`
 	Prompt     string `codec:"prompt" json:"prompt"`

@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type APIRes struct {
 	Status     string `codec:"status" json:"status"`
 	Body       string `codec:"body" json:"body"`

@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type HttpSrvInfo struct {
 	Address string `codec:"address" json:"address"`
 	Token   string `codec:"token" json:"token"`

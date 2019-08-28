@@ -3,8 +3,6 @@
 
 package keybase1
 
-import ()
-
 type GPGKey struct {
 	Algorithm  string        `codec:"algorithm" json:"algorithm"`
 	KeyID      string        `codec:"keyID" json:"keyID"`

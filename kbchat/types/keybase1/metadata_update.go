@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type RekeyRequest struct {
 	FolderID string `codec:"folderID" json:"folderID"`
 	Revision int64  `codec:"revision" json:"revision"`

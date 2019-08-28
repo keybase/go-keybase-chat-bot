@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type Sig struct {
 	Seqno        Seqno  `codec:"seqno" json:"seqno"`
 	SigID        SigID  `codec:"sigID" json:"sigID"`

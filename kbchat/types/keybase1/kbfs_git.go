@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type GcOptions struct {
 	MaxLooseRefs         int  `codec:"maxLooseRefs" json:"maxLooseRefs"`
 	PruneMinLooseObjects int  `codec:"pruneMinLooseObjects" json:"pruneMinLooseObjects"`

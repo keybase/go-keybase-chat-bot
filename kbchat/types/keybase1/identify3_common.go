@@ -3,8 +3,6 @@
 
 package keybase1
 
-import ()
-
 type Identify3Assertion string
 
 func (o Identify3Assertion) DeepCopy() Identify3Assertion {

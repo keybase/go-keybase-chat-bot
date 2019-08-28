@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 // Install status describes state of install for a component or service.
 type InstallStatus int
 

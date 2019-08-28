@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type TrackProof struct {
 	ProofType string `codec:"proofType" json:"proofType"`
 	ProofName string `codec:"proofName" json:"proofName"`

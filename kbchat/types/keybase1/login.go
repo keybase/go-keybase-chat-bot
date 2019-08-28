@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type ConfiguredAccount struct {
 	Username        string   `codec:"username" json:"username"`
 	Fullname        FullName `codec:"fullname" json:"fullname"`

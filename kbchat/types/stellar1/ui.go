@@ -3,10 +3,6 @@
 
 package stellar1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type UIPaymentReviewed struct {
 	Bid        BuildPaymentID    `codec:"bid" json:"bid"`
 	ReviewID   int               `codec:"reviewID" json:"reviewID"`

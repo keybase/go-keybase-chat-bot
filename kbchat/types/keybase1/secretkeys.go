@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type NaclSigningKeyPublic [32]byte
 
 func (o NaclSigningKeyPublic) DeepCopy() NaclSigningKeyPublic {

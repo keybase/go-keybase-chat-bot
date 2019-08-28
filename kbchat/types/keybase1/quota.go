@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type VerifySessionRes struct {
 	Uid       UID    `codec:"uid" json:"uid"`
 	Sid       string `codec:"sid" json:"sid"`

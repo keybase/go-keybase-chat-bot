@@ -3,8 +3,6 @@
 
 package keybase1
 
-import ()
-
 type Feature struct {
 	Allow        bool   `codec:"allow" json:"allow"`
 	DefaultValue bool   `codec:"defaultValue" json:"defaultValue"`

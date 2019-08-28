@@ -2,7 +2,3 @@
 //   Input file: ../client/protocol/avdl/stellar1/notify.avdl
 
 package stellar1
-
-import (
-	context "golang.org/x/net/context"
-)

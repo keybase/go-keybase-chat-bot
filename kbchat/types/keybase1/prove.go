@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type CheckProofStatus struct {
 	Found     bool        `codec:"found" json:"found"`
 	Status    ProofStatus `codec:"status" json:"status"`

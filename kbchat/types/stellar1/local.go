@@ -3,10 +3,6 @@
 
 package stellar1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type WalletAccountLocal struct {
 	AccountID           AccountID     `codec:"accountID" json:"accountID"`
 	IsDefault           bool          `codec:"isDefault" json:"isDefault"`

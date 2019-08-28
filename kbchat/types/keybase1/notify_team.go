@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type TeamChangeSet struct {
 	MembershipChanged bool `codec:"membershipChanged" json:"membershipChanged"`
 	KeyRotated        bool `codec:"keyRotated" json:"keyRotated"`

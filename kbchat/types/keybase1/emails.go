@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type EmailLookupResult struct {
 	Email EmailAddress `codec:"email" json:"email"`
 	Uid   *UID         `codec:"uid,omitempty" json:"uid,omitempty"`

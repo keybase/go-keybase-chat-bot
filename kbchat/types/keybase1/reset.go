@@ -3,8 +3,6 @@
 
 package keybase1
 
-import ()
-
 type SHA512 []byte
 
 func (o SHA512) DeepCopy() SHA512 {

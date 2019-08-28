@@ -2,7 +2,3 @@
 //   Input file: ../client/protocol/avdl/keybase1/notify_device_clone.avdl
 
 package keybase1
-
-import (
-	context "golang.org/x/net/context"
-)

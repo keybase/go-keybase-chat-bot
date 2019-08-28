@@ -3,8 +3,6 @@
 
 package keybase1
 
-import ()
-
 type ProofState int
 
 const (

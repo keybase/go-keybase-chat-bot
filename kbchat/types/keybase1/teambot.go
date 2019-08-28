@@ -3,8 +3,6 @@
 
 package keybase1
 
-import ()
-
 type TeambotKeyGeneration int64
 
 func (o TeambotKeyGeneration) DeepCopy() TeambotKeyGeneration {

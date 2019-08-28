@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type SignupRes struct {
 	PassphraseOk bool `codec:"passphraseOk" json:"passphraseOk"`
 	PostOk       bool `codec:"postOk" json:"postOk"`

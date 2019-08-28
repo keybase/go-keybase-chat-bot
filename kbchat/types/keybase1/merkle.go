@@ -3,10 +3,6 @@
 
 package keybase1
 
-import (
-	context "golang.org/x/net/context"
-)
-
 type MerkleRootAndTime struct {
 	Root       MerkleRootV2 `codec:"root" json:"root"`
 	UpdateTime Time         `codec:"updateTime" json:"updateTime"`

@@ -3,8 +3,6 @@
 
 package keybase1
 
-import ()
-
 type StatusCode int
 
 const (
@@ -43,6 +41,11 @@ const (
 	StatusCode_SCBadInvitationCode                         StatusCode = 707
 	StatusCode_SCBadSignupTeamName                         StatusCode = 711
 	StatusCode_SCFeatureFlag                               StatusCode = 712
+	StatusCode_SCEmailTaken                                StatusCode = 713
+	StatusCode_SCEmailAlreadyAdded                         StatusCode = 714
+	StatusCode_SCEmailLimitExceeded                        StatusCode = 715
+	StatusCode_SCEmailCannotDeletePrimary                  StatusCode = 716
+	StatusCode_SCEmailUnknown                              StatusCode = 717
 	StatusCode_SCMissingResult                             StatusCode = 801
 	StatusCode_SCKeyNotFound                               StatusCode = 901
 	StatusCode_SCKeyCorrupted                              StatusCode = 905
@@ -263,6 +266,11 @@ var StatusCodeMap = map[string]StatusCode{
 	"SCBadInvitationCode":        707,
 	"SCBadSignupTeamName":        711,
 	"SCFeatureFlag":              712,
+	"SCEmailTaken":               713,
+	"SCEmailAlreadyAdded":        714,
+	"SCEmailLimitExceeded":       715,
+	"SCEmailCannotDeletePrimary": 716,
+	"SCEmailUnknown":             717,
 	"SCMissingResult":            801,
 	"SCKeyNotFound":              901,
 	"SCKeyCorrupted":             905,
@@ -481,6 +489,11 @@ var StatusCodeRevMap = map[StatusCode]string{
 	707:  "SCBadInvitationCode",
 	711:  "SCBadSignupTeamName",
 	712:  "SCFeatureFlag",
+	713:  "SCEmailTaken",
+	714:  "SCEmailAlreadyAdded",
+	715:  "SCEmailLimitExceeded",
+	716:  "SCEmailCannotDeletePrimary",
+	717:  "SCEmailUnknown",
 	801:  "SCMissingResult",
 	901:  "SCKeyNotFound",
 	905:  "SCKeyCorrupted",
