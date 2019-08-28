@@ -1,5 +1,7 @@
 # go-keybase-chat-bot
 
+[![Travis CI](https://travis-ci.org/keybase/go-keybase-chat-bot-rpc.svg?branch=master)](https://travis-ci.org/keybase/go-keybase-chat-bot)
+
 Script Keybase Chat in Go!
 
 This module is a side-project/work in progress and may change or have crashers, but feel free to play with it. As long as you're logged in as a Keybase user, you can use this module to script basic chat commands.

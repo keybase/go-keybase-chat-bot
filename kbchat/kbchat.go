@@ -132,12 +132,16 @@ func (a *API) startPipes() (err error) {
 	a.Lock()
 	defer a.Unlock()
 	if a.apiCmd != nil {
-		a.apiCmd.Process.Kill()
+		if err := a.apiCmd.Process.Kill(); err != nil {
+			return err
+		}
 	}
 	a.apiCmd = nil
 
 	if a.runOpts.StartService {
-		a.runOpts.Command("service").Start()
+		if err := a.runOpts.Command("service").Start(); err != nil {
+			return err
+		}
 	}
 
 	if a.username, err = a.auth(); err != nil {
@@ -537,9 +541,7 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 					errorCh <- err
 					break
 				}
-				subscriptionPayment := SubscriptionWalletEvent{
-					Payment: holder.Payment,
-				}
+				subscriptionPayment := SubscriptionWalletEvent(holder)
 				newWalletCh <- subscriptionPayment
 			default:
 				continue
@@ -581,7 +583,9 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			attempts = 0
 			go readScanner(boutput)
 			<-done
-			p.Wait()
+			if err := p.Wait(); err != nil {
+				log.Printf("Listen: failed to Wait for command: %s", err)
+			}
 			time.Sleep(pause)
 		}
 	}()
