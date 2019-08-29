@@ -15,14 +15,17 @@ type Result struct {
 
 type Inbox struct {
 	Result Result `json:"result"`
+	Error  *Error `json:"error,omitempty"`
 }
 
 type ChannelsList struct {
 	Result Result `json:"result"`
+	Error  *Error `json:"error,omitempty"`
 }
 
 type SendResponse struct {
 	Result chat1.SendRes `json:"result"`
+	Error  *Error        `json:"error,omitempty"`
 }
 
 type TypeHolder struct {
@@ -31,6 +34,7 @@ type TypeHolder struct {
 
 type Thread struct {
 	Result chat1.Thread `json:"result"`
+	Error  *Error       `json:"error,omitempty"`
 }
 
 type Advertisement struct {
@@ -44,11 +48,11 @@ type Error struct {
 }
 
 type JoinChannel struct {
-	Error  Error          `json:"error"`
+	Error  *Error         `json:"error,omitempty"`
 	Result chat1.EmptyRes `json:"result"`
 }
 
 type LeaveChannel struct {
-	Error  Error          `json:"error"`
+	Error  *Error         `json:"error,omitempty"`
 	Result chat1.EmptyRes `json:"result"`
 }

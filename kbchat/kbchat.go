@@ -186,6 +186,8 @@ func (a *API) GetConversations(unreadOnly bool) ([]chat1.ConvSummary, error) {
 	var inbox Inbox
 	if err := json.Unmarshal(output, &inbox); err != nil {
 		return nil, err
+	} else if inbox.Error != nil {
+		return nil, errors.New(inbox.Error.Message)
 	}
 	return inbox.Result.Convs, nil
 }
@@ -206,7 +208,9 @@ func (a *API) GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]cha
 	var thread Thread
 
 	if err := json.Unmarshal(output, &thread); err != nil {
-		return nil, fmt.Errorf("unable to decode thread: %s", err.Error())
+		return nil, fmt.Errorf("unable to decode thread: %v", err)
+	} else if thread.Error != nil {
+		return nil, errors.New(thread.Error.Message)
 	}
 
 	var res []chat1.MsgSummary
@@ -242,7 +246,7 @@ type sendMessageArg struct {
 	Params sendMessageParams
 }
 
-func (a *API) doSend(arg interface{}) (response SendResponse, err error) {
+func (a *API) doSend(arg interface{}) (resp SendResponse, err error) {
 	a.Lock()
 	defer a.Unlock()
 
@@ -261,10 +265,12 @@ func (a *API) doSend(arg interface{}) (response SendResponse, err error) {
 	if err != nil {
 		return SendResponse{}, err
 	}
-	if err := json.Unmarshal(responseRaw, &response); err != nil {
-		return SendResponse{}, fmt.Errorf("failed to decode API response: %s", err)
+	if err := json.Unmarshal(responseRaw, &resp); err != nil {
+		return resp, fmt.Errorf("failed to decode API response: %s", err)
+	} else if resp.Error != nil {
+		return resp, errors.New(resp.Error.Message)
 	}
-	return response, nil
+	return resp, nil
 }
 
 func (a *API) doFetch(apiInput string) ([]byte, error) {
@@ -634,6 +640,8 @@ func (a *API) ListChannels(teamName string) ([]string, error) {
 	var channelsList ChannelsList
 	if err := json.Unmarshal(output, &channelsList); err != nil {
 		return nil, err
+	} else if channelsList.Error != nil {
+		return nil, errors.New(channelsList.Error.Message)
 	}
 
 	var channels []string
@@ -656,9 +664,8 @@ func (a *API) JoinChannel(teamName string, channelName string) (chat1.EmptyRes, 
 	err = json.Unmarshal(output, &joinChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
-	}
-	if joinChannel.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", joinChannel.Error.Message)
+	} else if joinChannel.Error != nil {
+		return empty, errors.New(joinChannel.Error.Message)
 	}
 
 	return joinChannel.Result, nil
@@ -677,9 +684,8 @@ func (a *API) LeaveChannel(teamName string, channelName string) (chat1.EmptyRes,
 	err = json.Unmarshal(output, &leaveChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
-	}
-	if leaveChannel.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", leaveChannel.Error.Message)
+	} else if leaveChannel.Error != nil {
+		return empty, errors.New(leaveChannel.Error.Message)
 	}
 
 	return leaveChannel.Result, nil

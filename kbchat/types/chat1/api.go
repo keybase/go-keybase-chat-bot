@@ -8,6 +8,18 @@ import (
 	keybase1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )
 
+type CallError struct {
+	Code    int    `codec:"code" json:"code"`
+	Message string `codec:"message" json:"message"`
+}
+
+func (o CallError) DeepCopy() CallError {
+	return CallError{
+		Code:    o.Code,
+		Message: o.Message,
+	}
+}
+
 type RateLimitRes struct {
 	Tank     string `codec:"tank" json:"tank"`
 	Capacity int    `codec:"capacity" json:"capacity"`
@@ -334,6 +346,7 @@ type Thread struct {
 	Offline          bool                          `codec:"offline,omitempty" json:"offline,omitempty"`
 	IdentifyFailures []keybase1.TLFIdentifyFailure `codec:"identifyFailures,omitempty" json:"identify_failures,omitempty"`
 	RateLimits       []RateLimitRes                `codec:"rateLimits,omitempty" json:"ratelimits,omitempty"`
+	Error            *CallError                    `codec:"error,omitempty" json:"error,omitempty"`
 }
 
 func (o Thread) DeepCopy() Thread {
@@ -379,6 +392,13 @@ func (o Thread) DeepCopy() Thread {
 			}
 			return ret
 		})(o.RateLimits),
+		Error: (func(x *CallError) *CallError {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Error),
 	}
 }
 
@@ -454,6 +474,7 @@ type ChatList struct {
 	IdentifyFailures []keybase1.TLFIdentifyFailure `codec:"identifyFailures,omitempty" json:"identify_failures,omitempty"`
 	Pagination       *Pagination                   `codec:"pagination,omitempty" json:"pagination,omitempty"`
 	RateLimits       []RateLimitRes                `codec:"rateLimits,omitempty" json:"ratelimits,omitempty"`
+	Error            *CallError                    `codec:"error,omitempty" json:"error,omitempty"`
 }
 
 func (o ChatList) DeepCopy() ChatList {
@@ -499,6 +520,13 @@ func (o ChatList) DeepCopy() ChatList {
 			}
 			return ret
 		})(o.RateLimits),
+		Error: (func(x *CallError) *CallError {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Error),
 	}
 }
 
@@ -508,6 +536,7 @@ type SendRes struct {
 	OutboxID         *OutboxID                     `codec:"outboxID,omitempty" json:"outbox_id,omitempty"`
 	IdentifyFailures []keybase1.TLFIdentifyFailure `codec:"identifyFailures,omitempty" json:"identify_failures,omitempty"`
 	RateLimits       []RateLimitRes                `codec:"rateLimits,omitempty" json:"ratelimits,omitempty"`
+	Error            *CallError                    `codec:"error,omitempty" json:"error,omitempty"`
 }
 
 func (o SendRes) DeepCopy() SendRes {
@@ -549,6 +578,13 @@ func (o SendRes) DeepCopy() SendRes {
 			}
 			return ret
 		})(o.RateLimits),
+		Error: (func(x *CallError) *CallError {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Error),
 	}
 }
 
@@ -556,6 +592,7 @@ type SearchInboxResOutput struct {
 	Results          *ChatSearchInboxResults       `codec:"results,omitempty" json:"results,omitempty"`
 	IdentifyFailures []keybase1.TLFIdentifyFailure `codec:"identifyFailures,omitempty" json:"identify_failures,omitempty"`
 	RateLimits       []RateLimitRes                `codec:"rateLimits,omitempty" json:"ratelimits,omitempty"`
+	Error            *CallError                    `codec:"error,omitempty" json:"error,omitempty"`
 }
 
 func (o SearchInboxResOutput) DeepCopy() SearchInboxResOutput {
@@ -589,6 +626,13 @@ func (o SearchInboxResOutput) DeepCopy() SearchInboxResOutput {
 			}
 			return ret
 		})(o.RateLimits),
+		Error: (func(x *CallError) *CallError {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Error),
 	}
 }
 
@@ -596,6 +640,7 @@ type RegexpRes struct {
 	Hits             []ChatSearchHit               `codec:"hits" json:"hits"`
 	IdentifyFailures []keybase1.TLFIdentifyFailure `codec:"identifyFailures,omitempty" json:"identify_failures,omitempty"`
 	RateLimits       []RateLimitRes                `codec:"rateLimits,omitempty" json:"ratelimits,omitempty"`
+	Error            *CallError                    `codec:"error,omitempty" json:"error,omitempty"`
 }
 
 func (o RegexpRes) DeepCopy() RegexpRes {
@@ -633,6 +678,13 @@ func (o RegexpRes) DeepCopy() RegexpRes {
 			}
 			return ret
 		})(o.RateLimits),
+		Error: (func(x *CallError) *CallError {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Error),
 	}
 }
 
@@ -640,6 +692,7 @@ type NewConvRes struct {
 	Id               string                        `codec:"id" json:"id"`
 	IdentifyFailures []keybase1.TLFIdentifyFailure `codec:"identifyFailures,omitempty" json:"identify_failures,omitempty"`
 	RateLimits       []RateLimitRes                `codec:"rateLimits,omitempty" json:"ratelimits,omitempty"`
+	Error            *CallError                    `codec:"error,omitempty" json:"error,omitempty"`
 }
 
 func (o NewConvRes) DeepCopy() NewConvRes {
@@ -667,12 +720,20 @@ func (o NewConvRes) DeepCopy() NewConvRes {
 			}
 			return ret
 		})(o.RateLimits),
+		Error: (func(x *CallError) *CallError {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Error),
 	}
 }
 
 type ListCommandsRes struct {
 	Commands   []UserBotCommandOutput `codec:"commands" json:"commands"`
 	RateLimits []RateLimitRes         `codec:"rateLimits,omitempty" json:"ratelimits,omitempty"`
+	Error      *CallError             `codec:"error,omitempty" json:"error,omitempty"`
 }
 
 func (o ListCommandsRes) DeepCopy() ListCommandsRes {
@@ -699,11 +760,19 @@ func (o ListCommandsRes) DeepCopy() ListCommandsRes {
 			}
 			return ret
 		})(o.RateLimits),
+		Error: (func(x *CallError) *CallError {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Error),
 	}
 }
 
 type EmptyRes struct {
 	RateLimits []RateLimitRes `codec:"rateLimits,omitempty" json:"ratelimits,omitempty"`
+	Error      *CallError     `codec:"error,omitempty" json:"error,omitempty"`
 }
 
 func (o EmptyRes) DeepCopy() EmptyRes {
@@ -719,6 +788,13 @@ func (o EmptyRes) DeepCopy() EmptyRes {
 			}
 			return ret
 		})(o.RateLimits),
+		Error: (func(x *CallError) *CallError {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Error),
 	}
 }
 
