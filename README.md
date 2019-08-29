@@ -195,9 +195,10 @@ cd client/protocol
 yarn install
 ```
 
-Then you can generate the types by using the provided Makefile in this Go bot repo.
+Then you can generate the types by using the provided Makefile in this Go bot repo. Note that [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) is required to generate the types.
 
 ```shell
+go get golang.org/x/tools/cmd/goimports # if you don't have goimports installed
 cd ../../go-keybase-chat-bot
 make
 ```
