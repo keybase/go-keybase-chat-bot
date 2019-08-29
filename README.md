@@ -59,10 +59,6 @@ func main() {
 
 This must be run first in order to start the Keybase JSON API stdin/stdout interactive mode.
 
-#### `API.SendMessageByTlfName(tlfName string, body string) (SendResponse, error)`
-
-send a new message by specifying a TLF name
-
 #### `API.SendMessage(channel chat1.ChatChannel, body string) (SendResponse, error)`
 
 send a new message by specifying a channel
@@ -70,6 +66,10 @@ send a new message by specifying a channel
 #### `API.SendMessageByConvID(convID string, body string) (SendResponse, error)`
 
 send a new message by specifying a conversation ID
+
+#### `API.SendMessageByTlfName(tlfName string, body string) (SendResponse, error)`
+
+send a new message by specifying a TLF name
 
 #### `API.GetConversations(unreadOnly bool) ([]chat1.ConvSummary, error)`
 
@@ -85,6 +85,18 @@ Reads the messages in a channel. You can read with or without marking as read.
 
 Returns an object that allows for a bot to enter into a loop calling `NewSubscription.Read`
 to receive any new message across all conversations (except the bots own messages). See the following example:
+
+#### `API.InChatSend(channel chat1.ChatChannel, body string) (SendResponse, error)`
+
+send a new message which can contain in-chat-send payments (i.e. `+5xlm@joshblum`) by specifying a channel
+
+#### `API.SendMessageByConvID(convID string, body string) (SendResponse, error)`
+
+send a new message which can contain in-chat-send payments (i.e. `+5xlm@joshblum`) by specifying a conversation ID
+
+#### `API.SendMessageByTlfName(tlfName string, body string) (SendResponse, error)`
+
+send a new message which can contain in-chat-send payments (i.e. `+5xlm@joshblum`) by specifying a TLF name
 
 ```go
 	sub, err := kbc.ListenForNewTextMessages()
