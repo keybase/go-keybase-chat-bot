@@ -88,15 +88,15 @@ to receive any new message across all conversations (except the bots own message
 
 #### `API.InChatSend(channel chat1.ChatChannel, body string) (SendResponse, error)`
 
-send a new message which can contain in-chat-send payments (i.e. `+5xlm@joshblum`) by specifying a channel
+send a new message which can contain in-chat-send payments (i.e. `+5XLM@joshblum`) by specifying a channel
 
-#### `API.SendMessageByConvID(convID string, body string) (SendResponse, error)`
+#### `API.InChatSendByConvID(convID string, body string) (SendResponse, error)`
 
-send a new message which can contain in-chat-send payments (i.e. `+5xlm@joshblum`) by specifying a conversation ID
+send a new message which can contain in-chat-send payments (i.e. `+5XLM@joshblum`) by specifying a conversation ID
 
-#### `API.SendMessageByTlfName(tlfName string, body string) (SendResponse, error)`
+#### `API.InChatSendByTlfName(tlfName string, body string) (SendResponse, error)`
 
-send a new message which can contain in-chat-send payments (i.e. `+5xlm@joshblum`) by specifying a TLF name
+send a new message which can contain in-chat-send payments (i.e. `+5XLM@joshblum`) by specifying a TLF name
 
 ```go
 	sub, err := kbc.ListenForNewTextMessages()
