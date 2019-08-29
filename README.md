@@ -1,6 +1,6 @@
 # go-keybase-chat-bot
 
-[![Travis CI](https://travis-ci.org/keybase/go-keybase-chat-bot-rpc.svg?branch=master)](https://travis-ci.org/keybase/go-keybase-chat-bot)
+[![Travis CI](https://travis-ci.org/keybase/go-keybase-chat-bot.svg?branch=master)](https://travis-ci.org/keybase/go-keybase-chat-bot)
 
 Script Keybase Chat in Go!
 
