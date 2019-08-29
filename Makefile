@@ -11,5 +11,9 @@ types:
 	$(AVDLC) -b -l go -t -o kbchat/types/stellar1 $(PROTOCOL_PATH)/avdl/stellar1/*.avdl
 	goimports -w ./kbchat/types/
 
+dependencies:
+	go get github.com/stretchr/testify/require
+	go get gopkg.in/yaml.v2
+
 clean:
 	rm -rf kbchat/types/
