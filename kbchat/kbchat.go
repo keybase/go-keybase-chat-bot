@@ -224,12 +224,13 @@ type sendMessageBody struct {
 }
 
 type sendMessageOptions struct {
-	Channel        chat1.ChatChannel `json:"channel,omitempty"`
-	ConversationID string            `json:"conversation_id,omitempty"`
-	Message        sendMessageBody   `json:",omitempty"`
-	Filename       string            `json:"filename,omitempty"`
-	Title          string            `json:"title,omitempty"`
-	MsgID          chat1.MessageID   `json:"message_id,omitempty"`
+	Channel          chat1.ChatChannel `json:"channel,omitempty"`
+	ConversationID   string            `json:"conversation_id,omitempty"`
+	Message          sendMessageBody   `json:",omitempty"`
+	Filename         string            `json:"filename,omitempty"`
+	Title            string            `json:"title,omitempty"`
+	MsgID            chat1.MessageID   `json:"message_id,omitempty"`
+	ConfirmLumenSend bool              `json:"confirm_lumen_send"`
 }
 
 type sendMessageParams struct {
@@ -285,51 +286,45 @@ func (a *API) doFetch(apiInput string) ([]byte, error) {
 	return byteOutput, nil
 }
 
-func (a *API) SendMessage(channel chat1.ChatChannel, body string) (SendResponse, error) {
-	arg := sendMessageArg{
+func newSendArg(options sendMessageOptions) sendMessageArg {
+	return sendMessageArg{
 		Method: "send",
 		Params: sendMessageParams{
-			Options: sendMessageOptions{
-				Channel: channel,
-				Message: sendMessageBody{
-					Body: body,
-				},
-			},
+			Options: options,
 		},
 	}
+}
+
+func (a *API) SendMessage(channel chat1.ChatChannel, body string) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: channel,
+		Message: sendMessageBody{
+			Body: body,
+		},
+	})
 	return a.doSend(arg)
 }
 
 func (a *API) SendMessageByConvID(convID string, body string) (SendResponse, error) {
-	arg := sendMessageArg{
-		Method: "send",
-		Params: sendMessageParams{
-			Options: sendMessageOptions{
-				ConversationID: convID,
-				Message: sendMessageBody{
-					Body: body,
-				},
-			},
+	arg := newSendArg(sendMessageOptions{
+		ConversationID: convID,
+		Message: sendMessageBody{
+			Body: body,
 		},
-	}
+	})
 	return a.doSend(arg)
 }
 
 // SendMessageByTlfName sends a message on the given TLF name
 func (a *API) SendMessageByTlfName(tlfName string, body string) (SendResponse, error) {
-	arg := sendMessageArg{
-		Method: "send",
-		Params: sendMessageParams{
-			Options: sendMessageOptions{
-				Channel: chat1.ChatChannel{
-					Name: tlfName,
-				},
-				Message: sendMessageBody{
-					Body: body,
-				},
-			},
+	arg := newSendArg(sendMessageOptions{
+		Channel: chat1.ChatChannel{
+			Name: tlfName,
 		},
-	}
+		Message: sendMessageBody{
+			Body: body,
+		},
+	})
 	return a.doSend(arg)
 }
 
@@ -338,21 +333,16 @@ func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *str
 	if inChannel != nil {
 		channel = *inChannel
 	}
-	arg := sendMessageArg{
-		Method: "send",
-		Params: sendMessageParams{
-			Options: sendMessageOptions{
-				Channel: chat1.ChatChannel{
-					MembersType: "team",
-					Name:        teamName,
-					TopicName:   channel,
-				},
-				Message: sendMessageBody{
-					Body: body,
-				},
-			},
+	arg := newSendArg(sendMessageOptions{
+		Channel: chat1.ChatChannel{
+			MembersType: "team",
+			Name:        teamName,
+			TopicName:   channel,
 		},
-	}
+		Message: sendMessageBody{
+			Body: body,
+		},
+	})
 	return a.doSend(arg)
 }
 
@@ -415,6 +405,41 @@ func (a *API) ReactByConvID(convID string, msgID chat1.MessageID, reaction strin
 		Message:        sendMessageBody{Body: reaction},
 		MsgID:          msgID,
 		ConversationID: convID,
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) InChatSend(channel chat1.ChatChannel, body string) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: channel,
+		Message: sendMessageBody{
+			Body: body,
+		},
+		ConfirmLumenSend: true,
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) InChatSendByConvID(convID string, body string) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		ConversationID: convID,
+		Message: sendMessageBody{
+			Body: body,
+		},
+		ConfirmLumenSend: true,
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) InChatSendByTlfName(tlfName string, body string) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: chat1.ChatChannel{
+			Name: tlfName,
+		},
+		Message: sendMessageBody{
+			Body: body,
+		},
+		ConfirmLumenSend: true,
 	})
 	return a.doSend(arg)
 }
