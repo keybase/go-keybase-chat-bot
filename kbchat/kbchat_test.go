@@ -311,7 +311,7 @@ func TestInChatSend(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
 	channel := getOneOnOneChatChannel(t, "alice", "bob")
-	text := "test InChatSend +1xlm" + randomString(t)
+	text := "test InChatSend +1xlm " + randomString(t)
 
 	// Send the message
 	res, err := alice.InChatSend(channel, text)
@@ -349,7 +349,7 @@ func TestInChatSendByConvID(t *testing.T) {
 func TestInChatSendByTlfName(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
-	text := "test InChatSendByTlfName +1xlm" + randomString(t)
+	text := "test InChatSendByTlfName +1xlm " + randomString(t)
 	channel := getOneOnOneChatChannel(t, "alice", "bob")
 
 	// Send the message
