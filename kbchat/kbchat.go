@@ -450,26 +450,90 @@ func (a *API) InChatSendByTlfName(tlfName string, body string) (SendResponse, er
 	return a.doSend(arg)
 }
 
-type advertiseParams struct {
+type advertiseCmdsParams struct {
 	Options Advertisement
 }
 
-type advertiseMsgArg struct {
+type advertiseCmdsMsgArg struct {
 	Method string
-	Params advertiseParams
+	Params advertiseCmdsParams
 }
 
-func newAdvertiseMsgArg(ad Advertisement) advertiseMsgArg {
-	return advertiseMsgArg{
+func newAdvertiseCmdsMsgArg(ad Advertisement) advertiseCmdsMsgArg {
+	return advertiseCmdsMsgArg{
 		Method: "advertisecommands",
-		Params: advertiseParams{
+		Params: advertiseCmdsParams{
 			Options: ad,
 		},
 	}
 }
 
 func (a *API) AdvertiseCommands(ad Advertisement) (SendResponse, error) {
-	return a.doSend(newAdvertiseMsgArg(ad))
+	return a.doSend(newAdvertiseCmdsMsgArg(ad))
+}
+
+func (a *API) ClearCommands() (SendResponse, error) {
+	arg := struct {
+		Method string
+	}{
+		Method: "clearcommands",
+	}
+	return a.doSend(arg)
+}
+
+type listCmdsOptions struct {
+	Channel        chat1.ChatChannel
+	ConversationID string
+}
+
+type listCmdsParams struct {
+	Options listCmdsOptions
+}
+
+type listCmdsArg struct {
+	Method string
+	Params listCmdsParams
+}
+
+func newListCmdsArg(options listCmdsOptions) listCmdsArg {
+	return listCmdsArg{
+		Method: "listcommands",
+		Params: listCmdsParams{
+			Options: options,
+		},
+	}
+}
+
+func (a *API) ListCommands(channel chat1.ChatChannel) ([]chat1.UserBotCommandOutput, error) {
+	arg := newListCmdsArg(listCmdsOptions{
+		Channel: channel,
+	})
+	return a.listCommands(arg)
+}
+
+func (a *API) ListCommandsByConvID(conversationID string) ([]chat1.UserBotCommandOutput, error) {
+	arg := newListCmdsArg(listCmdsOptions{
+		ConversationID: conversationID,
+	})
+	return a.listCommands(arg)
+}
+
+func (a *API) listCommands(arg listCmdsArg) ([]chat1.UserBotCommandOutput, error) {
+	bArg, err := json.Marshal(arg)
+	if err != nil {
+		return nil, err
+	}
+	output, err := a.doFetch(string(bArg))
+	if err != nil {
+		return nil, err
+	}
+	var res ListCommandsResponse
+	if err := json.Unmarshal(output, &res); err != nil {
+		return nil, err
+	} else if res.Error != nil {
+		return nil, errors.New(res.Error.Message)
+	}
+	return res.Result.Commands, nil
 }
 
 func (a *API) Username() string {
