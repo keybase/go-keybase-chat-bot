@@ -39,7 +39,7 @@ type Thread struct {
 
 type Advertisement struct {
 	Alias          string `json:"alias,omitempty"`
-	Advertisements []chat1.AdvertiseCommandsParam
+	Advertisements []chat1.AdvertiseCommandAPIParam
 }
 
 type Error struct {

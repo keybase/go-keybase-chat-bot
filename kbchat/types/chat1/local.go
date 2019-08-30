@@ -2391,10 +2391,22 @@ func (o BodyPlaintextV1) DeepCopy() BodyPlaintextV1 {
 	}
 }
 
+type BodyPlaintextV2 struct {
+	MessageBody MessageBody           `codec:"messageBody" json:"messageBody"`
+	Mi          BodyPlaintextMetaInfo `codec:"mi" json:"mi"`
+}
+
+func (o BodyPlaintextV2) DeepCopy() BodyPlaintextV2 {
+	return BodyPlaintextV2{
+		MessageBody: o.MessageBody.DeepCopy(),
+		Mi:          o.Mi.DeepCopy(),
+	}
+}
+
 type BodyPlaintext struct {
 	Version__ BodyPlaintextVersion      `codec:"version" json:"version"`
 	V1__      *BodyPlaintextV1          `codec:"v1,omitempty" json:"v1,omitempty"`
-	V2__      *BodyPlaintextUnsupported `codec:"v2,omitempty" json:"v2,omitempty"`
+	V2__      *BodyPlaintextV2          `codec:"v2,omitempty" json:"v2,omitempty"`
 	V3__      *BodyPlaintextUnsupported `codec:"v3,omitempty" json:"v3,omitempty"`
 	V4__      *BodyPlaintextUnsupported `codec:"v4,omitempty" json:"v4,omitempty"`
 	V5__      *BodyPlaintextUnsupported `codec:"v5,omitempty" json:"v5,omitempty"`
@@ -2471,7 +2483,7 @@ func (o BodyPlaintext) V1() (res BodyPlaintextV1) {
 	return *o.V1__
 }
 
-func (o BodyPlaintext) V2() (res BodyPlaintextUnsupported) {
+func (o BodyPlaintext) V2() (res BodyPlaintextV2) {
 	if o.Version__ != BodyPlaintextVersion_V2 {
 		panic("wrong case accessed")
 	}
@@ -2568,7 +2580,7 @@ func NewBodyPlaintextWithV1(v BodyPlaintextV1) BodyPlaintext {
 	}
 }
 
-func NewBodyPlaintextWithV2(v BodyPlaintextUnsupported) BodyPlaintext {
+func NewBodyPlaintextWithV2(v BodyPlaintextV2) BodyPlaintext {
 	return BodyPlaintext{
 		Version__: BodyPlaintextVersion_V2,
 		V2__:      &v,
@@ -2641,7 +2653,7 @@ func (o BodyPlaintext) DeepCopy() BodyPlaintext {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.V1__),
-		V2__: (func(x *BodyPlaintextUnsupported) *BodyPlaintextUnsupported {
+		V2__: (func(x *BodyPlaintextV2) *BodyPlaintextV2 {
 			if x == nil {
 				return nil
 			}
@@ -3117,6 +3129,18 @@ func (o ConversationLocalParticipant) DeepCopy() ConversationLocalParticipant {
 	}
 }
 
+type ConversationPinnedMessage struct {
+	Message        MessageUnboxed `codec:"message" json:"message"`
+	PinnerUsername string         `codec:"pinnerUsername" json:"pinnerUsername"`
+}
+
+func (o ConversationPinnedMessage) DeepCopy() ConversationPinnedMessage {
+	return ConversationPinnedMessage{
+		Message:        o.Message.DeepCopy(),
+		PinnerUsername: o.PinnerUsername,
+	}
+}
+
 type ConversationInfoLocal struct {
 	Id           ConversationID                 `codec:"id" json:"id"`
 	Triple       ConversationIDTriple           `codec:"triple" json:"triple"`
@@ -3124,7 +3148,7 @@ type ConversationInfoLocal struct {
 	TopicName    string                         `codec:"topicName" json:"topicName"`
 	Headline     string                         `codec:"headline" json:"headline"`
 	SnippetMsg   *MessageUnboxed                `codec:"snippetMsg,omitempty" json:"snippetMsg,omitempty"`
-	PinnedMsg    *MessageUnboxed                `codec:"pinnedMsg,omitempty" json:"pinnedMsg,omitempty"`
+	PinnedMsg    *ConversationPinnedMessage     `codec:"pinnedMsg,omitempty" json:"pinnedMsg,omitempty"`
 	Draft        *string                        `codec:"draft,omitempty" json:"draft,omitempty"`
 	Visibility   keybase1.TLFVisibility         `codec:"visibility" json:"visibility"`
 	Status       ConversationStatus             `codec:"status" json:"status"`
@@ -3153,7 +3177,7 @@ func (o ConversationInfoLocal) DeepCopy() ConversationInfoLocal {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.SnippetMsg),
-		PinnedMsg: (func(x *MessageUnboxed) *MessageUnboxed {
+		PinnedMsg: (func(x *ConversationPinnedMessage) *ConversationPinnedMessage {
 			if x == nil {
 				return nil
 			}
@@ -5455,6 +5479,26 @@ type ClearBotCommandsLocalRes struct {
 
 func (o ClearBotCommandsLocalRes) DeepCopy() ClearBotCommandsLocalRes {
 	return ClearBotCommandsLocalRes{
+		RateLimits: (func(x []RateLimit) []RateLimit {
+			if x == nil {
+				return nil
+			}
+			ret := make([]RateLimit, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.RateLimits),
+	}
+}
+
+type PinMessageRes struct {
+	RateLimits []RateLimit `codec:"rateLimits" json:"rateLimits"`
+}
+
+func (o PinMessageRes) DeepCopy() PinMessageRes {
+	return PinMessageRes{
 		RateLimits: (func(x []RateLimit) []RateLimit {
 			if x == nil {
 				return nil
