@@ -472,13 +472,14 @@ func (a *API) AdvertiseCommands(ad Advertisement) (SendResponse, error) {
 	return a.doSend(newAdvertiseCmdsMsgArg(ad))
 }
 
-func (a *API) ClearCommands() (SendResponse, error) {
+func (a *API) ClearCommands() error {
 	arg := struct {
 		Method string
 	}{
 		Method: "clearcommands",
 	}
-	return a.doSend(arg)
+	_, err := a.doSend(arg)
+	return err
 }
 
 type listCmdsOptions struct {

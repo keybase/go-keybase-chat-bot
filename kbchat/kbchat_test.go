@@ -276,7 +276,7 @@ func TestAdvertiseCommands(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, expectedOutput, res)
 
-	_, err = alice.ClearCommands()
+	err = alice.ClearCommands()
 	require.NoError(t, err)
 
 	res, err = alice.ListCommands(teamChannel)
