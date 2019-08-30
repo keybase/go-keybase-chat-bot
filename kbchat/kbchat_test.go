@@ -111,6 +111,7 @@ func TestSendMessage(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessage(channel, text)
 	require.NoError(t, err)
+	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
 
 	// Read it to confirm it sent
@@ -130,6 +131,7 @@ func TestSendMessageByConvID(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessageByConvID(convID, text)
 	require.NoError(t, err)
+	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
 
 	// Read it to confirm it sent
@@ -148,6 +150,7 @@ func TestSendMessageByTlfName(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessageByTlfName(channel.Name, text)
 	require.NoError(t, err)
+	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
 
 	// Read it to confirm it sent
@@ -166,6 +169,7 @@ func TestSendMessageByTeamName(t *testing.T) {
 	// Send the message
 	res, err := alice.SendMessageByTeamName(channel.Name, text, &channel.TopicName)
 	require.NoError(t, err)
+	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
 
 	// Read it to confirm it sent
@@ -191,6 +195,7 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	title := "test SendAttachmentByTeam " + randomString(t)
 	res, err := alice.SendAttachmentByTeam(channel.Name, location, title, &channel.TopicName)
 	require.NoError(t, err)
+	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
 }
 
@@ -204,6 +209,7 @@ func TestReactByChannel(t *testing.T) {
 
 	res, err := alice.ReactByChannel(channel, lastMessageID, react)
 	require.NoError(t, err)
+	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
 }
 
@@ -219,6 +225,7 @@ func TestReactByConvID(t *testing.T) {
 	// Send the react
 	res, err := alice.ReactByConvID(convID, lastMessageID, react)
 	require.NoError(t, err)
+	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
 }
 
@@ -298,4 +305,62 @@ func TestListenForNewTextMessages(t *testing.T) {
 	}
 
 	<-done
+}
+
+func TestInChatSend(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+	text := "test InChatSend +1xlm " + randomString(t)
+
+	// Send the message
+	res, err := alice.InChatSend(channel, text)
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.True(t, *res.Result.MessageID > 0)
+
+	// Read it to confirm it sent
+	readMessage := getMostRecentMessage(t, alice, channel)
+	require.Equal(t, readMessage.Content.TypeName, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.Id, *res.Result.MessageID)
+}
+
+func TestInChatSendByConvID(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	text := "test InChatSendByConvID +1xlm " + randomString(t)
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+	convID := getConvIDForChannel(t, alice, channel)
+
+	// Send the message
+	res, err := alice.InChatSendByConvID(convID, text)
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.True(t, *res.Result.MessageID > 0)
+
+	// Read it to confirm it sent
+	readMessage := getMostRecentMessage(t, alice, channel)
+	require.Equal(t, readMessage.Content.TypeName, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.Id, *res.Result.MessageID)
+}
+
+func TestInChatSendByTlfName(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+	text := "test InChatSendByTlfName +1xlm " + randomString(t)
+	channel := getOneOnOneChatChannel(t, "alice", "bob")
+
+	// Send the message
+	res, err := alice.InChatSendByTlfName(channel.Name, text)
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.True(t, *res.Result.MessageID > 0)
+
+	// Read it to confirm it sent
+	readMessage := getMostRecentMessage(t, alice, channel)
+	require.Equal(t, readMessage.Content.TypeName, "text")
+	require.Equal(t, readMessage.Content.Text.Body, text)
+	require.Equal(t, readMessage.Id, *res.Result.MessageID)
 }
