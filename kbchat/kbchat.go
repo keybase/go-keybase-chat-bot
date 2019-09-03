@@ -472,10 +472,6 @@ func (a *API) AdvertiseCommands(ad Advertisement) (SendResponse, error) {
 	return a.doSend(newAdvertiseMsgArg(ad))
 }
 
-func (a *API) Username() string {
-	return a.username
-}
-
 // SubscriptionMessage contains a message and conversation object
 type SubscriptionMessage struct {
 	Message      chat1.MsgSummary

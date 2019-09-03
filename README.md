@@ -44,7 +44,7 @@ func main() {
 		fail("Error creating API: %s", err.Error())
 	}
 
-	tlfName := fmt.Sprintf("%s,%s", kbc.Username(), "kb_monbot")
+	tlfName := fmt.Sprintf("%s,%s", kbc.GetUsername(), "kb_monbot")
 	fmt.Printf("saying hello on conversation: %s\n", tlfName)
 	if _, err = kbc.SendMessageByTlfName(tlfName, "hello!"); err != nil {
 		fail("Error sending message; %s", err.Error())
