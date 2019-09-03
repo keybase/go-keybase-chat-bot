@@ -229,7 +229,60 @@ func TestReactByConvID(t *testing.T) {
 	require.True(t, *res.Result.MessageID > 0)
 }
 
-func TestAdvertiseCommands(t *testing.T) {}
+func TestAdvertiseCommands(t *testing.T) {
+	alice, dir := testBotSetup(t, "alice")
+	defer testBotTeardown(t, alice, dir)
+
+	commands := []chat1.UserBotCommandInput{
+		{
+			Name:        "help",
+			Description: "get help for a command",
+			Usage:       "!help [cmdname]",
+			ExtendedDescription: &chat1.UserBotExtendedDescription{
+				Title:       "help command",
+				DesktopBody: "help",
+				MobileBody:  "help",
+			},
+		},
+	}
+
+	expectedOutput := []chat1.UserBotCommandOutput{
+		{
+			Username:    alice.GetUsername(),
+			Name:        "help",
+			Description: "get help for a command",
+			Usage:       "!help [cmdname]",
+			ExtendedDescription: &chat1.UserBotExtendedDescription{
+				Title:       "help command",
+				DesktopBody: "help",
+				MobileBody:  "help",
+			},
+		},
+	}
+
+	_, err := alice.AdvertiseCommands(Advertisement{
+		Alias: "botua",
+		Advertisements: []chat1.AdvertiseCommandAPIParam{
+			{
+				Typ:      "public",
+				Commands: commands,
+			},
+		},
+	})
+	require.NoError(t, err)
+
+	teamChannel := getTeamChatChannel(t, "acme")
+	res, err := alice.ListCommands(teamChannel)
+	require.NoError(t, err)
+	require.Equal(t, expectedOutput, res)
+
+	err = alice.ClearCommands()
+	require.NoError(t, err)
+
+	res, err = alice.ListCommands(teamChannel)
+	require.NoError(t, err)
+	require.Zero(t, len(res))
+}
 
 func TestListChannels(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")

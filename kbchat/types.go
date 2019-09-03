@@ -42,6 +42,13 @@ type Advertisement struct {
 	Advertisements []chat1.AdvertiseCommandAPIParam
 }
 
+type ListCommandsResponse struct {
+	Result struct {
+		Commands []chat1.UserBotCommandOutput `json:"commands"`
+	} `json:"result"`
+	Error *Error `json:"error,omitempty"`
+}
+
 type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
