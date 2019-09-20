@@ -622,14 +622,18 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 					errorCh <- err
 					break
 				}
-				subscriptionMessage := SubscriptionMessage{
-					Message: *notification.Msg,
-					Conversation: chat1.ConvSummary{
-						Id:      notification.Msg.ConvID,
-						Channel: notification.Msg.Channel,
-					},
+				if notification.Error != nil {
+					log.Printf("error message received: %s", *notification.Error)
+				} else if notification.Msg != nil {
+					subscriptionMessage := SubscriptionMessage{
+						Message: *notification.Msg,
+						Conversation: chat1.ConvSummary{
+							Id:      notification.Msg.ConvID,
+							Channel: notification.Msg.Channel,
+						},
+					}
+					newMsgCh <- subscriptionMessage
 				}
-				newMsgCh <- subscriptionMessage
 			case "wallet":
 				var holder PaymentHolder
 				if err := json.Unmarshal([]byte(t), &holder); err != nil {
