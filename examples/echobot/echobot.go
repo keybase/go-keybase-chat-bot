@@ -36,7 +36,7 @@ func main() {
 			fail("failed to read message: %s", err.Error())
 		}
 
-		if msg.Message.Content.Type != "text" {
+		if msg.Message.Content.TypeName != "text" {
 			continue
 		}
 

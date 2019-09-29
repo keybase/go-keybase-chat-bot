@@ -11,6 +11,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/stellar1"
 )
 
 // API is the main object used for communicating with the Keybase JSON API
@@ -132,12 +135,16 @@ func (a *API) startPipes() (err error) {
 	a.Lock()
 	defer a.Unlock()
 	if a.apiCmd != nil {
-		a.apiCmd.Process.Kill()
+		if err := a.apiCmd.Process.Kill(); err != nil {
+			return err
+		}
 	}
 	a.apiCmd = nil
 
 	if a.runOpts.StartService {
-		a.runOpts.Command("service").Start()
+		if err := a.runOpts.Command("service").Start(); err != nil {
+			return err
+		}
 	}
 
 	if a.username, err = a.auth(); err != nil {
@@ -169,7 +176,7 @@ func (a *API) getAPIPipesLocked() (io.Writer, *bufio.Reader, error) {
 }
 
 // GetConversations reads all conversations from the current user's inbox.
-func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
+func (a *API) GetConversations(unreadOnly bool) ([]chat1.ConvSummary, error) {
 	apiInput := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
 	output, err := a.doFetch(apiInput)
 	if err != nil {
@@ -179,13 +186,15 @@ func (a *API) GetConversations(unreadOnly bool) ([]Conversation, error) {
 	var inbox Inbox
 	if err := json.Unmarshal(output, &inbox); err != nil {
 		return nil, err
+	} else if inbox.Error != nil {
+		return nil, errors.New(inbox.Error.Message)
 	}
 	return inbox.Result.Convs, nil
 }
 
 // GetTextMessages fetches all text messages from a given channel. Optionally can filter
 // ont unread status.
-func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, error) {
+func (a *API) GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]chat1.MsgSummary, error) {
 	channelBytes, err := json.Marshal(channel)
 	if err != nil {
 		return nil, err
@@ -199,13 +208,15 @@ func (a *API) GetTextMessages(channel Channel, unreadOnly bool) ([]Message, erro
 	var thread Thread
 
 	if err := json.Unmarshal(output, &thread); err != nil {
-		return nil, fmt.Errorf("unable to decode thread: %s", err.Error())
+		return nil, fmt.Errorf("unable to decode thread: %v", err)
+	} else if thread.Error != nil {
+		return nil, errors.New(thread.Error.Message)
 	}
 
-	var res []Message
+	var res []chat1.MsgSummary
 	for _, msg := range thread.Result.Messages {
-		if msg.Msg.Content.Type == "text" {
-			res = append(res, msg.Msg)
+		if msg.Msg.Content.TypeName == "text" {
+			res = append(res, *msg.Msg)
 		}
 	}
 
@@ -217,12 +228,13 @@ type sendMessageBody struct {
 }
 
 type sendMessageOptions struct {
-	Channel        Channel         `json:"channel,omitempty"`
-	ConversationID string          `json:"conversation_id,omitempty"`
-	Message        sendMessageBody `json:",omitempty"`
-	Filename       string          `json:"filename,omitempty"`
-	Title          string          `json:"title,omitempty"`
-	MsgID          int             `json:"message_id,omitempty"`
+	Channel          chat1.ChatChannel `json:"channel,omitempty"`
+	ConversationID   string            `json:"conversation_id,omitempty"`
+	Message          sendMessageBody   `json:",omitempty"`
+	Filename         string            `json:"filename,omitempty"`
+	Title            string            `json:"title,omitempty"`
+	MsgID            chat1.MessageID   `json:"message_id,omitempty"`
+	ConfirmLumenSend bool              `json:"confirm_lumen_send"`
 }
 
 type sendMessageParams struct {
@@ -234,7 +246,7 @@ type sendMessageArg struct {
 	Params sendMessageParams
 }
 
-func (a *API) doSend(arg interface{}) (response SendResponse, err error) {
+func (a *API) doSend(arg interface{}) (resp SendResponse, err error) {
 	a.Lock()
 	defer a.Unlock()
 
@@ -253,10 +265,12 @@ func (a *API) doSend(arg interface{}) (response SendResponse, err error) {
 	if err != nil {
 		return SendResponse{}, err
 	}
-	if err := json.Unmarshal(responseRaw, &response); err != nil {
-		return SendResponse{}, fmt.Errorf("failed to decode API response: %s", err)
+	if err := json.Unmarshal(responseRaw, &resp); err != nil {
+		return resp, fmt.Errorf("failed to decode API response: %s", err)
+	} else if resp.Error != nil {
+		return resp, errors.New(resp.Error.Message)
 	}
-	return response, nil
+	return resp, nil
 }
 
 func (a *API) doFetch(apiInput string) ([]byte, error) {
@@ -278,51 +292,45 @@ func (a *API) doFetch(apiInput string) ([]byte, error) {
 	return byteOutput, nil
 }
 
-func (a *API) SendMessage(channel Channel, body string) (SendResponse, error) {
-	arg := sendMessageArg{
+func newSendArg(options sendMessageOptions) sendMessageArg {
+	return sendMessageArg{
 		Method: "send",
 		Params: sendMessageParams{
-			Options: sendMessageOptions{
-				Channel: channel,
-				Message: sendMessageBody{
-					Body: body,
-				},
-			},
+			Options: options,
 		},
 	}
+}
+
+func (a *API) SendMessage(channel chat1.ChatChannel, body string) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: channel,
+		Message: sendMessageBody{
+			Body: body,
+		},
+	})
 	return a.doSend(arg)
 }
 
 func (a *API) SendMessageByConvID(convID string, body string) (SendResponse, error) {
-	arg := sendMessageArg{
-		Method: "send",
-		Params: sendMessageParams{
-			Options: sendMessageOptions{
-				ConversationID: convID,
-				Message: sendMessageBody{
-					Body: body,
-				},
-			},
+	arg := newSendArg(sendMessageOptions{
+		ConversationID: convID,
+		Message: sendMessageBody{
+			Body: body,
 		},
-	}
+	})
 	return a.doSend(arg)
 }
 
 // SendMessageByTlfName sends a message on the given TLF name
 func (a *API) SendMessageByTlfName(tlfName string, body string) (SendResponse, error) {
-	arg := sendMessageArg{
-		Method: "send",
-		Params: sendMessageParams{
-			Options: sendMessageOptions{
-				Channel: Channel{
-					Name: tlfName,
-				},
-				Message: sendMessageBody{
-					Body: body,
-				},
-			},
+	arg := newSendArg(sendMessageOptions{
+		Channel: chat1.ChatChannel{
+			Name: tlfName,
 		},
-	}
+		Message: sendMessageBody{
+			Body: body,
+		},
+	})
 	return a.doSend(arg)
 }
 
@@ -331,21 +339,16 @@ func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *str
 	if inChannel != nil {
 		channel = *inChannel
 	}
-	arg := sendMessageArg{
-		Method: "send",
-		Params: sendMessageParams{
-			Options: sendMessageOptions{
-				Channel: Channel{
-					MembersType: "team",
-					Name:        teamName,
-					TopicName:   channel,
-				},
-				Message: sendMessageBody{
-					Body: body,
-				},
-			},
+	arg := newSendArg(sendMessageOptions{
+		Channel: chat1.ChatChannel{
+			MembersType: "team",
+			Name:        teamName,
+			TopicName:   channel,
 		},
-	}
+		Message: sendMessageBody{
+			Body: body,
+		},
+	})
 	return a.doSend(arg)
 }
 
@@ -358,7 +361,7 @@ func (a *API) SendAttachmentByTeam(teamName string, filename string, title strin
 		Method: "attach",
 		Params: sendMessageParams{
 			Options: sendMessageOptions{
-				Channel: Channel{
+				Channel: chat1.ChatChannel{
 					MembersType: "team",
 					Name:        teamName,
 					TopicName:   channel,
@@ -374,8 +377,8 @@ func (a *API) SendAttachmentByTeam(teamName string, filename string, title strin
 type reactionOptions struct {
 	ConversationID string `json:"conversation_id"`
 	Message        sendMessageBody
-	MsgID          int     `json:"message_id"`
-	Channel        Channel `json:"channel"`
+	MsgID          chat1.MessageID   `json:"message_id"`
+	Channel        chat1.ChatChannel `json:"channel"`
 }
 
 type reactionParams struct {
@@ -394,7 +397,7 @@ func newReactionArg(options reactionOptions) reactionArg {
 	}
 }
 
-func (a *API) ReactByChannel(channel Channel, msgID int, reaction string) (SendResponse, error) {
+func (a *API) ReactByChannel(channel chat1.ChatChannel, msgID chat1.MessageID, reaction string) (SendResponse, error) {
 	arg := newReactionArg(reactionOptions{
 		Message: sendMessageBody{Body: reaction},
 		MsgID:   msgID,
@@ -403,7 +406,7 @@ func (a *API) ReactByChannel(channel Channel, msgID int, reaction string) (SendR
 	return a.doSend(arg)
 }
 
-func (a *API) ReactByConvID(convID string, msgID int, reaction string) (SendResponse, error) {
+func (a *API) ReactByConvID(convID string, msgID chat1.MessageID, reaction string) (SendResponse, error) {
 	arg := newReactionArg(reactionOptions{
 		Message:        sendMessageBody{Body: reaction},
 		MsgID:          msgID,
@@ -412,40 +415,136 @@ func (a *API) ReactByConvID(convID string, msgID int, reaction string) (SendResp
 	return a.doSend(arg)
 }
 
-type advertiseParams struct {
+func (a *API) InChatSend(channel chat1.ChatChannel, body string) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: channel,
+		Message: sendMessageBody{
+			Body: body,
+		},
+		ConfirmLumenSend: true,
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) InChatSendByConvID(convID string, body string) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		ConversationID: convID,
+		Message: sendMessageBody{
+			Body: body,
+		},
+		ConfirmLumenSend: true,
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) InChatSendByTlfName(tlfName string, body string) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: chat1.ChatChannel{
+			Name: tlfName,
+		},
+		Message: sendMessageBody{
+			Body: body,
+		},
+		ConfirmLumenSend: true,
+	})
+	return a.doSend(arg)
+}
+
+type advertiseCmdsParams struct {
 	Options Advertisement
 }
 
-type advertiseMsgArg struct {
+type advertiseCmdsMsgArg struct {
 	Method string
-	Params advertiseParams
+	Params advertiseCmdsParams
 }
 
-func newAdvertiseMsgArg(ad Advertisement) advertiseMsgArg {
-	return advertiseMsgArg{
+func newAdvertiseCmdsMsgArg(ad Advertisement) advertiseCmdsMsgArg {
+	return advertiseCmdsMsgArg{
 		Method: "advertisecommands",
-		Params: advertiseParams{
+		Params: advertiseCmdsParams{
 			Options: ad,
 		},
 	}
 }
 
 func (a *API) AdvertiseCommands(ad Advertisement) (SendResponse, error) {
-	return a.doSend(newAdvertiseMsgArg(ad))
+	return a.doSend(newAdvertiseCmdsMsgArg(ad))
 }
 
-func (a *API) Username() string {
-	return a.username
+func (a *API) ClearCommands() error {
+	arg := struct {
+		Method string
+	}{
+		Method: "clearcommands",
+	}
+	_, err := a.doSend(arg)
+	return err
+}
+
+type listCmdsOptions struct {
+	Channel        chat1.ChatChannel
+	ConversationID string
+}
+
+type listCmdsParams struct {
+	Options listCmdsOptions
+}
+
+type listCmdsArg struct {
+	Method string
+	Params listCmdsParams
+}
+
+func newListCmdsArg(options listCmdsOptions) listCmdsArg {
+	return listCmdsArg{
+		Method: "listcommands",
+		Params: listCmdsParams{
+			Options: options,
+		},
+	}
+}
+
+func (a *API) ListCommands(channel chat1.ChatChannel) ([]chat1.UserBotCommandOutput, error) {
+	arg := newListCmdsArg(listCmdsOptions{
+		Channel: channel,
+	})
+	return a.listCommands(arg)
+}
+
+func (a *API) ListCommandsByConvID(conversationID string) ([]chat1.UserBotCommandOutput, error) {
+	arg := newListCmdsArg(listCmdsOptions{
+		ConversationID: conversationID,
+	})
+	return a.listCommands(arg)
+}
+
+func (a *API) listCommands(arg listCmdsArg) ([]chat1.UserBotCommandOutput, error) {
+	bArg, err := json.Marshal(arg)
+	if err != nil {
+		return nil, err
+	}
+	output, err := a.doFetch(string(bArg))
+	if err != nil {
+		return nil, err
+	}
+	var res ListCommandsResponse
+	if err := json.Unmarshal(output, &res); err != nil {
+		return nil, err
+	} else if res.Error != nil {
+		return nil, errors.New(res.Error.Message)
+	}
+	return res.Result.Commands, nil
 }
 
 // SubscriptionMessage contains a message and conversation object
 type SubscriptionMessage struct {
-	Message      Message
-	Conversation Conversation
+	Message      chat1.MsgSummary
+	Conversation chat1.ConvSummary
 }
 
 type SubscriptionWalletEvent struct {
-	Payment Payment
+	Payment stellar1.PaymentDetailsLocal
 }
 
 // NewSubscription has methods to control the background message fetcher loop
@@ -518,28 +617,30 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			}
 			switch typeHolder.Type {
 			case "chat":
-				var holder MessageHolder
-				if err := json.Unmarshal([]byte(t), &holder); err != nil {
+				var notification chat1.MsgNotification
+				if err := json.Unmarshal([]byte(t), &notification); err != nil {
 					errorCh <- err
 					break
 				}
-				subscriptionMessage := SubscriptionMessage{
-					Message: holder.Msg,
-					Conversation: Conversation{
-						ID:      holder.Msg.ConversationID,
-						Channel: holder.Msg.Channel,
-					},
+				if notification.Error != nil {
+					log.Printf("error message received: %s", *notification.Error)
+				} else if notification.Msg != nil {
+					subscriptionMessage := SubscriptionMessage{
+						Message: *notification.Msg,
+						Conversation: chat1.ConvSummary{
+							Id:      notification.Msg.ConvID,
+							Channel: notification.Msg.Channel,
+						},
+					}
+					newMsgCh <- subscriptionMessage
 				}
-				newMsgCh <- subscriptionMessage
 			case "wallet":
 				var holder PaymentHolder
 				if err := json.Unmarshal([]byte(t), &holder); err != nil {
 					errorCh <- err
 					break
 				}
-				subscriptionPayment := SubscriptionWalletEvent{
-					Payment: holder.Payment,
-				}
+				subscriptionPayment := SubscriptionWalletEvent(holder)
 				newWalletCh <- subscriptionPayment
 			default:
 				continue
@@ -581,7 +682,9 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			attempts = 0
 			go readScanner(boutput)
 			<-done
-			p.Wait()
+			if err := p.Wait(); err != nil {
+				log.Printf("Listen: failed to Wait for command: %s", err)
+			}
 			time.Sleep(pause)
 		}
 	}()
@@ -602,6 +705,8 @@ func (a *API) ListChannels(teamName string) ([]string, error) {
 	var channelsList ChannelsList
 	if err := json.Unmarshal(output, &channelsList); err != nil {
 		return nil, err
+	} else if channelsList.Error != nil {
+		return nil, errors.New(channelsList.Error.Message)
 	}
 
 	var channels []string
@@ -611,8 +716,8 @@ func (a *API) ListChannels(teamName string) ([]string, error) {
 	return channels, nil
 }
 
-func (a *API) JoinChannel(teamName string, channelName string) (JoinChannelResult, error) {
-	empty := JoinChannelResult{}
+func (a *API) JoinChannel(teamName string, channelName string) (chat1.EmptyRes, error) {
+	empty := chat1.EmptyRes{}
 
 	apiInput := fmt.Sprintf(`{"method": "join", "params": {"options": {"channel": {"name": "%s", "members_type": "team", "topic_name": "%s"}}}}`, teamName, channelName)
 	output, err := a.doFetch(apiInput)
@@ -624,16 +729,15 @@ func (a *API) JoinChannel(teamName string, channelName string) (JoinChannelResul
 	err = json.Unmarshal(output, &joinChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
-	}
-	if joinChannel.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", joinChannel.Error.Message)
+	} else if joinChannel.Error != nil {
+		return empty, errors.New(joinChannel.Error.Message)
 	}
 
 	return joinChannel.Result, nil
 }
 
-func (a *API) LeaveChannel(teamName string, channelName string) (LeaveChannelResult, error) {
-	empty := LeaveChannelResult{}
+func (a *API) LeaveChannel(teamName string, channelName string) (chat1.EmptyRes, error) {
+	empty := chat1.EmptyRes{}
 
 	apiInput := fmt.Sprintf(`{"method": "leave", "params": {"options": {"channel": {"name": "%s", "members_type": "team", "topic_name": "%s"}}}}`, teamName, channelName)
 	output, err := a.doFetch(apiInput)
@@ -645,9 +749,8 @@ func (a *API) LeaveChannel(teamName string, channelName string) (LeaveChannelRes
 	err = json.Unmarshal(output, &leaveChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
-	}
-	if leaveChannel.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", leaveChannel.Error.Message)
+	} else if leaveChannel.Error != nil {
+		return empty, errors.New(leaveChannel.Error.Message)
 	}
 
 	return leaveChannel.Result, nil

@@ -4,22 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )
 
 type ListTeamMembers struct {
-	Result ListTeamMembersResult `json:"result"`
-	Error  Error             `json:"error"`
-}
-
-type ListTeamMembersResult struct {
-	Members ListTeamMembersResultMembers `json:"members"`
-}
-
-type ListTeamMembersResultMembers struct {
-	Owners  []ListMembersOutputMembersCategory `json:"owners"`
-	Admins  []ListMembersOutputMembersCategory `json:"admins"`
-	Writers []ListMembersOutputMembersCategory `json:"writers"`
-	Readers []ListMembersOutputMembersCategory `json:"readers"`
+	Result keybase1.TeamDetails `json:"result"`
+	Error  Error                `json:"error"`
 }
 
 type ListMembersOutputMembersCategory struct {
@@ -28,24 +19,12 @@ type ListMembersOutputMembersCategory struct {
 }
 
 type ListUserMemberships struct {
-	Result ListUserMembershipsResult `json:"result"`
-	Error  Error             `json:"error"`
+	Result keybase1.AnnotatedTeamList `json:"result"`
+	Error  Error                      `json:"error"`
 }
 
-type ListUserMembershipsResult struct {
-	Teams []ListUserMembershipsResultTeam `json:"teams"`
-}
-
-type ListUserMembershipsResultTeam struct {
-	TeamName string `json:"fq_name"`
-	IsImplicitTeam bool `json:"is_implicit_team"`
-	IsOpenTeam bool `json:"is_open_team"`
-	Role int `json:"role"`
-	MemberCount int `json:"member_count"`
-}
-
-func (a *API) ListMembersOfTeam(teamName string) (ListTeamMembersResultMembers, error) {
-	empty := ListTeamMembersResultMembers{}
+func (a *API) ListMembersOfTeam(teamName string) (keybase1.TeamMembersDetails, error) {
+	empty := keybase1.TeamMembersDetails{}
 
 	apiInput := fmt.Sprintf(`{"method": "list-team-memberships", "params": {"options": {"team": "%s"}}}`, teamName)
 	cmd := a.runOpts.Command("team", "api")
@@ -66,8 +45,8 @@ func (a *API) ListMembersOfTeam(teamName string) (ListTeamMembersResultMembers, 
 	return members.Result.Members, nil
 }
 
-func (a *API) ListUserMemberships(username string) ([]ListUserMembershipsResultTeam, error) {
-	empty := []ListUserMembershipsResultTeam{}
+func (a *API) ListUserMemberships(username string) ([]keybase1.AnnotatedMemberInfo, error) {
+	empty := []keybase1.AnnotatedMemberInfo{}
 
 	apiInput := fmt.Sprintf(`{"method": "list-user-memberships", "params": {"options": {"username": "%s"}}}`, username)
 	cmd := a.runOpts.Command("team", "api")
