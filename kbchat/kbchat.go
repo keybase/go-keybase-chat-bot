@@ -311,6 +311,13 @@ func (a *API) SendMessage(channel chat1.ChatChannel, body string) (SendResponse,
 	return a.doSend(arg)
 }
 
+func (a *API) Broadcast(body string) (SendResponse, error) {
+	return a.SendMessage(chat1.ChatChannel{
+		Name:   a.GetUsername(),
+		Public: true,
+	}, body)
+}
+
 func (a *API) SendMessageByConvID(convID string, body string) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
