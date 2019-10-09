@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os/exec"
 	"strings"
@@ -680,6 +681,12 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 				time.Sleep(pause)
 				continue
 			}
+			stderr, err := p.StderrPipe()
+			if err != nil {
+				log.Printf("Listen: failed to listen to stderr: %s", err)
+				time.Sleep(pause)
+				continue
+			}
 			boutput := bufio.NewScanner(output)
 			if err := p.Start(); err != nil {
 				log.Printf("Listen: failed to make listen scanner: %s", err)
@@ -690,7 +697,11 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			go readScanner(boutput)
 			<-done
 			if err := p.Wait(); err != nil {
-				log.Printf("Listen: failed to Wait for command: %s", err)
+				stderrBytes, rerr := ioutil.ReadAll(stderr)
+				if rerr != nil {
+					stderrBytes = []byte("failed to get stderr")
+				}
+				log.Printf("Listen: failed to Wait for command: %s (```%s```)", err, stderrBytes)
 			}
 			time.Sleep(pause)
 		}
