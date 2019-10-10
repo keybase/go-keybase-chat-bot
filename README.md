@@ -200,7 +200,7 @@ To build the types for the Go bot, you'll need to clone the `client` repo in the
 git clone https://github.com/keybase/client
 ```
 
-and install the nessecary dependencies for compiling the protocol files. This requires [node.js](https://nodejs.org) and [Yarn](https://yarnpkg.com).
+and install the necessary dependencies for compiling the protocol files. This requires [node.js](https://nodejs.org) and [Yarn](https://yarnpkg.com).
 
 ```shell
 cd client/protocol
