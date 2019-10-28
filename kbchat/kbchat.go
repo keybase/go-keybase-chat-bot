@@ -696,11 +696,11 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			attempts = 0
 			go readScanner(boutput)
 			<-done
+			stderrBytes, rerr := ioutil.ReadAll(stderr)
+			if rerr != nil {
+				stderrBytes = []byte(fmt.Sprintf("failed to get stderr: %s", rerr))
+			}
 			if err := p.Wait(); err != nil {
-				stderrBytes, rerr := ioutil.ReadAll(stderr)
-				if rerr != nil {
-					stderrBytes = []byte("failed to get stderr")
-				}
 				log.Printf("Listen: failed to Wait for command: %s (```%s```)", err, stderrBytes)
 			}
 			time.Sleep(pause)
