@@ -110,7 +110,7 @@ send a new message which can contain in-chat-send payments (i.e. `+5XLM@joshblum
 			fail("failed to read message: %s", err.Error())
 		}
 
-		if msg.Message.Content.Type != "text" {
+		if msg.Message.Content.TypeName != "text" {
 			continue
 		}
 
