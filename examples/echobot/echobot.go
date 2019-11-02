@@ -40,13 +40,14 @@ func main() {
 			continue
 		}
 
-		if msg.Message.Sender.Username == kbc.GetUsername() {
-			continue
-		}
+		fmt.Println("received: ", msg.Message.Content.Text.Body)
 
-		if _, err = kbc.SendMessage(msg.Message.Channel, msg.Message.Content.Text.Body); err != nil {
-			fail("error echo'ing message: %s", err.Error())
-		}
+		// uncomment to send chat messages in the original message's channel
+		/*
+			if _, err = kbc.SendMessage(msg.Message.Channel, msg.Message.Content.Text.Body); err != nil {
+				fail("error echo'ing message: %s", err.Error())
+			}
+		*/
 	}
 
 }
