@@ -278,45 +278,6 @@ func (a *API) LeaveChannel(teamName string, channelName string) (chat1.EmptyRes,
 	return leaveChannel.Result, nil
 }
 
-func (a *API) LogSend(feedback string) error {
-	feedback = "go-keybase-chat-bot log send\n" +
-		"username: " + a.GetUsername() + "\n" +
-		feedback
-
-	args := []string{
-		"log", "send",
-		"--no-confirm",
-		"--feedback", feedback,
-	}
-
-	// We're determining whether the service is already running by running status
-	// with autofork disabled.
-	if err := a.runOpts.Command("--no-auto-fork", "status"); err != nil {
-		// Assume that there's no service running, so log send as standalone
-		args = append([]string{"--standalone"}, args...)
-	}
-
-	return a.runOpts.Command(args...).Run()
-}
-
-func (a *API) Shutdown() error {
-	if a.runOpts.Oneshot != nil {
-		err := a.runOpts.Command("logout", "--force").Run()
-		if err != nil {
-			return err
-		}
-	}
-
-	if a.runOpts.StartService {
-		err := a.runOpts.Command("ctl", "stop", "--shutdown").Run()
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 ////////////////////////////////////////////////////////
 // Send lumens in chat /////////////////////////////////
 ////////////////////////////////////////////////////////
