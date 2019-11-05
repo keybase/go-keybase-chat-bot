@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/ctl.avdl
 
 package keybase1
+
+import (
+	"fmt"
+)
 
 type ExitCode int
 
@@ -29,7 +33,7 @@ func (e ExitCode) String() string {
 	if v, ok := ExitCodeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type DbType int
@@ -67,7 +71,7 @@ func (e DbType) String() string {
 	if v, ok := DbTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type DbKey struct {
@@ -93,4 +97,33 @@ func (o DbValue) DeepCopy() DbValue {
 		}
 		return append([]byte{}, x...)
 	})(o)
+}
+
+type OnLoginStartupStatus int
+
+const (
+	OnLoginStartupStatus_UNKNOWN  OnLoginStartupStatus = 0
+	OnLoginStartupStatus_DISABLED OnLoginStartupStatus = 1
+	OnLoginStartupStatus_ENABLED  OnLoginStartupStatus = 2
+)
+
+func (o OnLoginStartupStatus) DeepCopy() OnLoginStartupStatus { return o }
+
+var OnLoginStartupStatusMap = map[string]OnLoginStartupStatus{
+	"UNKNOWN":  0,
+	"DISABLED": 1,
+	"ENABLED":  2,
+}
+
+var OnLoginStartupStatusRevMap = map[OnLoginStartupStatus]string{
+	0: "UNKNOWN",
+	1: "DISABLED",
+	2: "ENABLED",
+}
+
+func (e OnLoginStartupStatus) String() string {
+	if v, ok := OnLoginStartupStatusRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
 }

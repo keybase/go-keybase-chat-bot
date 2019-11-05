@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/kbfs_common.avdl
 
 package keybase1
+
+import (
+	"fmt"
+)
 
 type FSStatusCode int
 
@@ -29,7 +33,7 @@ func (e FSStatusCode) String() string {
 	if v, ok := FSStatusCodeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type FSNotificationType int
@@ -88,7 +92,7 @@ func (e FSNotificationType) String() string {
 	if v, ok := FSNotificationTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type FSErrorType int
@@ -159,7 +163,7 @@ func (e FSErrorType) String() string {
 	if v, ok := FSErrorTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type FSNotification struct {

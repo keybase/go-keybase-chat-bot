@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/passphrase_common.avdl
 
 package keybase1
+
+import (
+	"fmt"
+)
 
 type Feature struct {
 	Allow        bool   `codec:"allow" json:"allow"`
@@ -58,7 +62,7 @@ func (e PassphraseType) String() string {
 	if v, ok := PassphraseTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type GUIEntryArg struct {

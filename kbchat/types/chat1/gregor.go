@@ -1,4 +1,4 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/chat1/gregor.avdl
 
 package chat1
@@ -57,13 +57,14 @@ func (o NewConversationPayload) DeepCopy() NewConversationPayload {
 }
 
 type NewMessagePayload struct {
-	Action       string           `codec:"Action" json:"Action"`
-	ConvID       ConversationID   `codec:"convID" json:"convID"`
-	Message      MessageBoxed     `codec:"message" json:"message"`
-	InboxVers    InboxVers        `codec:"inboxVers" json:"inboxVers"`
-	TopicType    TopicType        `codec:"topicType" json:"topicType"`
-	UnreadUpdate *UnreadUpdate    `codec:"unreadUpdate,omitempty" json:"unreadUpdate,omitempty"`
-	MaxMsgs      []MessageSummary `codec:"maxMsgs" json:"maxMsgs"`
+	Action            string            `codec:"Action" json:"Action"`
+	ConvID            ConversationID    `codec:"convID" json:"convID"`
+	Message           MessageBoxed      `codec:"message" json:"message"`
+	InboxVers         InboxVers         `codec:"inboxVers" json:"inboxVers"`
+	TopicType         TopicType         `codec:"topicType" json:"topicType"`
+	UnreadUpdate      *UnreadUpdate     `codec:"unreadUpdate,omitempty" json:"unreadUpdate,omitempty"`
+	UntrustedTeamRole keybase1.TeamRole `codec:"untrustedTeamRole" json:"untrustedTeamRole"`
+	MaxMsgs           []MessageSummary  `codec:"maxMsgs" json:"maxMsgs"`
 }
 
 func (o NewMessagePayload) DeepCopy() NewMessagePayload {
@@ -80,6 +81,7 @@ func (o NewMessagePayload) DeepCopy() NewMessagePayload {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.UnreadUpdate),
+		UntrustedTeamRole: o.UntrustedTeamRole.DeepCopy(),
 		MaxMsgs: (func(x []MessageSummary) []MessageSummary {
 			if x == nil {
 				return nil
@@ -317,19 +319,39 @@ func (o RemoteUserTypingUpdate) DeepCopy() RemoteUserTypingUpdate {
 	}
 }
 
+type TeamMemberRoleUpdate struct {
+	TlfID TLFID             `codec:"tlfID" json:"tlfID"`
+	Role  keybase1.TeamRole `codec:"role" json:"role"`
+}
+
+func (o TeamMemberRoleUpdate) DeepCopy() TeamMemberRoleUpdate {
+	return TeamMemberRoleUpdate{
+		TlfID: o.TlfID.DeepCopy(),
+		Role:  o.Role.DeepCopy(),
+	}
+}
+
 type UpdateConversationMembership struct {
-	InboxVers     InboxVers            `codec:"inboxVers" json:"inboxVers"`
-	Joined        []ConversationMember `codec:"joined" json:"joined"`
-	Removed       []ConversationMember `codec:"removed" json:"removed"`
-	Reset         []ConversationMember `codec:"reset" json:"reset"`
-	Previewed     []ConversationID     `codec:"previewed" json:"previewed"`
-	UnreadUpdate  *UnreadUpdate        `codec:"unreadUpdate,omitempty" json:"unreadUpdate,omitempty"`
-	UnreadUpdates []UnreadUpdate       `codec:"unreadUpdates" json:"unreadUpdates"`
+	InboxVers            InboxVers             `codec:"inboxVers" json:"inboxVers"`
+	TeamMemberRoleUpdate *TeamMemberRoleUpdate `codec:"teamMemberRoleUpdate,omitempty" json:"teamMemberRoleUpdate,omitempty"`
+	Joined               []ConversationMember  `codec:"joined" json:"joined"`
+	Removed              []ConversationMember  `codec:"removed" json:"removed"`
+	Reset                []ConversationMember  `codec:"reset" json:"reset"`
+	Previewed            []ConversationID      `codec:"previewed" json:"previewed"`
+	UnreadUpdate         *UnreadUpdate         `codec:"unreadUpdate,omitempty" json:"unreadUpdate,omitempty"`
+	UnreadUpdates        []UnreadUpdate        `codec:"unreadUpdates" json:"unreadUpdates"`
 }
 
 func (o UpdateConversationMembership) DeepCopy() UpdateConversationMembership {
 	return UpdateConversationMembership{
 		InboxVers: o.InboxVers.DeepCopy(),
+		TeamMemberRoleUpdate: (func(x *TeamMemberRoleUpdate) *TeamMemberRoleUpdate {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.TeamMemberRoleUpdate),
 		Joined: (func(x []ConversationMember) []ConversationMember {
 			if x == nil {
 				return nil

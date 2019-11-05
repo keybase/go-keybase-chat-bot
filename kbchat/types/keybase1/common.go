@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/common.avdl
 
 package keybase1
 
 import (
 	"errors"
+	"fmt"
 )
 
 type Time int64
@@ -69,6 +70,12 @@ func (o UID) DeepCopy() UID {
 	return o
 }
 
+type VID string
+
+func (o VID) DeepCopy() VID {
+	return o
+}
+
 type DeviceID string
 
 func (o DeviceID) DeepCopy() DeviceID {
@@ -102,12 +109,6 @@ func (o PhoneNumber) DeepCopy() PhoneNumber {
 type RawPhoneNumber string
 
 func (o RawPhoneNumber) DeepCopy() RawPhoneNumber {
-	return o
-}
-
-type RegionCode string
-
-func (o RegionCode) DeepCopy() RegionCode {
 	return o
 }
 
@@ -212,7 +213,7 @@ func (e TeamType) String() string {
 	if v, ok := TeamTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type CompatibilityTeamID struct {
@@ -317,7 +318,7 @@ func (e TLFVisibility) String() string {
 	if v, ok := TLFVisibilityRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type TeamIDWithVisibility struct {
@@ -385,7 +386,7 @@ func (e SeqType) String() string {
 	if v, ok := SeqTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type Bytes32 [32]byte
@@ -503,28 +504,30 @@ func (o User) DeepCopy() User {
 }
 
 type Device struct {
-	Type         string   `codec:"type" json:"type"`
-	Name         string   `codec:"name" json:"name"`
-	DeviceID     DeviceID `codec:"deviceID" json:"deviceID"`
-	CTime        Time     `codec:"cTime" json:"cTime"`
-	MTime        Time     `codec:"mTime" json:"mTime"`
-	LastUsedTime Time     `codec:"lastUsedTime" json:"lastUsedTime"`
-	EncryptKey   KID      `codec:"encryptKey" json:"encryptKey"`
-	VerifyKey    KID      `codec:"verifyKey" json:"verifyKey"`
-	Status       int      `codec:"status" json:"status"`
+	Type               string   `codec:"type" json:"type"`
+	Name               string   `codec:"name" json:"name"`
+	DeviceID           DeviceID `codec:"deviceID" json:"deviceID"`
+	DeviceNumberOfType int      `codec:"deviceNumberOfType" json:"deviceNumberOfType"`
+	CTime              Time     `codec:"cTime" json:"cTime"`
+	MTime              Time     `codec:"mTime" json:"mTime"`
+	LastUsedTime       Time     `codec:"lastUsedTime" json:"lastUsedTime"`
+	EncryptKey         KID      `codec:"encryptKey" json:"encryptKey"`
+	VerifyKey          KID      `codec:"verifyKey" json:"verifyKey"`
+	Status             int      `codec:"status" json:"status"`
 }
 
 func (o Device) DeepCopy() Device {
 	return Device{
-		Type:         o.Type,
-		Name:         o.Name,
-		DeviceID:     o.DeviceID.DeepCopy(),
-		CTime:        o.CTime.DeepCopy(),
-		MTime:        o.MTime.DeepCopy(),
-		LastUsedTime: o.LastUsedTime.DeepCopy(),
-		EncryptKey:   o.EncryptKey.DeepCopy(),
-		VerifyKey:    o.VerifyKey.DeepCopy(),
-		Status:       o.Status,
+		Type:               o.Type,
+		Name:               o.Name,
+		DeviceID:           o.DeviceID.DeepCopy(),
+		DeviceNumberOfType: o.DeviceNumberOfType,
+		CTime:              o.CTime.DeepCopy(),
+		MTime:              o.MTime.DeepCopy(),
+		LastUsedTime:       o.LastUsedTime.DeepCopy(),
+		EncryptKey:         o.EncryptKey.DeepCopy(),
+		VerifyKey:          o.VerifyKey.DeepCopy(),
+		Status:             o.Status,
 	}
 }
 
@@ -551,7 +554,7 @@ func (e DeviceType) String() string {
 	if v, ok := DeviceTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type Stream struct {
@@ -605,7 +608,7 @@ func (e LogLevel) String() string {
 	if v, ok := LogLevelRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ClientType int
@@ -634,6 +637,20 @@ var ClientTypeRevMap = map[ClientType]string{
 	2: "GUI_MAIN",
 	3: "KBFS",
 	4: "GUI_HELPER",
+}
+
+type KBFSPathInfo struct {
+	StandardPath           string `codec:"standardPath" json:"standardPath"`
+	DeeplinkPath           string `codec:"deeplinkPath" json:"deeplinkPath"`
+	PlatformAfterMountPath string `codec:"platformAfterMountPath" json:"platformAfterMountPath"`
+}
+
+func (o KBFSPathInfo) DeepCopy() KBFSPathInfo {
+	return KBFSPathInfo{
+		StandardPath:           o.StandardPath,
+		DeeplinkPath:           o.DeeplinkPath,
+		PlatformAfterMountPath: o.PlatformAfterMountPath,
+	}
 }
 
 type UserVersionVector struct {
@@ -791,7 +808,7 @@ func (e UserOrTeamResult) String() string {
 	if v, ok := UserOrTeamResultRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type RemoteTrack struct {
@@ -929,7 +946,7 @@ func (e FullNamePackageVersion) String() string {
 	if v, ok := FullNamePackageVersionRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type FullNamePackage struct {
@@ -1003,7 +1020,7 @@ func (e IdentityVisibility) String() string {
 	if v, ok := IdentityVisibilityRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type SizedImage struct {
@@ -1041,7 +1058,7 @@ func (e OfflineAvailability) String() string {
 	if v, ok := OfflineAvailabilityRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ReacjiSkinTone int

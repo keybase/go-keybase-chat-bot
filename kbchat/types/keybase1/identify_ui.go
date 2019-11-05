@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/identify_ui.avdl
 
 package keybase1
+
+import (
+	"fmt"
+)
 
 type ProofResult struct {
 	State  ProofState  `codec:"state" json:"state"`
@@ -229,7 +233,7 @@ func (e CheckResultFreshness) String() string {
 	if v, ok := CheckResultFreshnessRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type CheckResult struct {
@@ -337,6 +341,7 @@ type UserCard struct {
 	FullName             string             `codec:"fullName" json:"fullName"`
 	Location             string             `codec:"location" json:"location"`
 	Bio                  string             `codec:"bio" json:"bio"`
+	BioDecorated         string             `codec:"bioDecorated" json:"bioDecorated"`
 	Website              string             `codec:"website" json:"website"`
 	Twitter              string             `codec:"twitter" json:"twitter"`
 	YouFollowThem        bool               `codec:"youFollowThem" json:"youFollowThem"`
@@ -354,6 +359,7 @@ func (o UserCard) DeepCopy() UserCard {
 		FullName:      o.FullName,
 		Location:      o.Location,
 		Bio:           o.Bio,
+		BioDecorated:  o.BioDecorated,
 		Website:       o.Website,
 		Twitter:       o.Twitter,
 		YouFollowThem: o.YouFollowThem,
@@ -413,7 +419,7 @@ func (e DismissReasonType) String() string {
 	if v, ok := DismissReasonTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type DismissReason struct {

@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/gregor_ui.avdl
 
 package keybase1
+
+import (
+	"fmt"
+)
 
 type PushReason int
 
@@ -29,5 +33,5 @@ func (e PushReason) String() string {
 	if v, ok := PushReasonRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }

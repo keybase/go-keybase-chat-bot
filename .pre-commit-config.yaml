@@ -5,3 +5,7 @@ repos:
     -   id: go-fmt
     -   id: go-vet
     -   id: go-lint
+        entry: run-go-lint.sh
+        language: script
+        files: \.go$
+        exclude: kbchat\/types\/.*$

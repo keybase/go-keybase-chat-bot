@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/stellar1/local.avdl
 
 package stellar1
+
+import (
+	"fmt"
+)
 
 type WalletAccountLocal struct {
 	AccountID           AccountID     `codec:"accountID" json:"accountID"`
@@ -115,7 +119,7 @@ func (e BalanceDelta) String() string {
 	if v, ok := BalanceDeltaRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PaymentStatus int
@@ -156,7 +160,7 @@ func (e PaymentStatus) String() string {
 	if v, ok := PaymentStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ParticipantType int
@@ -191,7 +195,7 @@ func (e ParticipantType) String() string {
 	if v, ok := ParticipantTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PaymentOrErrorLocal struct {
@@ -473,6 +477,7 @@ type BuildPaymentResLocal struct {
 	AmountErrMsg        string            `codec:"amountErrMsg" json:"amountErrMsg"`
 	SecretNoteErrMsg    string            `codec:"secretNoteErrMsg" json:"secretNoteErrMsg"`
 	PublicMemoErrMsg    string            `codec:"publicMemoErrMsg" json:"publicMemoErrMsg"`
+	PublicMemoOverride  string            `codec:"publicMemoOverride" json:"publicMemoOverride"`
 	WorthDescription    string            `codec:"worthDescription" json:"worthDescription"`
 	WorthInfo           string            `codec:"worthInfo" json:"worthInfo"`
 	WorthAmount         string            `codec:"worthAmount" json:"worthAmount"`
@@ -492,6 +497,7 @@ func (o BuildPaymentResLocal) DeepCopy() BuildPaymentResLocal {
 		AmountErrMsg:        o.AmountErrMsg,
 		SecretNoteErrMsg:    o.SecretNoteErrMsg,
 		PublicMemoErrMsg:    o.PublicMemoErrMsg,
+		PublicMemoOverride:  o.PublicMemoOverride,
 		WorthDescription:    o.WorthDescription,
 		WorthInfo:           o.WorthInfo,
 		WorthAmount:         o.WorthAmount,
@@ -540,7 +546,7 @@ func (e AdvancedBanner) String() string {
 	if v, ok := AdvancedBannerRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type SendBannerLocal struct {

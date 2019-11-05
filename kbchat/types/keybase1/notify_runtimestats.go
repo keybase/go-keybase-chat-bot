@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/notify_runtimestats.avdl
 
 package keybase1
+
+import (
+	"fmt"
+)
 
 type StatsSeverityLevel int
 
@@ -29,7 +33,7 @@ func (e StatsSeverityLevel) String() string {
 	if v, ok := StatsSeverityLevelRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type DbStats struct {
@@ -69,7 +73,7 @@ func (e ProcessType) String() string {
 	if v, ok := ProcessTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ProcessRuntimeStats struct {

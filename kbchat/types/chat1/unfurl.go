@@ -1,10 +1,13 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/chat1/unfurl.avdl
 
 package chat1
 
 import (
 	"errors"
+	"fmt"
+
+	gregor1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
 )
 
 type UnfurlType int
@@ -36,7 +39,7 @@ func (e UnfurlType) String() string {
 	if v, ok := UnfurlTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UnfurlVideo struct {
@@ -149,12 +152,16 @@ func (o UnfurlGiphyRaw) DeepCopy() UnfurlGiphyRaw {
 }
 
 type UnfurlMapsRaw struct {
-	Title           string  `codec:"title" json:"title"`
-	Url             string  `codec:"url" json:"url"`
-	SiteName        string  `codec:"siteName" json:"siteName"`
-	ImageUrl        string  `codec:"imageUrl" json:"imageUrl"`
-	HistoryImageUrl *string `codec:"historyImageUrl,omitempty" json:"historyImageUrl,omitempty"`
-	Description     string  `codec:"description" json:"description"`
+	Title               string        `codec:"title" json:"title"`
+	Url                 string        `codec:"url" json:"url"`
+	SiteName            string        `codec:"siteName" json:"siteName"`
+	ImageUrl            string        `codec:"imageUrl" json:"imageUrl"`
+	HistoryImageUrl     *string       `codec:"historyImageUrl,omitempty" json:"historyImageUrl,omitempty"`
+	Description         string        `codec:"description" json:"description"`
+	Coord               Coordinate    `codec:"coord" json:"coord"`
+	Time                gregor1.Time  `codec:"time" json:"time"`
+	LiveLocationEndTime *gregor1.Time `codec:"liveLocationEndTime,omitempty" json:"liveLocationEndTime,omitempty"`
+	LiveLocationDone    bool          `codec:"liveLocationDone" json:"liveLocationDone"`
 }
 
 func (o UnfurlMapsRaw) DeepCopy() UnfurlMapsRaw {
@@ -171,6 +178,16 @@ func (o UnfurlMapsRaw) DeepCopy() UnfurlMapsRaw {
 			return &tmp
 		})(o.HistoryImageUrl),
 		Description: o.Description,
+		Coord:       o.Coord.DeepCopy(),
+		Time:        o.Time.DeepCopy(),
+		LiveLocationEndTime: (func(x *gregor1.Time) *gregor1.Time {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.LiveLocationEndTime),
+		LiveLocationDone: o.LiveLocationDone,
 	}
 }
 
@@ -310,14 +327,37 @@ func (o UnfurlRaw) DeepCopy() UnfurlRaw {
 	}
 }
 
+type UnfurlGenericMapInfo struct {
+	Coord               Coordinate    `codec:"coord" json:"coord"`
+	Time                gregor1.Time  `codec:"time" json:"time"`
+	LiveLocationEndTime *gregor1.Time `codec:"liveLocationEndTime,omitempty" json:"liveLocationEndTime,omitempty"`
+	IsLiveLocationDone  bool          `codec:"isLiveLocationDone" json:"isLiveLocationDone"`
+}
+
+func (o UnfurlGenericMapInfo) DeepCopy() UnfurlGenericMapInfo {
+	return UnfurlGenericMapInfo{
+		Coord: o.Coord.DeepCopy(),
+		Time:  o.Time.DeepCopy(),
+		LiveLocationEndTime: (func(x *gregor1.Time) *gregor1.Time {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.LiveLocationEndTime),
+		IsLiveLocationDone: o.IsLiveLocationDone,
+	}
+}
+
 type UnfurlGeneric struct {
-	Title       string  `codec:"title" json:"title"`
-	Url         string  `codec:"url" json:"url"`
-	SiteName    string  `codec:"siteName" json:"siteName"`
-	Favicon     *Asset  `codec:"favicon,omitempty" json:"favicon,omitempty"`
-	Image       *Asset  `codec:"image,omitempty" json:"image,omitempty"`
-	PublishTime *int    `codec:"publishTime,omitempty" json:"publishTime,omitempty"`
-	Description *string `codec:"description,omitempty" json:"description,omitempty"`
+	Title       string                `codec:"title" json:"title"`
+	Url         string                `codec:"url" json:"url"`
+	SiteName    string                `codec:"siteName" json:"siteName"`
+	Favicon     *Asset                `codec:"favicon,omitempty" json:"favicon,omitempty"`
+	Image       *Asset                `codec:"image,omitempty" json:"image,omitempty"`
+	PublishTime *int                  `codec:"publishTime,omitempty" json:"publishTime,omitempty"`
+	Description *string               `codec:"description,omitempty" json:"description,omitempty"`
+	MapInfo     *UnfurlGenericMapInfo `codec:"mapInfo,omitempty" json:"mapInfo,omitempty"`
 }
 
 func (o UnfurlGeneric) DeepCopy() UnfurlGeneric {
@@ -353,6 +393,13 @@ func (o UnfurlGeneric) DeepCopy() UnfurlGeneric {
 			tmp := (*x)
 			return &tmp
 		})(o.Description),
+		MapInfo: (func(x *UnfurlGenericMapInfo) *UnfurlGenericMapInfo {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.MapInfo),
 	}
 }
 
@@ -530,13 +577,14 @@ func (o UnfurlImageDisplay) DeepCopy() UnfurlImageDisplay {
 }
 
 type UnfurlGenericDisplay struct {
-	Title       string              `codec:"title" json:"title"`
-	Url         string              `codec:"url" json:"url"`
-	SiteName    string              `codec:"siteName" json:"siteName"`
-	Favicon     *UnfurlImageDisplay `codec:"favicon,omitempty" json:"favicon,omitempty"`
-	Media       *UnfurlImageDisplay `codec:"media,omitempty" json:"media,omitempty"`
-	PublishTime *int                `codec:"publishTime,omitempty" json:"publishTime,omitempty"`
-	Description *string             `codec:"description,omitempty" json:"description,omitempty"`
+	Title       string                `codec:"title" json:"title"`
+	Url         string                `codec:"url" json:"url"`
+	SiteName    string                `codec:"siteName" json:"siteName"`
+	Favicon     *UnfurlImageDisplay   `codec:"favicon,omitempty" json:"favicon,omitempty"`
+	Media       *UnfurlImageDisplay   `codec:"media,omitempty" json:"media,omitempty"`
+	PublishTime *int                  `codec:"publishTime,omitempty" json:"publishTime,omitempty"`
+	Description *string               `codec:"description,omitempty" json:"description,omitempty"`
+	MapInfo     *UnfurlGenericMapInfo `codec:"mapInfo,omitempty" json:"mapInfo,omitempty"`
 }
 
 func (o UnfurlGenericDisplay) DeepCopy() UnfurlGenericDisplay {
@@ -572,6 +620,13 @@ func (o UnfurlGenericDisplay) DeepCopy() UnfurlGenericDisplay {
 			tmp := (*x)
 			return &tmp
 		})(o.Description),
+		MapInfo: (func(x *UnfurlGenericMapInfo) *UnfurlGenericMapInfo {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.MapInfo),
 	}
 }
 
@@ -746,7 +801,7 @@ func (e UnfurlMode) String() string {
 	if v, ok := UnfurlModeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UnfurlSettings struct {

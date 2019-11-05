@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/chat1/remote.avdl
 
 package chat1
 
 import (
 	"errors"
+	"fmt"
 
 	gregor1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
 	keybase1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
@@ -75,7 +76,7 @@ func (e MessageBoxedVersion) String() string {
 	if v, ok := MessageBoxedVersionRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ThreadViewBoxed struct {
@@ -368,7 +369,7 @@ func (e ChannelMention) String() string {
 	if v, ok := ChannelMentionRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UnreadUpdateFull struct {
@@ -546,7 +547,7 @@ func (e SyncAllProtVers) String() string {
 	if v, ok := SyncAllProtVersRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type SyncAllNotificationType int
@@ -572,7 +573,7 @@ func (e SyncAllNotificationType) String() string {
 	if v, ok := SyncAllNotificationTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type SyncAllNotificationRes struct {
@@ -848,7 +849,7 @@ func (e ExternalAPIKeyTyp) String() string {
 	if v, ok := ExternalAPIKeyTypRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ExternalAPIKey struct {
@@ -1062,18 +1063,20 @@ func (o RemoteBotCommandsAdvertisement) DeepCopy() RemoteBotCommandsAdvertisemen
 }
 
 type BotCommandConv struct {
-	Uid    gregor1.UID     `codec:"uid" json:"uid"`
-	ConvID ConversationID  `codec:"convID" json:"convID"`
-	Vers   CommandConvVers `codec:"vers" json:"vers"`
-	Mtime  gregor1.Time    `codec:"mtime" json:"mtime"`
+	Uid               gregor1.UID       `codec:"uid" json:"uid"`
+	UntrustedTeamRole keybase1.TeamRole `codec:"untrustedTeamRole" json:"untrustedTeamRole"`
+	ConvID            ConversationID    `codec:"convID" json:"convID"`
+	Vers              CommandConvVers   `codec:"vers" json:"vers"`
+	Mtime             gregor1.Time      `codec:"mtime" json:"mtime"`
 }
 
 func (o BotCommandConv) DeepCopy() BotCommandConv {
 	return BotCommandConv{
-		Uid:    o.Uid.DeepCopy(),
-		ConvID: o.ConvID.DeepCopy(),
-		Vers:   o.Vers.DeepCopy(),
-		Mtime:  o.Mtime.DeepCopy(),
+		Uid:               o.Uid.DeepCopy(),
+		UntrustedTeamRole: o.UntrustedTeamRole.DeepCopy(),
+		ConvID:            o.ConvID.DeepCopy(),
+		Vers:              o.Vers.DeepCopy(),
+		Mtime:             o.Mtime.DeepCopy(),
 	}
 }
 
@@ -1152,7 +1155,7 @@ func (e BotInfoResponseTyp) String() string {
 	if v, ok := BotInfoResponseTypRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type BotInfoResponse struct {

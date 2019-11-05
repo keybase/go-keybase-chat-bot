@@ -1,9 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/stellar1/common.avdl
 
 package stellar1
 
 import (
+	"fmt"
+
 	keybase1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )
 
@@ -82,6 +84,8 @@ type Asset struct {
 	WithdrawType       string `codec:"withdrawType" json:"withdrawType"`
 	TransferServer     string `codec:"transferServer" json:"transferServer"`
 	AuthEndpoint       string `codec:"authEndpoint" json:"authEndpoint"`
+	DepositReqAuth     bool   `codec:"depositReqAuth" json:"depositReqAuth"`
+	WithdrawReqAuth    bool   `codec:"withdrawReqAuth" json:"withdrawReqAuth"`
 }
 
 func (o Asset) DeepCopy() Asset {
@@ -101,6 +105,8 @@ func (o Asset) DeepCopy() Asset {
 		WithdrawType:       o.WithdrawType,
 		TransferServer:     o.TransferServer,
 		AuthEndpoint:       o.AuthEndpoint,
+		DepositReqAuth:     o.DepositReqAuth,
+		WithdrawReqAuth:    o.WithdrawReqAuth,
 	}
 }
 
@@ -186,7 +192,7 @@ func (e TransactionStatus) String() string {
 	if v, ok := TransactionStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type RequestStatus int
@@ -215,7 +221,7 @@ func (e RequestStatus) String() string {
 	if v, ok := RequestStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PaymentStrategy int
@@ -244,7 +250,7 @@ func (e PaymentStrategy) String() string {
 	if v, ok := PaymentStrategyRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type RelayDirection int
@@ -270,7 +276,7 @@ func (e RelayDirection) String() string {
 	if v, ok := RelayDirectionRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PaymentResult struct {
@@ -494,7 +500,7 @@ func (e AccountMode) String() string {
 	if v, ok := AccountModeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type Trustline struct {

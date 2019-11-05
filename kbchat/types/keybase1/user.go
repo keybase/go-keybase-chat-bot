@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/user.avdl
 
 package keybase1
+
+import (
+	"fmt"
+)
 
 type TrackProof struct {
 	ProofType string `codec:"proofType" json:"proofType"`
@@ -210,9 +214,10 @@ func (o UserSummary2Set) DeepCopy() UserSummary2Set {
 }
 
 type InterestingPerson struct {
-	Uid      UID    `codec:"uid" json:"uid"`
-	Username string `codec:"username" json:"username"`
-	Fullname string `codec:"fullname" json:"fullname"`
+	Uid        UID               `codec:"uid" json:"uid"`
+	Username   string            `codec:"username" json:"username"`
+	Fullname   string            `codec:"fullname" json:"fullname"`
+	ServiceMap map[string]string `codec:"serviceMap" json:"serviceMap"`
 }
 
 func (o InterestingPerson) DeepCopy() InterestingPerson {
@@ -220,6 +225,18 @@ func (o InterestingPerson) DeepCopy() InterestingPerson {
 		Uid:      o.Uid.DeepCopy(),
 		Username: o.Username,
 		Fullname: o.Fullname,
+		ServiceMap: (func(x map[string]string) map[string]string {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string]string, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := v
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.ServiceMap),
 	}
 }
 
@@ -246,14 +263,15 @@ func (o ProofSuggestionsRes) DeepCopy() ProofSuggestionsRes {
 }
 
 type ProofSuggestion struct {
-	Key           string             `codec:"key" json:"key"`
-	BelowFold     bool               `codec:"belowFold" json:"belowFold"`
-	ProfileText   string             `codec:"profileText" json:"profileText"`
-	ProfileIcon   []SizedImage       `codec:"profileIcon" json:"profileIcon"`
-	PickerText    string             `codec:"pickerText" json:"pickerText"`
-	PickerSubtext string             `codec:"pickerSubtext" json:"pickerSubtext"`
-	PickerIcon    []SizedImage       `codec:"pickerIcon" json:"pickerIcon"`
-	Metas         []Identify3RowMeta `codec:"metas" json:"metas"`
+	Key              string             `codec:"key" json:"key"`
+	BelowFold        bool               `codec:"belowFold" json:"belowFold"`
+	ProfileText      string             `codec:"profileText" json:"profileText"`
+	ProfileIcon      []SizedImage       `codec:"profileIcon" json:"profileIcon"`
+	ProfileIconWhite []SizedImage       `codec:"profileIconWhite" json:"profileIconWhite"`
+	PickerText       string             `codec:"pickerText" json:"pickerText"`
+	PickerSubtext    string             `codec:"pickerSubtext" json:"pickerSubtext"`
+	PickerIcon       []SizedImage       `codec:"pickerIcon" json:"pickerIcon"`
+	Metas            []Identify3RowMeta `codec:"metas" json:"metas"`
 }
 
 func (o ProofSuggestion) DeepCopy() ProofSuggestion {
@@ -272,6 +290,17 @@ func (o ProofSuggestion) DeepCopy() ProofSuggestion {
 			}
 			return ret
 		})(o.ProfileIcon),
+		ProfileIconWhite: (func(x []SizedImage) []SizedImage {
+			if x == nil {
+				return nil
+			}
+			ret := make([]SizedImage, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.ProfileIconWhite),
 		PickerText:    o.PickerText,
 		PickerSubtext: o.PickerSubtext,
 		PickerIcon: (func(x []SizedImage) []SizedImage {
@@ -315,16 +344,53 @@ func (o NextMerkleRootRes) DeepCopy() NextMerkleRootRes {
 	}
 }
 
+// PassphraseState values are used in .config.json, so should not be changed without a migration strategy
+type PassphraseState int
+
+const (
+	PassphraseState_KNOWN  PassphraseState = 0
+	PassphraseState_RANDOM PassphraseState = 1
+)
+
+func (o PassphraseState) DeepCopy() PassphraseState { return o }
+
+var PassphraseStateMap = map[string]PassphraseState{
+	"KNOWN":  0,
+	"RANDOM": 1,
+}
+
+var PassphraseStateRevMap = map[PassphraseState]string{
+	0: "KNOWN",
+	1: "RANDOM",
+}
+
+func (e PassphraseState) String() string {
+	if v, ok := PassphraseStateRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
+}
+
 type CanLogoutRes struct {
-	CanLogout     bool   `codec:"canLogout" json:"canLogout"`
-	Reason        string `codec:"reason" json:"reason"`
-	SetPassphrase bool   `codec:"setPassphrase" json:"setPassphrase"`
+	CanLogout       bool            `codec:"canLogout" json:"canLogout"`
+	Reason          string          `codec:"reason" json:"reason"`
+	PassphraseState PassphraseState `codec:"passphraseState" json:"passphraseState"`
 }
 
 func (o CanLogoutRes) DeepCopy() CanLogoutRes {
 	return CanLogoutRes{
-		CanLogout:     o.CanLogout,
-		Reason:        o.Reason,
-		SetPassphrase: o.SetPassphrase,
+		CanLogout:       o.CanLogout,
+		Reason:          o.Reason,
+		PassphraseState: o.PassphraseState.DeepCopy(),
+	}
+}
+
+type UserPassphraseStateMsg struct {
+	PassphraseState PassphraseState `codec:"passphraseState" json:"state"`
+}
+
+func (o UserPassphraseStateMsg) DeepCopy() UserPassphraseStateMsg {
+	return UserPassphraseStateMsg{
+		PassphraseState: o.PassphraseState.DeepCopy(),
 	}
 }

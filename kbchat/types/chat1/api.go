@@ -1,4 +1,4 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/chat1/api.avdl
 
 package chat1
@@ -24,10 +24,12 @@ func (o RateLimitRes) DeepCopy() RateLimitRes {
 	}
 }
 
+// A Keybase chat channel. This can be a channel in a team, or just an informal channel between two users.
+// name: the name of the team or comma-separated list of participants
 type ChatChannel struct {
 	Name        string `codec:"name" json:"name"`
-	Public      bool   `codec:"public" json:"public"`
-	MembersType string `codec:"membersType" json:"members_type"`
+	Public      bool   `codec:"public,omitempty" json:"public,omitempty"`
+	MembersType string `codec:"membersType,omitempty" json:"members_type,omitempty"`
 	TopicType   string `codec:"topicType,omitempty" json:"topic_type,omitempty"`
 	TopicName   string `codec:"topicName,omitempty" json:"topic_name,omitempty"`
 }
@@ -42,6 +44,7 @@ func (o ChatChannel) DeepCopy() ChatChannel {
 	}
 }
 
+// A chat message. The content goes in the `body` property!
 type ChatMessage struct {
 	Body string `codec:"body" json:"body"`
 }
@@ -65,6 +68,18 @@ func (o MsgSender) DeepCopy() MsgSender {
 		Username:   o.Username,
 		DeviceID:   o.DeviceID,
 		DeviceName: o.DeviceName,
+	}
+}
+
+type MsgBotInfo struct {
+	BotUID      string `codec:"botUID" json:"bot_uid"`
+	BotUsername string `codec:"botUsername,omitempty" json:"bot_username,omitempty"`
+}
+
+func (o MsgBotInfo) DeepCopy() MsgBotInfo {
+	return MsgBotInfo{
+		BotUID:      o.BotUID,
+		BotUsername: o.BotUsername,
 	}
 }
 
@@ -241,6 +256,7 @@ type MsgSummary struct {
 	AtMentionUsernames  []string                 `codec:"atMentionUsernames,omitempty" json:"at_mention_usernames,omitempty"`
 	ChannelMention      string                   `codec:"channelMention,omitempty" json:"channel_mention,omitempty"`
 	ChannelNameMentions []UIChannelNameMention   `codec:"channelNameMentions,omitempty" json:"channel_name_mentions,omitempty"`
+	BotInfo             *MsgBotInfo              `codec:"botInfo,omitempty" json:"bot_info,omitempty"`
 }
 
 func (o MsgSummary) DeepCopy() MsgSummary {
@@ -301,6 +317,13 @@ func (o MsgSummary) DeepCopy() MsgSummary {
 			}
 			return ret
 		})(o.ChannelNameMentions),
+		BotInfo: (func(x *MsgBotInfo) *MsgBotInfo {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.BotInfo),
 	}
 }
 
@@ -382,6 +405,7 @@ func (o Thread) DeepCopy() Thread {
 	}
 }
 
+// A chat conversation. This is essentially a chat channel plus some additional metadata.
 type ConvSummary struct {
 	Id           string                    `codec:"id" json:"id"`
 	Channel      ChatChannel               `codec:"channel" json:"channel"`
@@ -779,5 +803,85 @@ func (o AdvertiseCommandAPIParam) DeepCopy() AdvertiseCommandAPIParam {
 			return ret
 		})(o.Commands),
 		TeamName: o.TeamName,
+	}
+}
+
+type ResetConvMemberAPI struct {
+	ConversationID string `codec:"conversationID" json:"conversationID"`
+	Username       string `codec:"username" json:"username"`
+}
+
+func (o ResetConvMemberAPI) DeepCopy() ResetConvMemberAPI {
+	return ResetConvMemberAPI{
+		ConversationID: o.ConversationID,
+		Username:       o.Username,
+	}
+}
+
+type GetResetConvMembersRes struct {
+	Members    []ResetConvMemberAPI `codec:"members" json:"members"`
+	RateLimits []RateLimitRes       `codec:"rateLimits" json:"rateLimits"`
+}
+
+func (o GetResetConvMembersRes) DeepCopy() GetResetConvMembersRes {
+	return GetResetConvMembersRes{
+		Members: (func(x []ResetConvMemberAPI) []ResetConvMemberAPI {
+			if x == nil {
+				return nil
+			}
+			ret := make([]ResetConvMemberAPI, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Members),
+		RateLimits: (func(x []RateLimitRes) []RateLimitRes {
+			if x == nil {
+				return nil
+			}
+			ret := make([]RateLimitRes, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.RateLimits),
+	}
+}
+
+type DeviceInfo struct {
+	DeviceID          string `codec:"deviceID" json:"id"`
+	DeviceDescription string `codec:"deviceDescription" json:"description"`
+	DeviceType        string `codec:"deviceType" json:"type"`
+	DeviceCtime       int64  `codec:"deviceCtime" json:"ctime"`
+}
+
+func (o DeviceInfo) DeepCopy() DeviceInfo {
+	return DeviceInfo{
+		DeviceID:          o.DeviceID,
+		DeviceDescription: o.DeviceDescription,
+		DeviceType:        o.DeviceType,
+		DeviceCtime:       o.DeviceCtime,
+	}
+}
+
+type GetDeviceInfoRes struct {
+	Devices []DeviceInfo `codec:"devices" json:"devices"`
+}
+
+func (o GetDeviceInfoRes) DeepCopy() GetDeviceInfoRes {
+	return GetDeviceInfoRes{
+		Devices: (func(x []DeviceInfo) []DeviceInfo {
+			if x == nil {
+				return nil
+			}
+			ret := make([]DeviceInfo, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Devices),
 	}
 }

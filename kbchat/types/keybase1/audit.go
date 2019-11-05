@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/audit.avdl
 
 package keybase1
+
+import (
+	"fmt"
+)
 
 type BoxAuditAttemptResult int
 
@@ -38,7 +42,7 @@ func (e BoxAuditAttemptResult) String() string {
 	if v, ok := BoxAuditAttemptResultRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type BoxAuditAttempt struct {

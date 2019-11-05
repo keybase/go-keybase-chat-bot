@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/stellar1/bundle.avdl
 
 package stellar1
 
 import (
 	"errors"
+	"fmt"
 
 	keybase1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )
@@ -83,7 +84,7 @@ func (e BundleVersion) String() string {
 	if v, ok := BundleVersionRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type BundleSecretVersioned struct {
@@ -553,7 +554,7 @@ func (e AccountBundleVersion) String() string {
 	if v, ok := AccountBundleVersionRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type AccountBundleSecretVersioned struct {
