@@ -15,8 +15,9 @@ import (
 )
 
 type keybaseTestConfig struct {
-	Bots  map[string]*OneshotOptions
-	Teams map[string]chat1.ChatChannel
+	Keybase string
+	Bots    map[string]*OneshotOptions
+	Teams   map[string]chat1.ChatChannel
 }
 
 func readAndParseTestConfig(t *testing.T) (config keybaseTestConfig) {
@@ -31,9 +32,13 @@ func readAndParseTestConfig(t *testing.T) (config keybaseTestConfig) {
 
 func testBotSetup(t *testing.T, botName string) (bot *API, dir string) {
 	config := readAndParseTestConfig(t)
+	kbLocation := whichKeybase(t)
+	if len(config.Keybase) > 0 {
+		kbLocation = config.Keybase
+	}
 	dir = randomTempDir(t)
-	kbLocation := prepWorkingDir(t, dir)
-	bot, err := Start(RunOptions{KeybaseLocation: kbLocation, HomeDir: dir, Oneshot: config.Bots[botName], StartService: true})
+	kbTmpLocation := prepWorkingDir(t, dir, kbLocation)
+	bot, err := Start(RunOptions{KeybaseLocation: kbTmpLocation, HomeDir: dir, Oneshot: config.Bots[botName], StartService: true})
 	require.NoError(t, err)
 	return bot, dir
 }

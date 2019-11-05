@@ -1,5 +1,6 @@
 # Rename this file to `test_config.yaml`
 
+keybase: "/path/to/keybase"
 bots:
   # Alice should have an active Stellar account with a little bit of XLM in it
   alice:
