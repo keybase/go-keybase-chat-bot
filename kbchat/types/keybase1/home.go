@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/home.avdl
 
 package keybase1
 
 import (
 	"errors"
+	"fmt"
 )
 
 type HomeScreenItemID string
@@ -39,7 +40,7 @@ func (e HomeScreenItemType) String() string {
 	if v, ok := HomeScreenItemTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type HomeScreenItemData struct {
@@ -250,7 +251,7 @@ func (e AppLinkType) String() string {
 	if v, ok := AppLinkTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type HomeScreenAnnouncementID int
@@ -363,7 +364,7 @@ func (e HomeScreenTodoType) String() string {
 	if v, ok := HomeScreenTodoTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 // Most of TODO items do not carry additional data, but some do. e.g. TODO
@@ -553,6 +554,8 @@ type HomeScreenPeopleNotificationType int
 const (
 	HomeScreenPeopleNotificationType_FOLLOWED       HomeScreenPeopleNotificationType = 1
 	HomeScreenPeopleNotificationType_FOLLOWED_MULTI HomeScreenPeopleNotificationType = 2
+	HomeScreenPeopleNotificationType_CONTACT        HomeScreenPeopleNotificationType = 3
+	HomeScreenPeopleNotificationType_CONTACT_MULTI  HomeScreenPeopleNotificationType = 4
 )
 
 func (o HomeScreenPeopleNotificationType) DeepCopy() HomeScreenPeopleNotificationType { return o }
@@ -560,18 +563,22 @@ func (o HomeScreenPeopleNotificationType) DeepCopy() HomeScreenPeopleNotificatio
 var HomeScreenPeopleNotificationTypeMap = map[string]HomeScreenPeopleNotificationType{
 	"FOLLOWED":       1,
 	"FOLLOWED_MULTI": 2,
+	"CONTACT":        3,
+	"CONTACT_MULTI":  4,
 }
 
 var HomeScreenPeopleNotificationTypeRevMap = map[HomeScreenPeopleNotificationType]string{
 	1: "FOLLOWED",
 	2: "FOLLOWED_MULTI",
+	3: "CONTACT",
+	4: "CONTACT_MULTI",
 }
 
 func (e HomeScreenPeopleNotificationType) String() string {
 	if v, ok := HomeScreenPeopleNotificationTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type HomeScreenPeopleNotificationFollowed struct {
@@ -610,10 +617,50 @@ func (o HomeScreenPeopleNotificationFollowedMulti) DeepCopy() HomeScreenPeopleNo
 	}
 }
 
+type HomeScreenPeopleNotificationContact struct {
+	ResolveTime         Time   `codec:"resolveTime" json:"resolveTime"`
+	Username            string `codec:"username" json:"username"`
+	Description         string `codec:"description" json:"description"`
+	ResolvedContactBlob string `codec:"resolvedContactBlob" json:"resolvedContactBlob"`
+}
+
+func (o HomeScreenPeopleNotificationContact) DeepCopy() HomeScreenPeopleNotificationContact {
+	return HomeScreenPeopleNotificationContact{
+		ResolveTime:         o.ResolveTime.DeepCopy(),
+		Username:            o.Username,
+		Description:         o.Description,
+		ResolvedContactBlob: o.ResolvedContactBlob,
+	}
+}
+
+type HomeScreenPeopleNotificationContactMulti struct {
+	Contacts  []HomeScreenPeopleNotificationContact `codec:"contacts" json:"contacts"`
+	NumOthers int                                   `codec:"numOthers" json:"numOthers"`
+}
+
+func (o HomeScreenPeopleNotificationContactMulti) DeepCopy() HomeScreenPeopleNotificationContactMulti {
+	return HomeScreenPeopleNotificationContactMulti{
+		Contacts: (func(x []HomeScreenPeopleNotificationContact) []HomeScreenPeopleNotificationContact {
+			if x == nil {
+				return nil
+			}
+			ret := make([]HomeScreenPeopleNotificationContact, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Contacts),
+		NumOthers: o.NumOthers,
+	}
+}
+
 type HomeScreenPeopleNotification struct {
 	T__             HomeScreenPeopleNotificationType           `codec:"t" json:"t"`
 	Followed__      *HomeScreenPeopleNotificationFollowed      `codec:"followed,omitempty" json:"followed,omitempty"`
 	FollowedMulti__ *HomeScreenPeopleNotificationFollowedMulti `codec:"followedMulti,omitempty" json:"followedMulti,omitempty"`
+	Contact__       *HomeScreenPeopleNotificationContact       `codec:"contact,omitempty" json:"contact,omitempty"`
+	ContactMulti__  *HomeScreenPeopleNotificationContactMulti  `codec:"contactMulti,omitempty" json:"contactMulti,omitempty"`
 }
 
 func (o *HomeScreenPeopleNotification) T() (ret HomeScreenPeopleNotificationType, err error) {
@@ -626,6 +673,16 @@ func (o *HomeScreenPeopleNotification) T() (ret HomeScreenPeopleNotificationType
 	case HomeScreenPeopleNotificationType_FOLLOWED_MULTI:
 		if o.FollowedMulti__ == nil {
 			err = errors.New("unexpected nil value for FollowedMulti__")
+			return ret, err
+		}
+	case HomeScreenPeopleNotificationType_CONTACT:
+		if o.Contact__ == nil {
+			err = errors.New("unexpected nil value for Contact__")
+			return ret, err
+		}
+	case HomeScreenPeopleNotificationType_CONTACT_MULTI:
+		if o.ContactMulti__ == nil {
+			err = errors.New("unexpected nil value for ContactMulti__")
 			return ret, err
 		}
 	}
@@ -652,6 +709,26 @@ func (o HomeScreenPeopleNotification) FollowedMulti() (res HomeScreenPeopleNotif
 	return *o.FollowedMulti__
 }
 
+func (o HomeScreenPeopleNotification) Contact() (res HomeScreenPeopleNotificationContact) {
+	if o.T__ != HomeScreenPeopleNotificationType_CONTACT {
+		panic("wrong case accessed")
+	}
+	if o.Contact__ == nil {
+		return
+	}
+	return *o.Contact__
+}
+
+func (o HomeScreenPeopleNotification) ContactMulti() (res HomeScreenPeopleNotificationContactMulti) {
+	if o.T__ != HomeScreenPeopleNotificationType_CONTACT_MULTI {
+		panic("wrong case accessed")
+	}
+	if o.ContactMulti__ == nil {
+		return
+	}
+	return *o.ContactMulti__
+}
+
 func NewHomeScreenPeopleNotificationWithFollowed(v HomeScreenPeopleNotificationFollowed) HomeScreenPeopleNotification {
 	return HomeScreenPeopleNotification{
 		T__:        HomeScreenPeopleNotificationType_FOLLOWED,
@@ -663,6 +740,20 @@ func NewHomeScreenPeopleNotificationWithFollowedMulti(v HomeScreenPeopleNotifica
 	return HomeScreenPeopleNotification{
 		T__:             HomeScreenPeopleNotificationType_FOLLOWED_MULTI,
 		FollowedMulti__: &v,
+	}
+}
+
+func NewHomeScreenPeopleNotificationWithContact(v HomeScreenPeopleNotificationContact) HomeScreenPeopleNotification {
+	return HomeScreenPeopleNotification{
+		T__:       HomeScreenPeopleNotificationType_CONTACT,
+		Contact__: &v,
+	}
+}
+
+func NewHomeScreenPeopleNotificationWithContactMulti(v HomeScreenPeopleNotificationContactMulti) HomeScreenPeopleNotification {
+	return HomeScreenPeopleNotification{
+		T__:            HomeScreenPeopleNotificationType_CONTACT_MULTI,
+		ContactMulti__: &v,
 	}
 }
 
@@ -683,6 +774,20 @@ func (o HomeScreenPeopleNotification) DeepCopy() HomeScreenPeopleNotification {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.FollowedMulti__),
+		Contact__: (func(x *HomeScreenPeopleNotificationContact) *HomeScreenPeopleNotificationContact {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Contact__),
+		ContactMulti__: (func(x *HomeScreenPeopleNotificationContactMulti) *HomeScreenPeopleNotificationContactMulti {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.ContactMulti__),
 	}
 }
 

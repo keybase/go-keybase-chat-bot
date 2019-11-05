@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/chat1/notify.avdl
 
 package chat1
 
 import (
 	"errors"
+	"fmt"
 
 	keybase1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )
@@ -32,7 +33,7 @@ func (e ChatActivitySource) String() string {
 	if v, ok := ChatActivitySourceRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ChatActivityType int
@@ -91,7 +92,7 @@ func (e ChatActivityType) String() string {
 	if v, ok := ChatActivityTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type IncomingMessage struct {
@@ -793,7 +794,6 @@ type StaleUpdateType int
 const (
 	StaleUpdateType_CLEAR       StaleUpdateType = 0
 	StaleUpdateType_NEWACTIVITY StaleUpdateType = 1
-	StaleUpdateType_CONVUPDATE  StaleUpdateType = 2
 )
 
 func (o StaleUpdateType) DeepCopy() StaleUpdateType { return o }
@@ -801,20 +801,18 @@ func (o StaleUpdateType) DeepCopy() StaleUpdateType { return o }
 var StaleUpdateTypeMap = map[string]StaleUpdateType{
 	"CLEAR":       0,
 	"NEWACTIVITY": 1,
-	"CONVUPDATE":  2,
 }
 
 var StaleUpdateTypeRevMap = map[StaleUpdateType]string{
 	0: "CLEAR",
 	1: "NEWACTIVITY",
-	2: "CONVUPDATE",
 }
 
 func (e StaleUpdateType) String() string {
 	if v, ok := StaleUpdateTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ConversationStaleUpdate struct {

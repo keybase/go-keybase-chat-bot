@@ -1,4 +1,4 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/teambot.avdl
 
 package keybase1
@@ -14,6 +14,7 @@ type TeambotKeyMetadata struct {
 	Generation    TeambotKeyGeneration `codec:"generation" json:"generation"`
 	Uid           UID                  `codec:"uid" json:"uid"`
 	PukGeneration PerUserKeyGeneration `codec:"pukGeneration" json:"puk_generation"`
+	Application   TeamApplication      `codec:"application" json:"application"`
 }
 
 func (o TeambotKeyMetadata) DeepCopy() TeambotKeyMetadata {
@@ -22,6 +23,7 @@ func (o TeambotKeyMetadata) DeepCopy() TeambotKeyMetadata {
 		Generation:    o.Generation.DeepCopy(),
 		Uid:           o.Uid.DeepCopy(),
 		PukGeneration: o.PukGeneration.DeepCopy(),
+		Application:   o.Application.DeepCopy(),
 	}
 }
 

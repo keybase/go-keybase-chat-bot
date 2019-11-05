@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/favorite.avdl
 
 package keybase1
 
 import (
 	"errors"
+	"fmt"
 )
 
 type FolderType int
@@ -36,7 +37,7 @@ func (e FolderType) String() string {
 	if v, ok := FolderTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type FolderConflictType int
@@ -68,7 +69,7 @@ func (e FolderConflictType) String() string {
 	if v, ok := FolderConflictTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ConflictStateType int
@@ -94,7 +95,7 @@ func (e ConflictStateType) String() string {
 	if v, ok := ConflictStateTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type FolderNormalView struct {

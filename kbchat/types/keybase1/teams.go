@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/teams.avdl
 
 package keybase1
 
 import (
 	"errors"
+	"fmt"
 )
 
 type TeamRole int
@@ -45,7 +46,7 @@ func (e TeamRole) String() string {
 	if v, ok := TeamRoleRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type TeamApplication int
@@ -57,6 +58,7 @@ const (
 	TeamApplication_GIT_METADATA        TeamApplication = 4
 	TeamApplication_SEITAN_INVITE_TOKEN TeamApplication = 5
 	TeamApplication_STELLAR_RELAY       TeamApplication = 6
+	TeamApplication_KVSTORE             TeamApplication = 7
 )
 
 func (o TeamApplication) DeepCopy() TeamApplication { return o }
@@ -68,6 +70,7 @@ var TeamApplicationMap = map[string]TeamApplication{
 	"GIT_METADATA":        4,
 	"SEITAN_INVITE_TOKEN": 5,
 	"STELLAR_RELAY":       6,
+	"KVSTORE":             7,
 }
 
 var TeamApplicationRevMap = map[TeamApplication]string{
@@ -77,13 +80,14 @@ var TeamApplicationRevMap = map[TeamApplication]string{
 	4: "GIT_METADATA",
 	5: "SEITAN_INVITE_TOKEN",
 	6: "STELLAR_RELAY",
+	7: "KVSTORE",
 }
 
 func (e TeamApplication) String() string {
 	if v, ok := TeamApplicationRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type TeamStatus int
@@ -115,7 +119,36 @@ func (e TeamStatus) String() string {
 	if v, ok := TeamStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
+}
+
+type AuditMode int
+
+const (
+	AuditMode_STANDARD     AuditMode = 0
+	AuditMode_JUST_CREATED AuditMode = 1
+	AuditMode_SKIP         AuditMode = 2
+)
+
+func (o AuditMode) DeepCopy() AuditMode { return o }
+
+var AuditModeMap = map[string]AuditMode{
+	"STANDARD":     0,
+	"JUST_CREATED": 1,
+	"SKIP":         2,
+}
+
+var AuditModeRevMap = map[AuditMode]string{
+	0: "STANDARD",
+	1: "JUST_CREATED",
+	2: "SKIP",
+}
+
+func (e AuditMode) String() string {
+	if v, ok := AuditModeRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PerTeamKeyGeneration int
@@ -144,7 +177,7 @@ func (e PTKType) String() string {
 	if v, ok := PTKTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PerTeamSeedCheckVersion int
@@ -167,7 +200,7 @@ func (e PerTeamSeedCheckVersion) String() string {
 	if v, ok := PerTeamSeedCheckVersionRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PerTeamSeedCheck struct {
@@ -441,7 +474,7 @@ func (e TeamMemberStatus) String() string {
 	if v, ok := TeamMemberStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type TeamMemberDetails struct {
@@ -937,7 +970,7 @@ func (e RatchetType) String() string {
 	if v, ok := RatchetTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type HiddenTeamChainRatchetSet struct {
@@ -968,6 +1001,7 @@ type HiddenTeamChain struct {
 	Frozen            bool                           `codec:"frozen" json:"frozen"`
 	Tombstoned        bool                           `codec:"tombstoned" json:"tombstoned"`
 	Last              Seqno                          `codec:"last" json:"last"`
+	LastFull          Seqno                          `codec:"lastFull" json:"lastFull"`
 	LatestSeqnoHint   Seqno                          `codec:"latestSeqnoHint" json:"latestSeqnoHint"`
 	LastPerTeamKeys   map[PTKType]Seqno              `codec:"lastPerTeamKeys" json:"lastPerTeamKeys"`
 	Outer             map[Seqno]LinkID               `codec:"outer" json:"outer"`
@@ -987,6 +1021,7 @@ func (o HiddenTeamChain) DeepCopy() HiddenTeamChain {
 		Frozen:          o.Frozen,
 		Tombstoned:      o.Tombstoned,
 		Last:            o.Last.DeepCopy(),
+		LastFull:        o.LastFull.DeepCopy(),
 		LatestSeqnoHint: o.LatestSeqnoHint.DeepCopy(),
 		LastPerTeamKeys: (func(x map[PTKType]Seqno) map[PTKType]Seqno {
 			if x == nil {
@@ -1307,7 +1342,7 @@ func (e AuditVersion) String() string {
 	if v, ok := AuditVersionRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type AuditHistory struct {
@@ -1417,7 +1452,7 @@ func (e TeamInviteCategory) String() string {
 	if v, ok := TeamInviteCategoryRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type TeamInviteType struct {
@@ -2151,7 +2186,7 @@ func (e SeitanKeyAndLabelVersion) String() string {
 	if v, ok := SeitanKeyAndLabelVersionRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type SeitanKeyAndLabel struct {
@@ -2280,7 +2315,7 @@ func (e SeitanKeyLabelType) String() string {
 	if v, ok := SeitanKeyLabelTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type SeitanKeyLabel struct {
@@ -2508,8 +2543,8 @@ type LoadTeamArg struct {
 	ForceRepoll               bool           `codec:"forceRepoll" json:"forceRepoll"`
 	StaleOK                   bool           `codec:"staleOK" json:"staleOK"`
 	AllowNameLookupBurstCache bool           `codec:"allowNameLookupBurstCache" json:"allowNameLookupBurstCache"`
-	SkipAudit                 bool           `codec:"skipAudit" json:"skipAudit"`
 	SkipNeedHiddenRotateCheck bool           `codec:"skipNeedHiddenRotateCheck" json:"skipNeedHiddenRotateCheck"`
+	AuditMode                 AuditMode      `codec:"auditMode" json:"auditMode"`
 }
 
 func (o LoadTeamArg) DeepCopy() LoadTeamArg {
@@ -2524,8 +2559,8 @@ func (o LoadTeamArg) DeepCopy() LoadTeamArg {
 		ForceRepoll:               o.ForceRepoll,
 		StaleOK:                   o.StaleOK,
 		AllowNameLookupBurstCache: o.AllowNameLookupBurstCache,
-		SkipAudit:                 o.SkipAudit,
 		SkipNeedHiddenRotateCheck: o.SkipNeedHiddenRotateCheck,
+		AuditMode:                 o.AuditMode.DeepCopy(),
 	}
 }
 
@@ -2812,12 +2847,14 @@ func (o TeamTreeEntry) DeepCopy() TeamTreeEntry {
 
 type SubteamListEntry struct {
 	Name        TeamName `codec:"name" json:"name"`
+	TeamID      TeamID   `codec:"teamID" json:"teamID"`
 	MemberCount int      `codec:"memberCount" json:"memberCount"`
 }
 
 func (o SubteamListEntry) DeepCopy() SubteamListEntry {
 	return SubteamListEntry{
 		Name:        o.Name.DeepCopy(),
+		TeamID:      o.TeamID.DeepCopy(),
 		MemberCount: o.MemberCount,
 	}
 }
@@ -3213,7 +3250,7 @@ func (e RotationType) String() string {
 	if v, ok := RotationTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type TeamDebugRes struct {
@@ -3261,5 +3298,126 @@ func (o MemberUsername) DeepCopy() MemberUsername {
 	return MemberUsername{
 		Username: o.Username,
 		Role:     o.Role,
+	}
+}
+
+type TeamRolePair struct {
+	Role         TeamRole `codec:"role" json:"role"`
+	ImplicitRole TeamRole `codec:"implicitRole" json:"implicit_role"`
+}
+
+func (o TeamRolePair) DeepCopy() TeamRolePair {
+	return TeamRolePair{
+		Role:         o.Role.DeepCopy(),
+		ImplicitRole: o.ImplicitRole.DeepCopy(),
+	}
+}
+
+type TeamRoleMapAndVersion struct {
+	Teams   map[TeamID]TeamRolePair `codec:"teams" json:"teams"`
+	Version UserTeamVersion         `codec:"version" json:"user_team_version"`
+}
+
+func (o TeamRoleMapAndVersion) DeepCopy() TeamRoleMapAndVersion {
+	return TeamRoleMapAndVersion{
+		Teams: (func(x map[TeamID]TeamRolePair) map[TeamID]TeamRolePair {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[TeamID]TeamRolePair, len(x))
+			for k, v := range x {
+				kCopy := k.DeepCopy()
+				vCopy := v.DeepCopy()
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.Teams),
+		Version: o.Version.DeepCopy(),
+	}
+}
+
+type TeamRoleMapStored struct {
+	Data     TeamRoleMapAndVersion `codec:"data" json:"data"`
+	CachedAt Time                  `codec:"cachedAt" json:"cachedAt"`
+}
+
+func (o TeamRoleMapStored) DeepCopy() TeamRoleMapStored {
+	return TeamRoleMapStored{
+		Data:     o.Data.DeepCopy(),
+		CachedAt: o.CachedAt.DeepCopy(),
+	}
+}
+
+type UserTeamVersion int
+
+func (o UserTeamVersion) DeepCopy() UserTeamVersion {
+	return o
+}
+
+type UserTeamVersionUpdate struct {
+	Version UserTeamVersion `codec:"version" json:"version"`
+}
+
+func (o UserTeamVersionUpdate) DeepCopy() UserTeamVersionUpdate {
+	return UserTeamVersionUpdate{
+		Version: o.Version.DeepCopy(),
+	}
+}
+
+type AnnotatedTeam struct {
+	TeamID                       TeamID                `codec:"teamID" json:"teamID"`
+	Name                         string                `codec:"name" json:"name"`
+	TransitiveSubteamsUnverified SubteamListResult     `codec:"transitiveSubteamsUnverified" json:"transitiveSubteamsUnverified"`
+	Members                      []TeamMemberDetails   `codec:"members" json:"members"`
+	Invites                      []AnnotatedTeamInvite `codec:"invites" json:"invites"`
+	JoinRequests                 []TeamJoinRequest     `codec:"joinRequests" json:"joinRequests"`
+	UserIsShowcasing             bool                  `codec:"userIsShowcasing" json:"userIsShowcasing"`
+	TarsDisabled                 bool                  `codec:"tarsDisabled" json:"tarsDisabled"`
+	Settings                     TeamSettings          `codec:"settings" json:"settings"`
+	Showcase                     TeamShowcase          `codec:"showcase" json:"showcase"`
+}
+
+func (o AnnotatedTeam) DeepCopy() AnnotatedTeam {
+	return AnnotatedTeam{
+		TeamID:                       o.TeamID.DeepCopy(),
+		Name:                         o.Name,
+		TransitiveSubteamsUnverified: o.TransitiveSubteamsUnverified.DeepCopy(),
+		Members: (func(x []TeamMemberDetails) []TeamMemberDetails {
+			if x == nil {
+				return nil
+			}
+			ret := make([]TeamMemberDetails, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Members),
+		Invites: (func(x []AnnotatedTeamInvite) []AnnotatedTeamInvite {
+			if x == nil {
+				return nil
+			}
+			ret := make([]AnnotatedTeamInvite, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Invites),
+		JoinRequests: (func(x []TeamJoinRequest) []TeamJoinRequest {
+			if x == nil {
+				return nil
+			}
+			ret := make([]TeamJoinRequest, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.JoinRequests),
+		UserIsShowcasing: o.UserIsShowcasing,
+		TarsDisabled:     o.TarsDisabled,
+		Settings:         o.Settings.DeepCopy(),
+		Showcase:         o.Showcase.DeepCopy(),
 	}
 }

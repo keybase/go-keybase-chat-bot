@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/simple_fs.avdl
 
 package keybase1
 
 import (
 	"errors"
+	"fmt"
 )
 
 type OpID [16]byte
@@ -50,7 +51,7 @@ func (e KBFSArchivedType) String() string {
 	if v, ok := KBFSArchivedTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type KBFSArchivedParam struct {
@@ -253,7 +254,7 @@ func (e PathType) String() string {
 	if v, ok := PathTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type Path struct {
@@ -391,7 +392,7 @@ func (e DirentType) String() string {
 	if v, ok := DirentTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PrefetchStatus int
@@ -420,7 +421,7 @@ func (e PrefetchStatus) String() string {
 	if v, ok := PrefetchStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PrefetchProgress struct {
@@ -498,7 +499,7 @@ func (e RevisionSpanType) String() string {
 	if v, ok := RevisionSpanTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ErrorNum int
@@ -542,7 +543,7 @@ func (e OpenFlags) String() string {
 	if v, ok := OpenFlagsRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type Progress int
@@ -634,7 +635,7 @@ func (e AsyncOps) String() string {
 	if v, ok := AsyncOpsRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ListFilter int
@@ -663,7 +664,7 @@ func (e ListFilter) String() string {
 	if v, ok := ListFilterRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ListArgs struct {
@@ -1116,18 +1117,6 @@ func (o OpProgress) DeepCopy() OpProgress {
 	}
 }
 
-type SimpleFSGetHTTPAddressAndTokenResponse struct {
-	Address string `codec:"address" json:"address"`
-	Token   string `codec:"token" json:"token"`
-}
-
-func (o SimpleFSGetHTTPAddressAndTokenResponse) DeepCopy() SimpleFSGetHTTPAddressAndTokenResponse {
-	return SimpleFSGetHTTPAddressAndTokenResponse{
-		Address: o.Address,
-		Token:   o.Token,
-	}
-}
-
 type SimpleFSQuotaUsage struct {
 	UsageBytes      int64 `codec:"usageBytes" json:"usageBytes"`
 	ArchiveBytes    int64 `codec:"archiveBytes" json:"archiveBytes"`
@@ -1174,7 +1163,7 @@ func (e FolderSyncMode) String() string {
 	if v, ok := FolderSyncModeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type FolderSyncConfig struct {
@@ -1247,6 +1236,22 @@ func (o SyncConfigAndStatusRes) DeepCopy() SyncConfigAndStatusRes {
 	}
 }
 
+type FolderWithFavFlags struct {
+	Folder     Folder `codec:"folder" json:"folder"`
+	IsFavorite bool   `codec:"isFavorite" json:"isFavorite"`
+	IsIgnored  bool   `codec:"isIgnored" json:"isIgnored"`
+	IsNew      bool   `codec:"isNew" json:"isNew"`
+}
+
+func (o FolderWithFavFlags) DeepCopy() FolderWithFavFlags {
+	return FolderWithFavFlags{
+		Folder:     o.Folder.DeepCopy(),
+		IsFavorite: o.IsFavorite,
+		IsIgnored:  o.IsIgnored,
+		IsNew:      o.IsNew,
+	}
+}
+
 type FSSettings struct {
 	SpaceAvailableNotificationThreshold int64 `codec:"spaceAvailableNotificationThreshold" json:"spaceAvailableNotificationThreshold"`
 }
@@ -1306,30 +1311,36 @@ func (o SimpleFSStats) DeepCopy() SimpleFSStats {
 type SubscriptionTopic int
 
 const (
-	SubscriptionTopic_FAVORITES      SubscriptionTopic = 0
-	SubscriptionTopic_JOURNAL_STATUS SubscriptionTopic = 1
-	SubscriptionTopic_ONLINE_STATUS  SubscriptionTopic = 2
+	SubscriptionTopic_FAVORITES       SubscriptionTopic = 0
+	SubscriptionTopic_JOURNAL_STATUS  SubscriptionTopic = 1
+	SubscriptionTopic_ONLINE_STATUS   SubscriptionTopic = 2
+	SubscriptionTopic_DOWNLOAD_STATUS SubscriptionTopic = 3
+	SubscriptionTopic_FILES_TAB_BADGE SubscriptionTopic = 4
 )
 
 func (o SubscriptionTopic) DeepCopy() SubscriptionTopic { return o }
 
 var SubscriptionTopicMap = map[string]SubscriptionTopic{
-	"FAVORITES":      0,
-	"JOURNAL_STATUS": 1,
-	"ONLINE_STATUS":  2,
+	"FAVORITES":       0,
+	"JOURNAL_STATUS":  1,
+	"ONLINE_STATUS":   2,
+	"DOWNLOAD_STATUS": 3,
+	"FILES_TAB_BADGE": 4,
 }
 
 var SubscriptionTopicRevMap = map[SubscriptionTopic]string{
 	0: "FAVORITES",
 	1: "JOURNAL_STATUS",
 	2: "ONLINE_STATUS",
+	3: "DOWNLOAD_STATUS",
+	4: "FILES_TAB_BADGE",
 }
 
 func (e SubscriptionTopic) String() string {
 	if v, ok := SubscriptionTopicRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type PathSubscriptionTopic int
@@ -1355,5 +1366,161 @@ func (e PathSubscriptionTopic) String() string {
 	if v, ok := PathSubscriptionTopicRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
+}
+
+type DownloadInfo struct {
+	DownloadID        string   `codec:"downloadID" json:"downloadID"`
+	Path              KBFSPath `codec:"path" json:"path"`
+	Filename          string   `codec:"filename" json:"filename"`
+	StartTime         Time     `codec:"startTime" json:"startTime"`
+	IsRegularDownload bool     `codec:"isRegularDownload" json:"isRegularDownload"`
+}
+
+func (o DownloadInfo) DeepCopy() DownloadInfo {
+	return DownloadInfo{
+		DownloadID:        o.DownloadID,
+		Path:              o.Path.DeepCopy(),
+		Filename:          o.Filename,
+		StartTime:         o.StartTime.DeepCopy(),
+		IsRegularDownload: o.IsRegularDownload,
+	}
+}
+
+type DownloadState struct {
+	DownloadID  string  `codec:"downloadID" json:"downloadID"`
+	Progress    float64 `codec:"progress" json:"progress"`
+	EndEstimate Time    `codec:"endEstimate" json:"endEstimate"`
+	LocalPath   string  `codec:"localPath" json:"localPath"`
+	Error       string  `codec:"error" json:"error"`
+	Done        bool    `codec:"done" json:"done"`
+	Canceled    bool    `codec:"canceled" json:"canceled"`
+}
+
+func (o DownloadState) DeepCopy() DownloadState {
+	return DownloadState{
+		DownloadID:  o.DownloadID,
+		Progress:    o.Progress,
+		EndEstimate: o.EndEstimate.DeepCopy(),
+		LocalPath:   o.LocalPath,
+		Error:       o.Error,
+		Done:        o.Done,
+		Canceled:    o.Canceled,
+	}
+}
+
+type DownloadStatus struct {
+	RegularDownloadIDs []string        `codec:"regularDownloadIDs" json:"regularDownloadIDs"`
+	States             []DownloadState `codec:"states" json:"states"`
+}
+
+func (o DownloadStatus) DeepCopy() DownloadStatus {
+	return DownloadStatus{
+		RegularDownloadIDs: (func(x []string) []string {
+			if x == nil {
+				return nil
+			}
+			ret := make([]string, len(x))
+			for i, v := range x {
+				vCopy := v
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.RegularDownloadIDs),
+		States: (func(x []DownloadState) []DownloadState {
+			if x == nil {
+				return nil
+			}
+			ret := make([]DownloadState, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.States),
+	}
+}
+
+type FilesTabBadge int
+
+const (
+	FilesTabBadge_NONE            FilesTabBadge = 0
+	FilesTabBadge_UPLOADING_STUCK FilesTabBadge = 1
+	FilesTabBadge_AWAITING_UPLOAD FilesTabBadge = 2
+	FilesTabBadge_UPLOADING       FilesTabBadge = 3
+)
+
+func (o FilesTabBadge) DeepCopy() FilesTabBadge { return o }
+
+var FilesTabBadgeMap = map[string]FilesTabBadge{
+	"NONE":            0,
+	"UPLOADING_STUCK": 1,
+	"AWAITING_UPLOAD": 2,
+	"UPLOADING":       3,
+}
+
+var FilesTabBadgeRevMap = map[FilesTabBadge]string{
+	0: "NONE",
+	1: "UPLOADING_STUCK",
+	2: "AWAITING_UPLOAD",
+	3: "UPLOADING",
+}
+
+func (e FilesTabBadge) String() string {
+	if v, ok := FilesTabBadgeRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
+}
+
+type GUIViewType int
+
+const (
+	GUIViewType_DEFAULT GUIViewType = 0
+	GUIViewType_TEXT    GUIViewType = 1
+	GUIViewType_IMAGE   GUIViewType = 2
+	GUIViewType_AUDIO   GUIViewType = 3
+	GUIViewType_VIDEO   GUIViewType = 4
+	GUIViewType_PDF     GUIViewType = 5
+)
+
+func (o GUIViewType) DeepCopy() GUIViewType { return o }
+
+var GUIViewTypeMap = map[string]GUIViewType{
+	"DEFAULT": 0,
+	"TEXT":    1,
+	"IMAGE":   2,
+	"AUDIO":   3,
+	"VIDEO":   4,
+	"PDF":     5,
+}
+
+var GUIViewTypeRevMap = map[GUIViewType]string{
+	0: "DEFAULT",
+	1: "TEXT",
+	2: "IMAGE",
+	3: "AUDIO",
+	4: "VIDEO",
+	5: "PDF",
+}
+
+func (e GUIViewType) String() string {
+	if v, ok := GUIViewTypeRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
+}
+
+type GUIFileContext struct {
+	ViewType    GUIViewType `codec:"viewType" json:"viewType"`
+	ContentType string      `codec:"contentType" json:"contentType"`
+	Url         string      `codec:"url" json:"url"`
+}
+
+func (o GUIFileContext) DeepCopy() GUIFileContext {
+	return GUIFileContext{
+		ViewType:    o.ViewType.DeepCopy(),
+		ContentType: o.ContentType,
+		Url:         o.Url,
+	}
 }

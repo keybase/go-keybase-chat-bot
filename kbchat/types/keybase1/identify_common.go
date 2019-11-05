@@ -1,7 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/identify_common.avdl
 
 package keybase1
+
+import (
+	"fmt"
+)
 
 type TrackToken string
 
@@ -65,7 +69,7 @@ func (e TrackDiffType) String() string {
 	if v, ok := TrackDiffTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type TrackDiff struct {
@@ -142,7 +146,7 @@ func (e TrackStatus) String() string {
 	if v, ok := TrackStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type TrackOptions struct {
@@ -212,7 +216,7 @@ func (e IdentifyReasonType) String() string {
 	if v, ok := IdentifyReasonTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type IdentifyReason struct {

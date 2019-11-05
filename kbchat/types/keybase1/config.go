@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/config.avdl
 
 package keybase1
 
 import (
 	"errors"
+	"fmt"
 )
 
 type CurrentStatus struct {
@@ -498,7 +499,7 @@ func (e ForkType) String() string {
 	if v, ok := ForkTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type Config struct {
@@ -538,11 +539,12 @@ func (o Config) DeepCopy() Config {
 }
 
 type ConfigValue struct {
-	IsNull bool    `codec:"isNull" json:"isNull"`
-	B      *bool   `codec:"b,omitempty" json:"b,omitempty"`
-	I      *int    `codec:"i,omitempty" json:"i,omitempty"`
-	S      *string `codec:"s,omitempty" json:"s,omitempty"`
-	O      *string `codec:"o,omitempty" json:"o,omitempty"`
+	IsNull bool     `codec:"isNull" json:"isNull"`
+	B      *bool    `codec:"b,omitempty" json:"b,omitempty"`
+	I      *int     `codec:"i,omitempty" json:"i,omitempty"`
+	F      *float64 `codec:"f,omitempty" json:"f,omitempty"`
+	S      *string  `codec:"s,omitempty" json:"s,omitempty"`
+	O      *string  `codec:"o,omitempty" json:"o,omitempty"`
 }
 
 func (o ConfigValue) DeepCopy() ConfigValue {
@@ -562,6 +564,13 @@ func (o ConfigValue) DeepCopy() ConfigValue {
 			tmp := (*x)
 			return &tmp
 		})(o.I),
+		F: (func(x *float64) *float64 {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.F),
 		S: (func(x *string) *string {
 			if x == nil {
 				return nil
@@ -621,7 +630,7 @@ func (e UpdateInfoStatus) String() string {
 	if v, ok := UpdateInfoStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UpdateInfo struct {
@@ -694,7 +703,7 @@ func (e UpdateInfoStatus2) String() string {
 	if v, ok := UpdateInfoStatus2RevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UpdateDetails struct {
@@ -815,7 +824,7 @@ func (e ProxyType) String() string {
 	if v, ok := ProxyTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type ProxyData struct {

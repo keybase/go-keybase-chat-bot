@@ -1,10 +1,11 @@
-// Auto-generated types using avdl-compiler v1.4.1 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/chat1/chat_ui.avdl
 
 package chat1
 
 import (
 	"errors"
+	"fmt"
 
 	gregor1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/gregor1"
 	keybase1 "github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
@@ -24,6 +25,244 @@ func (o UIPagination) DeepCopy() UIPagination {
 		Previous: o.Previous,
 		Num:      o.Num,
 		Last:     o.Last,
+	}
+}
+
+type UIInboxSmallTeamRow struct {
+	ConvID            string       `codec:"convID" json:"convID"`
+	Name              string       `codec:"name" json:"name"`
+	Time              gregor1.Time `codec:"time" json:"time"`
+	Snippet           *string      `codec:"snippet,omitempty" json:"snippet,omitempty"`
+	SnippetDecoration *string      `codec:"snippetDecoration,omitempty" json:"snippetDecoration,omitempty"`
+	Draft             *string      `codec:"draft,omitempty" json:"draft,omitempty"`
+	IsMuted           bool         `codec:"isMuted" json:"isMuted"`
+	IsTeam            bool         `codec:"isTeam" json:"isTeam"`
+}
+
+func (o UIInboxSmallTeamRow) DeepCopy() UIInboxSmallTeamRow {
+	return UIInboxSmallTeamRow{
+		ConvID: o.ConvID,
+		Name:   o.Name,
+		Time:   o.Time.DeepCopy(),
+		Snippet: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.Snippet),
+		SnippetDecoration: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.SnippetDecoration),
+		Draft: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.Draft),
+		IsMuted: o.IsMuted,
+		IsTeam:  o.IsTeam,
+	}
+}
+
+type UIInboxBigTeamRowTyp int
+
+const (
+	UIInboxBigTeamRowTyp_LABEL   UIInboxBigTeamRowTyp = 1
+	UIInboxBigTeamRowTyp_CHANNEL UIInboxBigTeamRowTyp = 2
+)
+
+func (o UIInboxBigTeamRowTyp) DeepCopy() UIInboxBigTeamRowTyp { return o }
+
+var UIInboxBigTeamRowTypMap = map[string]UIInboxBigTeamRowTyp{
+	"LABEL":   1,
+	"CHANNEL": 2,
+}
+
+var UIInboxBigTeamRowTypRevMap = map[UIInboxBigTeamRowTyp]string{
+	1: "LABEL",
+	2: "CHANNEL",
+}
+
+func (e UIInboxBigTeamRowTyp) String() string {
+	if v, ok := UIInboxBigTeamRowTypRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
+}
+
+type UIInboxBigTeamChannelRow struct {
+	ConvID      string  `codec:"convID" json:"convID"`
+	Teamname    string  `codec:"teamname" json:"teamname"`
+	Channelname string  `codec:"channelname" json:"channelname"`
+	Draft       *string `codec:"draft,omitempty" json:"draft,omitempty"`
+	IsMuted     bool    `codec:"isMuted" json:"isMuted"`
+}
+
+func (o UIInboxBigTeamChannelRow) DeepCopy() UIInboxBigTeamChannelRow {
+	return UIInboxBigTeamChannelRow{
+		ConvID:      o.ConvID,
+		Teamname:    o.Teamname,
+		Channelname: o.Channelname,
+		Draft: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.Draft),
+		IsMuted: o.IsMuted,
+	}
+}
+
+type UIInboxBigTeamRow struct {
+	State__   UIInboxBigTeamRowTyp      `codec:"state" json:"state"`
+	Label__   *string                   `codec:"label,omitempty" json:"label,omitempty"`
+	Channel__ *UIInboxBigTeamChannelRow `codec:"channel,omitempty" json:"channel,omitempty"`
+}
+
+func (o *UIInboxBigTeamRow) State() (ret UIInboxBigTeamRowTyp, err error) {
+	switch o.State__ {
+	case UIInboxBigTeamRowTyp_LABEL:
+		if o.Label__ == nil {
+			err = errors.New("unexpected nil value for Label__")
+			return ret, err
+		}
+	case UIInboxBigTeamRowTyp_CHANNEL:
+		if o.Channel__ == nil {
+			err = errors.New("unexpected nil value for Channel__")
+			return ret, err
+		}
+	}
+	return o.State__, nil
+}
+
+func (o UIInboxBigTeamRow) Label() (res string) {
+	if o.State__ != UIInboxBigTeamRowTyp_LABEL {
+		panic("wrong case accessed")
+	}
+	if o.Label__ == nil {
+		return
+	}
+	return *o.Label__
+}
+
+func (o UIInboxBigTeamRow) Channel() (res UIInboxBigTeamChannelRow) {
+	if o.State__ != UIInboxBigTeamRowTyp_CHANNEL {
+		panic("wrong case accessed")
+	}
+	if o.Channel__ == nil {
+		return
+	}
+	return *o.Channel__
+}
+
+func NewUIInboxBigTeamRowWithLabel(v string) UIInboxBigTeamRow {
+	return UIInboxBigTeamRow{
+		State__: UIInboxBigTeamRowTyp_LABEL,
+		Label__: &v,
+	}
+}
+
+func NewUIInboxBigTeamRowWithChannel(v UIInboxBigTeamChannelRow) UIInboxBigTeamRow {
+	return UIInboxBigTeamRow{
+		State__:   UIInboxBigTeamRowTyp_CHANNEL,
+		Channel__: &v,
+	}
+}
+
+func (o UIInboxBigTeamRow) DeepCopy() UIInboxBigTeamRow {
+	return UIInboxBigTeamRow{
+		State__: o.State__.DeepCopy(),
+		Label__: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.Label__),
+		Channel__: (func(x *UIInboxBigTeamChannelRow) *UIInboxBigTeamChannelRow {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Channel__),
+	}
+}
+
+type UIInboxReselectInfo struct {
+	OldConvID string  `codec:"oldConvID" json:"oldConvID"`
+	NewConvID *string `codec:"newConvID,omitempty" json:"newConvID,omitempty"`
+}
+
+func (o UIInboxReselectInfo) DeepCopy() UIInboxReselectInfo {
+	return UIInboxReselectInfo{
+		OldConvID: o.OldConvID,
+		NewConvID: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.NewConvID),
+	}
+}
+
+type UIInboxLayout struct {
+	SmallTeams   []UIInboxSmallTeamRow `codec:"smallTeams" json:"smallTeams"`
+	BigTeams     []UIInboxBigTeamRow   `codec:"bigTeams" json:"bigTeams"`
+	ReselectInfo *UIInboxReselectInfo  `codec:"reselectInfo,omitempty" json:"reselectInfo,omitempty"`
+	WidgetList   []UIInboxSmallTeamRow `codec:"widgetList" json:"widgetList"`
+}
+
+func (o UIInboxLayout) DeepCopy() UIInboxLayout {
+	return UIInboxLayout{
+		SmallTeams: (func(x []UIInboxSmallTeamRow) []UIInboxSmallTeamRow {
+			if x == nil {
+				return nil
+			}
+			ret := make([]UIInboxSmallTeamRow, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.SmallTeams),
+		BigTeams: (func(x []UIInboxBigTeamRow) []UIInboxBigTeamRow {
+			if x == nil {
+				return nil
+			}
+			ret := make([]UIInboxBigTeamRow, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.BigTeams),
+		ReselectInfo: (func(x *UIInboxReselectInfo) *UIInboxReselectInfo {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.ReselectInfo),
+		WidgetList: (func(x []UIInboxSmallTeamRow) []UIInboxSmallTeamRow {
+			if x == nil {
+				return nil
+			}
+			ret := make([]UIInboxSmallTeamRow, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.WidgetList),
 	}
 }
 
@@ -71,6 +310,7 @@ func (o UnverifiedInboxUIItemMetadata) DeepCopy() UnverifiedInboxUIItemMetadata 
 
 type UnverifiedInboxUIItem struct {
 	ConvID          string                         `codec:"convID" json:"convID"`
+	TlfID           string                         `codec:"tlfID" json:"tlfID"`
 	TopicType       TopicType                      `codec:"topicType" json:"topicType"`
 	IsPublic        bool                           `codec:"isPublic" json:"isPublic"`
 	Name            string                         `codec:"name" json:"name"`
@@ -99,6 +339,7 @@ type UnverifiedInboxUIItem struct {
 func (o UnverifiedInboxUIItem) DeepCopy() UnverifiedInboxUIItem {
 	return UnverifiedInboxUIItem{
 		ConvID:       o.ConvID,
+		TlfID:        o.TlfID,
 		TopicType:    o.TopicType.DeepCopy(),
 		IsPublic:     o.IsPublic,
 		Name:         o.Name,
@@ -240,20 +481,22 @@ func (e UIParticipantType) String() string {
 	if v, ok := UIParticipantTypeRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UIParticipant struct {
 	Type        UIParticipantType `codec:"type" json:"type"`
 	Assertion   string            `codec:"assertion" json:"assertion"`
+	InConvName  bool              `codec:"inConvName" json:"inConvName"`
 	FullName    *string           `codec:"fullName,omitempty" json:"fullName,omitempty"`
 	ContactName *string           `codec:"contactName,omitempty" json:"contactName,omitempty"`
 }
 
 func (o UIParticipant) DeepCopy() UIParticipant {
 	return UIParticipant{
-		Type:      o.Type.DeepCopy(),
-		Assertion: o.Assertion,
+		Type:       o.Type.DeepCopy(),
+		Assertion:  o.Assertion,
+		InConvName: o.InConvName,
 		FullName: (func(x *string) *string {
 			if x == nil {
 				return nil
@@ -285,6 +528,7 @@ func (o UIPinnedMessage) DeepCopy() UIPinnedMessage {
 
 type InboxUIItem struct {
 	ConvID            string                        `codec:"convID" json:"convID"`
+	TlfID             string                        `codec:"tlfID" json:"tlfID"`
 	TopicType         TopicType                     `codec:"topicType" json:"topicType"`
 	IsPublic          bool                          `codec:"isPublic" json:"isPublic"`
 	IsEmpty           bool                          `codec:"isEmpty" json:"isEmpty"`
@@ -324,6 +568,7 @@ type InboxUIItem struct {
 func (o InboxUIItem) DeepCopy() InboxUIItem {
 	return InboxUIItem{
 		ConvID:            o.ConvID,
+		TlfID:             o.TlfID,
 		TopicType:         o.TopicType.DeepCopy(),
 		IsPublic:          o.IsPublic,
 		IsEmpty:           o.IsEmpty,
@@ -667,7 +912,8 @@ type UIMessageValid struct {
 	IsDeleteable          bool                   `codec:"isDeleteable" json:"isDeleteable"`
 	IsEditable            bool                   `codec:"isEditable" json:"isEditable"`
 	ReplyTo               *UIMessage             `codec:"replyTo,omitempty" json:"replyTo,omitempty"`
-	BotUID                *gregor1.UID           `codec:"botUID,omitempty" json:"botUID,omitempty"`
+	PinnedMessageID       *MessageID             `codec:"pinnedMessageID,omitempty" json:"pinnedMessageID,omitempty"`
+	BotUsername           string                 `codec:"botUsername" json:"botUsername"`
 }
 
 func (o UIMessageValid) DeepCopy() UIMessageValid {
@@ -791,13 +1037,14 @@ func (o UIMessageValid) DeepCopy() UIMessageValid {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.ReplyTo),
-		BotUID: (func(x *gregor1.UID) *gregor1.UID {
+		PinnedMessageID: (func(x *MessageID) *MessageID {
 			if x == nil {
 				return nil
 			}
 			tmp := (*x).DeepCopy()
 			return &tmp
-		})(o.BotUID),
+		})(o.PinnedMessageID),
+		BotUsername: o.BotUsername,
 	}
 }
 
@@ -859,6 +1106,20 @@ func (o UIMessageOutbox) DeepCopy() UIMessageOutbox {
 	}
 }
 
+type UIMessageJourneycard struct {
+	Ordinal        float64         `codec:"ordinal" json:"ordinal"`
+	CardType       JourneycardType `codec:"cardType" json:"cardType"`
+	HighlightMsgID MessageID       `codec:"highlightMsgID" json:"highlightMsgID"`
+}
+
+func (o UIMessageJourneycard) DeepCopy() UIMessageJourneycard {
+	return UIMessageJourneycard{
+		Ordinal:        o.Ordinal,
+		CardType:       o.CardType.DeepCopy(),
+		HighlightMsgID: o.HighlightMsgID.DeepCopy(),
+	}
+}
+
 type MessageUnboxedState int
 
 const (
@@ -866,6 +1127,7 @@ const (
 	MessageUnboxedState_ERROR       MessageUnboxedState = 2
 	MessageUnboxedState_OUTBOX      MessageUnboxedState = 3
 	MessageUnboxedState_PLACEHOLDER MessageUnboxedState = 4
+	MessageUnboxedState_JOURNEYCARD MessageUnboxedState = 5
 )
 
 func (o MessageUnboxedState) DeepCopy() MessageUnboxedState { return o }
@@ -875,6 +1137,7 @@ var MessageUnboxedStateMap = map[string]MessageUnboxedState{
 	"ERROR":       2,
 	"OUTBOX":      3,
 	"PLACEHOLDER": 4,
+	"JOURNEYCARD": 5,
 }
 
 var MessageUnboxedStateRevMap = map[MessageUnboxedState]string{
@@ -882,13 +1145,14 @@ var MessageUnboxedStateRevMap = map[MessageUnboxedState]string{
 	2: "ERROR",
 	3: "OUTBOX",
 	4: "PLACEHOLDER",
+	5: "JOURNEYCARD",
 }
 
 func (e MessageUnboxedState) String() string {
 	if v, ok := MessageUnboxedStateRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UIMessage struct {
@@ -897,6 +1161,7 @@ type UIMessage struct {
 	Error__       *MessageUnboxedError       `codec:"error,omitempty" json:"error,omitempty"`
 	Outbox__      *UIMessageOutbox           `codec:"outbox,omitempty" json:"outbox,omitempty"`
 	Placeholder__ *MessageUnboxedPlaceholder `codec:"placeholder,omitempty" json:"placeholder,omitempty"`
+	Journeycard__ *UIMessageJourneycard      `codec:"journeycard,omitempty" json:"journeycard,omitempty"`
 }
 
 func (o *UIMessage) State() (ret MessageUnboxedState, err error) {
@@ -919,6 +1184,11 @@ func (o *UIMessage) State() (ret MessageUnboxedState, err error) {
 	case MessageUnboxedState_PLACEHOLDER:
 		if o.Placeholder__ == nil {
 			err = errors.New("unexpected nil value for Placeholder__")
+			return ret, err
+		}
+	case MessageUnboxedState_JOURNEYCARD:
+		if o.Journeycard__ == nil {
+			err = errors.New("unexpected nil value for Journeycard__")
 			return ret, err
 		}
 	}
@@ -965,6 +1235,16 @@ func (o UIMessage) Placeholder() (res MessageUnboxedPlaceholder) {
 	return *o.Placeholder__
 }
 
+func (o UIMessage) Journeycard() (res UIMessageJourneycard) {
+	if o.State__ != MessageUnboxedState_JOURNEYCARD {
+		panic("wrong case accessed")
+	}
+	if o.Journeycard__ == nil {
+		return
+	}
+	return *o.Journeycard__
+}
+
 func NewUIMessageWithValid(v UIMessageValid) UIMessage {
 	return UIMessage{
 		State__: MessageUnboxedState_VALID,
@@ -990,6 +1270,13 @@ func NewUIMessageWithPlaceholder(v MessageUnboxedPlaceholder) UIMessage {
 	return UIMessage{
 		State__:       MessageUnboxedState_PLACEHOLDER,
 		Placeholder__: &v,
+	}
+}
+
+func NewUIMessageWithJourneycard(v UIMessageJourneycard) UIMessage {
+	return UIMessage{
+		State__:       MessageUnboxedState_JOURNEYCARD,
+		Journeycard__: &v,
 	}
 }
 
@@ -1024,6 +1311,13 @@ func (o UIMessage) DeepCopy() UIMessage {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.Placeholder__),
+		Journeycard__: (func(x *UIMessageJourneycard) *UIMessageJourneycard {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Journeycard__),
 	}
 }
 
@@ -1112,6 +1406,7 @@ const (
 	UITextDecorationTyp_MAYBEMENTION       UITextDecorationTyp = 3
 	UITextDecorationTyp_LINK               UITextDecorationTyp = 4
 	UITextDecorationTyp_MAILTO             UITextDecorationTyp = 5
+	UITextDecorationTyp_KBFSPATH           UITextDecorationTyp = 6
 )
 
 func (o UITextDecorationTyp) DeepCopy() UITextDecorationTyp { return o }
@@ -1123,6 +1418,7 @@ var UITextDecorationTypMap = map[string]UITextDecorationTyp{
 	"MAYBEMENTION":       3,
 	"LINK":               4,
 	"MAILTO":             5,
+	"KBFSPATH":           6,
 }
 
 var UITextDecorationTypRevMap = map[UITextDecorationTyp]string{
@@ -1132,13 +1428,14 @@ var UITextDecorationTypRevMap = map[UITextDecorationTyp]string{
 	3: "MAYBEMENTION",
 	4: "LINK",
 	5: "MAILTO",
+	6: "KBFSPATH",
 }
 
 func (e UITextDecorationTyp) String() string {
 	if v, ok := UITextDecorationTypRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UIMaybeMentionStatus int
@@ -1170,18 +1467,20 @@ func (e UIMaybeMentionStatus) String() string {
 	if v, ok := UIMaybeMentionStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UILinkDecoration struct {
-	Display string `codec:"display" json:"display"`
-	Url     string `codec:"url" json:"url"`
+	Display  string `codec:"display" json:"display"`
+	Url      string `codec:"url" json:"url"`
+	Punycode string `codec:"punycode" json:"punycode"`
 }
 
 func (o UILinkDecoration) DeepCopy() UILinkDecoration {
 	return UILinkDecoration{
-		Display: o.Display,
-		Url:     o.Url,
+		Display:  o.Display,
+		Url:      o.Url,
+		Punycode: o.Punycode,
 	}
 }
 
@@ -1257,6 +1556,7 @@ type UITextDecoration struct {
 	Maybemention__       *MaybeMention         `codec:"maybemention,omitempty" json:"maybemention,omitempty"`
 	Link__               *UILinkDecoration     `codec:"link,omitempty" json:"link,omitempty"`
 	Mailto__             *UILinkDecoration     `codec:"mailto,omitempty" json:"mailto,omitempty"`
+	Kbfspath__           *KBFSPath             `codec:"kbfspath,omitempty" json:"kbfspath,omitempty"`
 }
 
 func (o *UITextDecoration) Typ() (ret UITextDecorationTyp, err error) {
@@ -1289,6 +1589,11 @@ func (o *UITextDecoration) Typ() (ret UITextDecorationTyp, err error) {
 	case UITextDecorationTyp_MAILTO:
 		if o.Mailto__ == nil {
 			err = errors.New("unexpected nil value for Mailto__")
+			return ret, err
+		}
+	case UITextDecorationTyp_KBFSPATH:
+		if o.Kbfspath__ == nil {
+			err = errors.New("unexpected nil value for Kbfspath__")
 			return ret, err
 		}
 	}
@@ -1355,6 +1660,16 @@ func (o UITextDecoration) Mailto() (res UILinkDecoration) {
 	return *o.Mailto__
 }
 
+func (o UITextDecoration) Kbfspath() (res KBFSPath) {
+	if o.Typ__ != UITextDecorationTyp_KBFSPATH {
+		panic("wrong case accessed")
+	}
+	if o.Kbfspath__ == nil {
+		return
+	}
+	return *o.Kbfspath__
+}
+
 func NewUITextDecorationWithPayment(v TextPayment) UITextDecoration {
 	return UITextDecoration{
 		Typ__:     UITextDecorationTyp_PAYMENT,
@@ -1394,6 +1709,13 @@ func NewUITextDecorationWithMailto(v UILinkDecoration) UITextDecoration {
 	return UITextDecoration{
 		Typ__:    UITextDecorationTyp_MAILTO,
 		Mailto__: &v,
+	}
+}
+
+func NewUITextDecorationWithKbfspath(v KBFSPath) UITextDecoration {
+	return UITextDecoration{
+		Typ__:      UITextDecorationTyp_KBFSPATH,
+		Kbfspath__: &v,
 	}
 }
 
@@ -1442,6 +1764,13 @@ func (o UITextDecoration) DeepCopy() UITextDecoration {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.Mailto__),
+		Kbfspath__: (func(x *KBFSPath) *KBFSPath {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Kbfspath__),
 	}
 }
 
@@ -1474,7 +1803,7 @@ func (e UIChatThreadStatusTyp) String() string {
 	if v, ok := UIChatThreadStatusTypRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UIChatThreadStatus struct {
@@ -1702,7 +2031,7 @@ func (e UICoinFlipPhase) String() string {
 	if v, ok := UICoinFlipPhaseRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UICoinFlipErrorParticipant struct {
@@ -1778,7 +2107,7 @@ func (e UICoinFlipErrorTyp) String() string {
 	if v, ok := UICoinFlipErrorTypRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UICoinFlipError struct {
@@ -2021,7 +2350,7 @@ func (e UICoinFlipResultTyp) String() string {
 	if v, ok := UICoinFlipResultTypRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UICoinFlipHand struct {
@@ -2340,6 +2669,32 @@ func (o LocationWatchID) DeepCopy() LocationWatchID {
 	return o
 }
 
+type UIWatchPositionPerm int
+
+const (
+	UIWatchPositionPerm_BASE   UIWatchPositionPerm = 0
+	UIWatchPositionPerm_ALWAYS UIWatchPositionPerm = 1
+)
+
+func (o UIWatchPositionPerm) DeepCopy() UIWatchPositionPerm { return o }
+
+var UIWatchPositionPermMap = map[string]UIWatchPositionPerm{
+	"BASE":   0,
+	"ALWAYS": 1,
+}
+
+var UIWatchPositionPermRevMap = map[UIWatchPositionPerm]string{
+	0: "BASE",
+	1: "ALWAYS",
+}
+
+func (e UIWatchPositionPerm) String() string {
+	if v, ok := UIWatchPositionPermRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
+}
+
 type UICommandStatusDisplayTyp int
 
 const (
@@ -2366,7 +2721,7 @@ func (e UICommandStatusDisplayTyp) String() string {
 	if v, ok := UICommandStatusDisplayTypRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UICommandStatusActionTyp int
@@ -2389,7 +2744,7 @@ func (e UICommandStatusActionTyp) String() string {
 	if v, ok := UICommandStatusActionTypRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
 
 type UIBotCommandsUpdateStatus int
@@ -2421,5 +2776,5 @@ func (e UIBotCommandsUpdateStatus) String() string {
 	if v, ok := UIBotCommandsUpdateStatusRevMap[e]; ok {
 		return v
 	}
-	return ""
+	return fmt.Sprintf("%v", int(e))
 }
