@@ -88,47 +88,47 @@ func (a *API) GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]cha
 	return res, nil
 }
 
-func (a *API) SendMessage(channel chat1.ChatChannel, body string) (SendResponse, error) {
+func (a *API) SendMessage(channel chat1.ChatChannel, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: channel,
 		Message: sendMessageBody{
-			Body: body,
+			Body: fmt.Sprintf(body, args...),
 		},
 	})
 	return a.doSend(arg)
 }
 
-func (a *API) Broadcast(body string) (SendResponse, error) {
+func (a *API) Broadcast(body string, args ...interface{}) (SendResponse, error) {
 	return a.SendMessage(chat1.ChatChannel{
 		Name:   a.GetUsername(),
 		Public: true,
-	}, body)
+	}, fmt.Sprintf(body, args...))
 }
 
-func (a *API) SendMessageByConvID(convID string, body string) (SendResponse, error) {
+func (a *API) SendMessageByConvID(convID string, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{
-			Body: body,
+			Body: fmt.Sprintf(body, args...),
 		},
 	})
 	return a.doSend(arg)
 }
 
 // SendMessageByTlfName sends a message on the given TLF name
-func (a *API) SendMessageByTlfName(tlfName string, body string) (SendResponse, error) {
+func (a *API) SendMessageByTlfName(tlfName string, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: chat1.ChatChannel{
 			Name: tlfName,
 		},
 		Message: sendMessageBody{
-			Body: body,
+			Body: fmt.Sprintf(body, args...),
 		},
 	})
 	return a.doSend(arg)
 }
 
-func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *string) (SendResponse, error) {
+func (a *API) SendMessageByTeamName(teamName string, inChannel *string, body string, args ...interface{}) (SendResponse, error) {
 	channel := "general"
 	if inChannel != nil {
 		channel = *inChannel
@@ -140,13 +140,13 @@ func (a *API) SendMessageByTeamName(teamName string, body string, inChannel *str
 			TopicName:   channel,
 		},
 		Message: sendMessageBody{
-			Body: body,
+			Body: fmt.Sprintf(body, args...),
 		},
 	})
 	return a.doSend(arg)
 }
 
-func (a *API) SendAttachmentByTeam(teamName string, filename string, title string, inChannel *string) (SendResponse, error) {
+func (a *API) SendAttachmentByTeam(teamName string, inChannel *string, filename string, title string) (SendResponse, error) {
 	channel := "general"
 	if inChannel != nil {
 		channel = *inChannel
@@ -282,35 +282,35 @@ func (a *API) LeaveChannel(teamName string, channelName string) (chat1.EmptyRes,
 // Send lumens in chat /////////////////////////////////
 ////////////////////////////////////////////////////////
 
-func (a *API) InChatSend(channel chat1.ChatChannel, body string) (SendResponse, error) {
+func (a *API) InChatSend(channel chat1.ChatChannel, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: channel,
 		Message: sendMessageBody{
-			Body: body,
+			Body: fmt.Sprintf(body, args...),
 		},
 		ConfirmLumenSend: true,
 	})
 	return a.doSend(arg)
 }
 
-func (a *API) InChatSendByConvID(convID string, body string) (SendResponse, error) {
+func (a *API) InChatSendByConvID(convID string, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{
-			Body: body,
+			Body: fmt.Sprintf(body, args...),
 		},
 		ConfirmLumenSend: true,
 	})
 	return a.doSend(arg)
 }
 
-func (a *API) InChatSendByTlfName(tlfName string, body string) (SendResponse, error) {
+func (a *API) InChatSendByTlfName(tlfName string, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: chat1.ChatChannel{
 			Name: tlfName,
 		},
 		Message: sendMessageBody{
-			Body: body,
+			Body: fmt.Sprintf(body, args...),
 		},
 		ConfirmLumenSend: true,
 	})
