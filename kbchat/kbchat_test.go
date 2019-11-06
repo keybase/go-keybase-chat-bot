@@ -172,7 +172,7 @@ func TestSendMessageByTeamName(t *testing.T) {
 	channel := getTeamChatChannel(t, "acme")
 
 	// Send the message
-	res, err := alice.SendMessageByTeamName(channel.Name, text, &channel.TopicName)
+	res, err := alice.SendMessageByTeamName(channel.Name, &channel.TopicName, text)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
@@ -198,7 +198,7 @@ func TestSendAttachmentByTeam(t *testing.T) {
 
 	// Send the message
 	title := "test SendAttachmentByTeam " + randomString(t)
-	res, err := alice.SendAttachmentByTeam(channel.Name, location, title, &channel.TopicName)
+	res, err := alice.SendAttachmentByTeam(channel.Name, &channel.TopicName, location, title)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
