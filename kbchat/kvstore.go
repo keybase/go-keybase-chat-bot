@@ -33,7 +33,6 @@ type ListEntryKeys struct {
 	Error  Error                      `json:"error,omitempty"`
 }
 
-// PutEntry
 func (a *API) PutEntry(teamName string, namespace string, entryKey string, entryValue string, revision int) (keybase1.KVPutResult, error) {
 	empty := keybase1.KVPutResult{}
 
@@ -60,7 +59,6 @@ func (a *API) PutEntry(teamName string, namespace string, entryKey string, entry
 	return entry.Result, nil
 }
 
-// DeleteEntry
 func (a *API) DeleteEntry(teamName string, namespace string, entryKey string, revision int) (keybase1.KVDeleteEntryResult, error) {
 	empty := keybase1.KVDeleteEntryResult{}
 
@@ -87,7 +85,6 @@ func (a *API) DeleteEntry(teamName string, namespace string, entryKey string, re
 	return entry.Result, nil
 }
 
-// GetEntry
 func (a *API) GetEntry(teamName string, namespace string, entryKey string) (keybase1.KVGetResult, error) {
 	empty := keybase1.KVGetResult{}
 
@@ -110,7 +107,6 @@ func (a *API) GetEntry(teamName string, namespace string, entryKey string) (keyb
 	return entry.Result, nil
 }
 
-// ListNamespaces
 func (a *API) ListNamespaces(teamName string) ([]string, error) {
 	empty := []string{}
 
@@ -133,7 +129,6 @@ func (a *API) ListNamespaces(teamName string) ([]string, error) {
 	return namespaces.Result.Namespaces, nil
 }
 
-// ListEntryKeys
 func (a *API) ListEntryKeys(teamName string, namespace string) ([]keybase1.KVListEntryKey, error) {
 	empty := []keybase1.KVListEntryKey{}
 

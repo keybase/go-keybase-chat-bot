@@ -272,15 +272,15 @@ func (a *API) JoinChannel(teamName string, channelName string) (chat1.EmptyRes, 
 		return empty, err
 	}
 
-	res := JoinChannel{}
-	err = json.Unmarshal(output, &res)
+	joinChannel := JoinChannel{}
+	err = json.Unmarshal(output, &joinChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
-	} else if res.Error != nil {
-		return empty, errors.New(res.Error.Message)
+	} else if joinChannel.Error != nil {
+		return empty, errors.New(joinChannel.Error.Message)
 	}
 
-	return res.Result, nil
+	return joinChannel.Result, nil
 }
 
 func (a *API) LeaveChannel(teamName string, channelName string) (chat1.EmptyRes, error) {
@@ -292,15 +292,15 @@ func (a *API) LeaveChannel(teamName string, channelName string) (chat1.EmptyRes,
 		return empty, err
 	}
 
-	res := LeaveChannel{}
-	err = json.Unmarshal(output, &res)
+	leaveChannel := LeaveChannel{}
+	err = json.Unmarshal(output, &leaveChannel)
 	if err != nil {
 		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
-	} else if res.Error != nil {
-		return empty, errors.New(res.Error.Message)
+	} else if leaveChannel.Error != nil {
+		return empty, errors.New(leaveChannel.Error.Message)
 	}
 
-	return res.Result, nil
+	return leaveChannel.Result, nil
 }
 
 ////////////////////////////////////////////////////////
