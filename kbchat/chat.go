@@ -8,6 +8,16 @@ import (
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
 )
 
+type Thread struct {
+	Result chat1.Thread `json:"result"`
+	Error  *Error       `json:"error,omitempty"`
+}
+
+type Inbox struct {
+	Result Result `json:"result"`
+	Error  *Error `json:"error,omitempty"`
+}
+
 type sendMessageBody struct {
 	Body string
 }
@@ -217,6 +227,21 @@ func (a *API) ReactByConvID(convID string, msgID chat1.MessageID, reaction strin
 // Manage channels /////////////////////////////////////
 ////////////////////////////////////////////////////////
 
+type ChannelsList struct {
+	Result Result `json:"result"`
+	Error  *Error `json:"error,omitempty"`
+}
+
+type JoinChannel struct {
+	Error  *Error         `json:"error,omitempty"`
+	Result chat1.EmptyRes `json:"result"`
+}
+
+type LeaveChannel struct {
+	Error  *Error         `json:"error,omitempty"`
+	Result chat1.EmptyRes `json:"result"`
+}
+
 func (a *API) ListChannels(teamName string) ([]string, error) {
 	apiInput := fmt.Sprintf(`{"method": "listconvsonname", "params": {"options": {"topic_type": "CHAT", "members_type": "team", "name": "%s"}}}`, teamName)
 	output, err := a.doFetch(apiInput)
@@ -320,6 +345,18 @@ func (a *API) InChatSendByTlfName(tlfName string, body string, args ...interface
 ////////////////////////////////////////////////////////
 // Misc commands ///////////////////////////////////////
 ////////////////////////////////////////////////////////
+
+type Advertisement struct {
+	Alias          string `json:"alias,omitempty"`
+	Advertisements []chat1.AdvertiseCommandAPIParam
+}
+
+type ListCommandsResponse struct {
+	Result struct {
+		Commands []chat1.UserBotCommandOutput `json:"commands"`
+	} `json:"result"`
+	Error *Error `json:"error,omitempty"`
+}
 
 type advertiseCmdsParams struct {
 	Options Advertisement
