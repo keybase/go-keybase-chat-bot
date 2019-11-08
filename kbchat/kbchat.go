@@ -273,6 +273,14 @@ type ListenOptions struct {
 	Wallet bool
 }
 
+type PaymentHolder struct {
+	Payment stellar1.PaymentDetailsLocal `json:"notification"`
+}
+
+type TypeHolder struct {
+	Type string `json:"type"`
+}
+
 // ListenForNewTextMessages proxies to Listen without wallet events
 func (a *API) ListenForNewTextMessages() (NewSubscription, error) {
 	opts := ListenOptions{Wallet: false}
