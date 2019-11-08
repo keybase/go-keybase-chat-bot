@@ -1,3 +1,25 @@
+/*
+WHAT IS IN THIS EXAMPLE?
+
+Keybase has added an encrypted key-value store intended to support
+security-conscious bot development with persistent state. It is a
+place to store small bits of data that are
+  (1) encrypted for a team or user (via the user's implicit self-team: e.g.
+alice,alice),
+  (2) persistent across logins
+  (3) fast and durable.
+
+It supports putting, getting, listing, and deleting. There is also
+concurrency support, but check out 5_secret_storage for that. A team has many
+namespaces, a namespace has many entryKeys, and an entryKey has one current
+entryValue. Namespaces and entryKeys are in cleartext, and the Keybase client
+service will encrypt and sign the entryValue on the way in (as well as
+decrypt and verify on the way out) so keybase servers cannot see it or
+forge it.
+
+This example shows how you can use interact with the team
+encrypted key-value store using chat commands.
+*/
 package main
 
 import (
@@ -16,6 +38,14 @@ func fail(msg string, args ...interface{}) {
 	os.Exit(3)
 }
 
+/*
+ Listens to chat messages of the form:
+    `!storage put <namespace> <key> <value> (<revision>)`
+    `!storage get <namespace> <key>`
+    `!storage delete <namespace> <key> (<revision>)`
+    `!storage list`  // list namespaces
+    `!storage list <namespace>`  // list entries in namespace
+*/
 func main() {
 	const MsgPrefix = "!storage"
 	const (
@@ -76,9 +106,7 @@ func main() {
 		case Delete:
 			handleDelete(kbc, channel, team, body, action)
 		}
-
 	}
-
 }
 
 func handleHelp(api *kbchat.API, channel chat1.ChatChannel, team string, body []string, action string) {
@@ -107,7 +135,7 @@ func handleList(api *kbchat.API, channel chat1.ChatChannel, team string, body []
 			sendMsg = fmt.Sprintf("%+v", err)
 		}
 	} else if len(body) == 3 {
-		// !storage list ,namespace.
+		// !storage list namespace.
 		namespace := body[2]
 		if res, err := api.ListEntryKeys(team, namespace); err == nil {
 			sendMsg = fmt.Sprintf("%+v", res)
@@ -147,6 +175,10 @@ func handlePut(api *kbchat.API, channel chat1.ChatChannel, team string, body []s
 	if len(body) == 5 || len(body) == 6 {
 		// !storage put <namespace> <key> <value> (<revision>)
 		namespace, key, value := body[2], body[3], body[4]
+
+		// note: if revision=0, the server does a get (to get
+		// the latest revision number) then a put (with revision
+		// number + 1); this operation is not atomic.
 		revision := 0
 		if len(body) == 6 {
 			thisRevision, err := strconv.Atoi(body[5])
@@ -175,7 +207,7 @@ func handleDelete(api *kbchat.API, channel chat1.ChatChannel, team string, body 
 	if len(body) == 4 || len(body) == 5 {
 		// !storage delete <namespace> <key> (<revision>)
 		namespace, key := body[2], body[3]
-		revision := 0 ///////
+		revision := 0
 		if len(body) == 5 {
 			thisRevision, err := strconv.Atoi(body[4])
 			if err != nil {

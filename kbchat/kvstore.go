@@ -45,16 +45,16 @@ func (a *API) PutEntry(teamName string, namespace string, entryKey string, entry
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.Output()
 	if err != nil {
-		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to call keybase kvstore api: %v", err)
 	}
 
 	entry := PutEntry{}
 	err = json.Unmarshal(bytes, &entry)
 	if err != nil {
-		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
 	}
 	if entry.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", entry.Error.Message)
+		return empty, fmt.Errorf("received error from keybase kvstore api: %s", entry.Error.Message)
 	}
 	return entry.Result, nil
 }
@@ -71,16 +71,16 @@ func (a *API) DeleteEntry(teamName string, namespace string, entryKey string, re
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.Output()
 	if err != nil {
-		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to call keybase kvstore api: %v", err)
 	}
 
 	entry := DeleteEntry{}
 	err = json.Unmarshal(bytes, &entry)
 	if err != nil {
-		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
 	}
 	if entry.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", entry.Error.Message)
+		return empty, fmt.Errorf("received error from keybase kvstore api: %s", entry.Error.Message)
 	}
 	return entry.Result, nil
 }
@@ -93,16 +93,16 @@ func (a *API) GetEntry(teamName string, namespace string, entryKey string) (keyb
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.Output()
 	if err != nil {
-		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to call keybase kvstore api: %v", err)
 	}
 
 	entry := GetEntry{}
 	err = json.Unmarshal(bytes, &entry)
 	if err != nil {
-		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
 	}
 	if entry.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", entry.Error.Message)
+		return empty, fmt.Errorf("received error from keybase kvstore api: %s", entry.Error.Message)
 	}
 	return entry.Result, nil
 }
@@ -115,16 +115,16 @@ func (a *API) ListNamespaces(teamName string) ([]string, error) {
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.Output()
 	if err != nil {
-		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to call keybase kvstore api: %v", err)
 	}
 
 	var namespaces ListNamespaces
 	err = json.Unmarshal(bytes, &namespaces)
 	if err != nil {
-		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
 	}
 	if namespaces.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", namespaces.Error.Message)
+		return empty, fmt.Errorf("received error from keybase kvstore api: %s", namespaces.Error.Message)
 	}
 	return namespaces.Result.Namespaces, nil
 }
@@ -137,16 +137,16 @@ func (a *API) ListEntryKeys(teamName string, namespace string) ([]keybase1.KVLis
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.Output()
 	if err != nil {
-		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to call keybase kvstore api: %v", err)
 	}
 
 	entryKeys := ListEntryKeys{}
 	err = json.Unmarshal(bytes, &entryKeys)
 	if err != nil {
-		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+		return empty, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
 	}
 	if entryKeys.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", entryKeys.Error.Message)
+		return empty, fmt.Errorf("received error from keybase kvstore api: %s", entryKeys.Error.Message)
 	}
 	return entryKeys.Result.EntryKeys, nil
 }
