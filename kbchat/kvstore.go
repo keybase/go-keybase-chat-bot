@@ -37,7 +37,11 @@ type ListEntryKeys struct {
 func (a *API) PutEntry(teamName string, namespace string, entryKey string, entryValue string, revision int) (keybase1.KVPutResult, error) {
 	empty := keybase1.KVPutResult{}
 
-	apiInput := fmt.Sprintf(`{"method": "put", "params": {"options": {"team": "%s", "namespace": "%s", "entryKey": "%s", "revision": "%d"}}}`, teamName, namespace, entryKey, revision)
+	apiInput := fmt.Sprintf(`{"method": "put", "params": {"options": {"team": "%s", "namespace": "%s", "entryKey": "%s", "entryValue": "%s"}}}`, teamName, namespace, entryKey, entryValue)
+	if revision != 0 {
+		apiInput = fmt.Sprintf(`{"method": "put", "params": {"options": {"team": "%s", "namespace": "%s", "entryKey": "%s", "entryValue": "%s", "revision": %d}}}`, teamName, namespace, entryKey, entryValue, revision)
+	}
+
 	cmd := a.runOpts.Command("kvstore", "api")
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.Output()
@@ -60,7 +64,11 @@ func (a *API) PutEntry(teamName string, namespace string, entryKey string, entry
 func (a *API) DeleteEntry(teamName string, namespace string, entryKey string, revision int) (keybase1.KVDeleteEntryResult, error) {
 	empty := keybase1.KVDeleteEntryResult{}
 
-	apiInput := fmt.Sprintf(`{"method": "delete", "params": {"options": {"team": "%s", "namespace": "%s", "entryKey": "%s", "revision": "%d"}}}`, teamName, namespace, entryKey, revision)
+	apiInput := fmt.Sprintf(`{"method": "delete", "params": {"options": {"team": "%s", "namespace": "%s", "entryKey": "%s"}}}`, teamName, namespace, entryKey)
+	if revision != 0 {
+		apiInput = fmt.Sprintf(`{"method": "delete", "params": {"options": {"team": "%s", "namespace": "%s", "entryKey": "%s", "revision": "%d"}}}`, teamName, namespace, entryKey, revision)
+	}
+
 	cmd := a.runOpts.Command("kvstore", "api")
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.Output()
