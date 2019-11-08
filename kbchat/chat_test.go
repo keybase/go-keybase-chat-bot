@@ -45,7 +45,6 @@ func TestSendMessage(t *testing.T) {
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.Id, *res.Result.MessageID)
 }
-
 func TestSendMessageByConvID(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
@@ -92,7 +91,7 @@ func TestSendMessageByTeamName(t *testing.T) {
 	channel := getTeamChatChannel(t, "acme")
 
 	// Send the message
-	res, err := alice.SendMessageByTeamName(channel.Name, text, &channel.TopicName)
+	res, err := alice.SendMessageByTeamName(channel.Name, &channel.TopicName, text)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
@@ -118,7 +117,7 @@ func TestSendAttachmentByTeam(t *testing.T) {
 
 	// Send the message
 	title := "test SendAttachmentByTeam " + randomString(t)
-	res, err := alice.SendAttachmentByTeam(channel.Name, location, title, &channel.TopicName)
+	res, err := alice.SendAttachmentByTeam(channel.Name, &channel.TopicName, location, title)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
@@ -127,7 +126,6 @@ func TestSendAttachmentByTeam(t *testing.T) {
 ////////////////////////////////////////////////////////
 // React to chat ///////////////////////////////////////
 ////////////////////////////////////////////////////////
-
 func TestReactByChannel(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
@@ -197,7 +195,7 @@ func TestJoinAndLeaveChannel(t *testing.T) {
 ////////////////////////////////////////////////////////
 // Send lumens in chat /////////////////////////////////
 ////////////////////////////////////////////////////////
-/*
+
 func TestInChatSend(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
@@ -254,12 +252,11 @@ func TestInChatSendByTlfName(t *testing.T) {
 	require.Equal(t, readMessage.Content.TypeName, "text")
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.Id, *res.Result.MessageID)
-}*/
+}
 
 ////////////////////////////////////////////////////////
 // Misc commands ///////////////////////////////////////
 ////////////////////////////////////////////////////////
-
 func TestAdvertiseCommands(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
