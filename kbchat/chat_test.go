@@ -45,7 +45,6 @@ func TestSendMessage(t *testing.T) {
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.Id, *res.Result.MessageID)
 }
-
 func TestSendMessageByConvID(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
@@ -127,7 +126,6 @@ func TestSendAttachmentByTeam(t *testing.T) {
 ////////////////////////////////////////////////////////
 // React to chat ///////////////////////////////////////
 ////////////////////////////////////////////////////////
-
 func TestReactByChannel(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
@@ -259,7 +257,6 @@ func TestInChatSendByTlfName(t *testing.T) {
 ////////////////////////////////////////////////////////
 // Misc commands ///////////////////////////////////////
 ////////////////////////////////////////////////////////
-
 func TestAdvertiseCommands(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
