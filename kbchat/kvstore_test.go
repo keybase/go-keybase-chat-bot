@@ -28,12 +28,12 @@ func TestKVStore(t *testing.T) {
 	// list namespaces
 	res4, err4 := alice.ListNamespaces(team)
 	require.NoError(t, err4)
-	require.True(t, len(res4) > 0)
+	require.True(t, len(res4.Namespaces) > 0)
 
 	// list entryKeys
 	res5, err5 := alice.ListEntryKeys(team, namespace)
 	require.NoError(t, err5)
-	require.True(t, len(res5) > 0)
+	require.True(t, len(res5.EntryKeys) > 0)
 
 	// get
 	res6, err6 := alice.GetEntry(team, namespace, key)
@@ -49,8 +49,12 @@ func TestKVStore(t *testing.T) {
 	require.NoError(t, err8)
 	require.Equal(t, rev+1, res8.Revision)
 
+	// fail delete
+	_, err9 := alice.DeleteEntry(team, namespace, key, 0)
+	require.Error(t, err9)
+
 	// get
-	res9, err9 := alice.GetEntry(team, namespace, key)
-	require.NoError(t, err9)
-	require.Equal(t, "", res9.EntryValue)
+	res10, err10 := alice.GetEntry(team, namespace, key)
+	require.NoError(t, err10)
+	require.Equal(t, "", res10.EntryValue)
 }
