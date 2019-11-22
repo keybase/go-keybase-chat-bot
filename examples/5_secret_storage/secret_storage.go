@@ -88,7 +88,7 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 	}
 
 	// we don't expect SecretKey's revision > 0
-	if _, err := sc.api.PutEntry(teamName, namespace, SecretKey, hex.EncodeToString(newSecret), 1); err != nil {
+	if _, err := sc.api.PutEntryWithRevision(teamName, namespace, SecretKey, hex.EncodeToString(newSecret), 1); err != nil {
 		// failed to put; get entry
 		res, err := sc.api.GetEntry(teamName, namespace, SecretKey)
 		if err != nil {
@@ -116,7 +116,11 @@ func (sc *SecretKeyKVStoreAPI) hmacKey(teamName string, namespace string, entryK
 	return hex.EncodeToString(hmacEntryKey), nil
 }
 
-func (sc *SecretKeyKVStoreAPI) PutEntry(teamName string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
+func (sc *SecretKeyKVStoreAPI) PutEntry(teamName string, namespace string, entryKey string, entryValue string) (result keybase1.KVPutResult, err error) {
+	return sc.PutEntryWithRevision(teamName, namespace, entryKey, entryValue, 0)
+}
+
+func (sc *SecretKeyKVStoreAPI) PutEntryWithRevision(teamName string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
 	var keyedValue map[string]string
 	if err = json.Unmarshal([]byte(entryValue), &keyedValue); err != nil {
 		return
@@ -133,7 +137,7 @@ func (sc *SecretKeyKVStoreAPI) PutEntry(teamName string, namespace string, entry
 		return
 	}
 
-	result, err = sc.api.PutEntry(teamName, namespace, hmacEntryKey, string(bytes), revision)
+	result, err = sc.api.PutEntryWithRevision(teamName, namespace, hmacEntryKey, string(bytes), revision)
 	if err != nil {
 		return
 	}
@@ -141,12 +145,16 @@ func (sc *SecretKeyKVStoreAPI) PutEntry(teamName string, namespace string, entry
 	return
 }
 
-func (sc *SecretKeyKVStoreAPI) DeleteEntry(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
+func (sc *SecretKeyKVStoreAPI) DeleteEntry(teamName string, namespace string, entryKey string) (result keybase1.KVDeleteEntryResult, err error) {
+	return sc.DeleteEntryWithRevision(teamName, namespace, entryKey, 0)
+}
+
+func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevision(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
 	hmacEntryKey, err := sc.hmacKey(teamName, namespace, entryKey)
 	if err != nil {
 		return
 	}
-	result, err = sc.api.DeleteEntry(teamName, namespace, hmacEntryKey, revision)
+	result, err = sc.api.DeleteEntryWithRevision(teamName, namespace, hmacEntryKey, revision)
 	if err != nil {
 		return
 	}
@@ -224,7 +232,7 @@ func (r *RentalBotClient) Add(teamName string, tool string) (ok bool, result key
 	if err != nil {
 		return false, result, err
 	}
-	if _, err := r.api.PutEntry(teamName, Namespace, tool, string(bytes), expectedRevision); err != nil {
+	if _, err := r.api.PutEntryWithRevision(teamName, Namespace, tool, string(bytes), expectedRevision); err != nil {
 		// failed put. try get
 		result, err := r.Lookup(teamName, tool)
 		if err != nil {
@@ -245,7 +253,7 @@ func (r *RentalBotClient) Remove(teamName string, tool string) (ok bool, result 
 	}
 
 	expectedRevision := result.Revision + 1
-	if _, err := r.api.DeleteEntry(teamName, Namespace, tool, expectedRevision); err != nil {
+	if _, err := r.api.DeleteEntryWithRevision(teamName, Namespace, tool, expectedRevision); err != nil {
 		// failed delete. try get
 		result, err := r.Lookup(teamName, tool)
 		if err != nil {
@@ -282,7 +290,7 @@ func (r *RentalBotClient) Reserve(teamName string, username string, tool string,
 	if err != nil {
 		return false, result, err
 	}
-	if _, err := r.api.PutEntry(teamName, Namespace, tool, string(bytes), expectedRevision); err != nil {
+	if _, err := r.api.PutEntryWithRevision(teamName, Namespace, tool, string(bytes), expectedRevision); err != nil {
 		// failed put. try get
 		result, err := r.Lookup(teamName, tool)
 		if err != nil {
@@ -324,7 +332,7 @@ func (r *RentalBotClient) Unreserve(teamName string, username string, tool strin
 	if err != nil {
 		return false, result, err
 	}
-	if _, err := r.api.PutEntry(teamName, Namespace, tool, string(bytes), expectedRevision); err != nil {
+	if _, err := r.api.PutEntryWithRevision(teamName, Namespace, tool, string(bytes), expectedRevision); err != nil {
 		// failed put. try get
 		result, err = r.Lookup(teamName, tool)
 		if err != nil {

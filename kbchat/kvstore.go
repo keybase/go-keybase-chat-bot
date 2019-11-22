@@ -34,14 +34,20 @@ type ListEntryKeys struct {
 }
 
 type KVStoreAPI interface {
-	PutEntry(teamName string, namespace string, entryKey string, entryValue string, revision int) (keybase1.KVPutResult, error)
-	DeleteEntry(teamName string, namespace string, entryKey string, revision int) (keybase1.KVDeleteEntryResult, error)
+	PutEntry(teamName string, namespace string, entryKey string, entryValue string) (keybase1.KVPutResult, error)
+	PutEntryWithRevision(teamName string, namespace string, entryKey string, entryValue string, revision int) (keybase1.KVPutResult, error)
+	DeleteEntry(teamName string, namespace string, entryKey string) (keybase1.KVDeleteEntryResult, error)
+	DeleteEntryWithRevision(teamName string, namespace string, entryKey string, revision int) (keybase1.KVDeleteEntryResult, error)
 	GetEntry(teamName string, namespace string, entryKey string) (keybase1.KVGetResult, error)
 	ListNamespaces(teamName string) (keybase1.KVListNamespaceResult, error)
 	ListEntryKeys(teamName string, namespace string) (keybase1.KVListEntryResult, error)
 }
 
-func (a *API) PutEntry(teamName string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
+func (a *API) PutEntry(teamName string, namespace string, entryKey string, entryValue string) (result keybase1.KVPutResult, err error) {
+	return a.PutEntryWithRevision(teamName, namespace, entryKey, entryValue, 0)
+}
+
+func (a *API) PutEntryWithRevision(teamName string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
 
 	type PutArgs struct {
 		Method string `json:"method"`
@@ -75,21 +81,25 @@ func (a *API) PutEntry(teamName string, namespace string, entryKey string, entry
 	cmd.Stdin = strings.NewReader(string(apiInput))
 	bytes, err := cmd.Output()
 	if err != nil {
-		return result, fmt.Errorf("failed to call keybase kvstore api: %v", err)
+		return result, APIError{err}
 	}
 
 	entry := PutEntry{}
 	err = json.Unmarshal(bytes, &entry)
 	if err != nil {
-		return result, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
+		return result, UnmarshalError{err}
 	}
 	if entry.Error.Message != "" {
-		return result, fmt.Errorf("received error from keybase kvstore api: %s", entry.Error.Message)
+		return result, ResponseError{entry.Error.Message}
 	}
 	return entry.Result, nil
 }
 
-func (a *API) DeleteEntry(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
+func (a *API) DeleteEntry(teamName string, namespace string, entryKey string) (result keybase1.KVDeleteEntryResult, err error) {
+	return a.DeleteEntryWithRevision(teamName, namespace, entryKey, 0)
+}
+
+func (a *API) DeleteEntryWithRevision(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
 
 	type DeleteArgs struct {
 		Method string `json:"method"`
@@ -121,16 +131,16 @@ func (a *API) DeleteEntry(teamName string, namespace string, entryKey string, re
 	cmd.Stdin = strings.NewReader(string(apiInput))
 	bytes, err := cmd.Output()
 	if err != nil {
-		return result, fmt.Errorf("failed to call keybase kvstore api: %v", err)
+		return result, APIError{err}
 	}
 
 	entry := DeleteEntry{}
 	err = json.Unmarshal(bytes, &entry)
 	if err != nil {
-		return result, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
+		return result, UnmarshalError{err}
 	}
 	if entry.Error.Message != "" {
-		return result, fmt.Errorf("received error from keybase kvstore api: %s", entry.Error.Message)
+		return result, ResponseError{entry.Error.Message}
 	}
 	return entry.Result, nil
 }
@@ -162,17 +172,16 @@ func (a *API) GetEntry(teamName string, namespace string, entryKey string) (resu
 	cmd.Stdin = strings.NewReader(string(apiInput))
 	bytes, err := cmd.Output()
 	if err != nil {
-		return result, fmt.Errorf("failed to call keybase kvstore api: %v", err)
+		return result, APIError{err}
 	}
 
 	entry := GetEntry{}
 	err = json.Unmarshal(bytes, &entry)
-
 	if err != nil {
-		return result, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
+		return result, UnmarshalError{err}
 	}
 	if entry.Error.Message != "" {
-		return result, fmt.Errorf("received error from keybase kvstore api: %s", entry.Error.Message)
+		return result, ResponseError{entry.Error.Message}
 	}
 	return entry.Result, nil
 }
@@ -183,16 +192,16 @@ func (a *API) ListNamespaces(teamName string) (result keybase1.KVListNamespaceRe
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.Output()
 	if err != nil {
-		return result, fmt.Errorf("failed to call keybase kvstore api: %v", err)
+		return result, APIError{err}
 	}
 
 	var namespaces ListNamespaces
 	err = json.Unmarshal(bytes, &namespaces)
 	if err != nil {
-		return result, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
+		return result, UnmarshalError{err}
 	}
 	if namespaces.Error.Message != "" {
-		return result, fmt.Errorf("received error from keybase kvstore api: %s", namespaces.Error.Message)
+		return result, ResponseError{namespaces.Error.Message}
 	}
 	return namespaces.Result, nil
 }
@@ -203,16 +212,16 @@ func (a *API) ListEntryKeys(teamName string, namespace string) (result keybase1.
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.Output()
 	if err != nil {
-		return result, fmt.Errorf("failed to call keybase kvstore api: %v", err)
+		return result, APIError{err}
 	}
 
 	entryKeys := ListEntryKeys{}
 	err = json.Unmarshal(bytes, &entryKeys)
 	if err != nil {
-		return result, fmt.Errorf("failed to parse output from keybase kvstore api: %v", err)
+		return result, UnmarshalError{err}
 	}
 	if entryKeys.Error.Message != "" {
-		return result, fmt.Errorf("received error from keybase kvstore api: %s", entryKeys.Error.Message)
+		return result, ResponseError{entryKeys.Error.Message}
 	}
 	return entryKeys.Result, nil
 }

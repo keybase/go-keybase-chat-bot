@@ -3,11 +3,32 @@ package kbchat
 import (
 	"testing"
 
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 	"github.com/stretchr/testify/require"
 )
 
+func contains(a []string, x string) bool {
+	for _, n := range a {
+		if x == n {
+			return true
+		}
+	}
+	return false
+}
+
+func containsKey(a []keybase1.KVListEntryKey, x string) bool {
+	for _, n := range a {
+		if x == n.EntryKey {
+			return true
+		}
+	}
+	return false
+}
+
 // test doesn't make assumption about prior state
 func TestKVStore(t *testing.T) {
+	var err error
+
 	alice, dir := testBotSetup(t, "alice")
 	channel := getTeamChatChannel(t, "acme")
 	team := channel.Name
@@ -17,44 +38,62 @@ func TestKVStore(t *testing.T) {
 	key := "_test_key1"
 
 	// put with default revision
-	res2, err2 := alice.PutEntry(team, namespace, key, "value1", 0)
-	require.NoError(t, err2)
-	rev := res2.Revision
+	put, err := alice.PutEntry(team, namespace, key, "value1")
+	require.NoError(t, err)
+	require.True(t, put.Revision > 0)
+	rev := put.Revision
 
-	// fail put
-	_, err3 := alice.PutEntry(team, namespace, key, "value2", rev)
-	require.Error(t, err3)
+	expectedRevision := rev + 1
+
+	// fail put (wrong revision)
+	_, err = alice.PutEntryWithRevision(team, namespace, key, "value2", expectedRevision-1)
+	require.Error(t, err)
 
 	// list namespaces
-	res4, err4 := alice.ListNamespaces(team)
-	require.NoError(t, err4)
-	require.True(t, len(res4.Namespaces) > 0)
+	listns, err := alice.ListNamespaces(team)
+	require.NoError(t, err)
+	require.True(t, len(listns.Namespaces) > 0)
+	require.True(t, contains(listns.Namespaces, namespace))
 
 	// list entryKeys
-	res5, err5 := alice.ListEntryKeys(team, namespace)
-	require.NoError(t, err5)
-	require.True(t, len(res5.EntryKeys) > 0)
+	listek, err := alice.ListEntryKeys(team, namespace)
+	require.NoError(t, err)
+	require.True(t, len(listek.EntryKeys) > 0)
+	require.True(t, containsKey(listek.EntryKeys, key))
 
 	// get
-	res6, err6 := alice.GetEntry(team, namespace, key)
-	require.NoError(t, err6)
-	require.Equal(t, "value1", res6.EntryValue)
+	get, err := alice.GetEntry(team, namespace, key)
+	require.NoError(t, err)
+	require.Equal(t, "value1", get.EntryValue)
 
 	// fail delete
-	_, err7 := alice.DeleteEntry(team, namespace, key, rev+2)
-	require.Error(t, err7)
+	_, err = alice.DeleteEntryWithRevision(team, namespace, key, expectedRevision+1)
+	require.Error(t, err)
 
 	// delete
-	res8, err8 := alice.DeleteEntry(team, namespace, key, rev+1)
-	require.NoError(t, err8)
-	require.Equal(t, rev+1, res8.Revision)
+	del, err := alice.DeleteEntryWithRevision(team, namespace, key, expectedRevision)
+	require.NoError(t, err)
+	require.Equal(t, expectedRevision, del.Revision)
 
-	// fail delete
-	_, err9 := alice.DeleteEntry(team, namespace, key, 0)
-	require.Error(t, err9)
+	// fail delete (non existent)
+	_, err = alice.DeleteEntry(team, namespace, key)
+	require.Error(t, err)
+
+	// put with default revision
+	expectedRevision++
+	put, err = alice.PutEntry(team, namespace, key, "value3")
+	require.NoError(t, err)
+	require.Equal(t, expectedRevision, put.Revision)
+
+	// delete with default revision
+	expectedRevision++
+	del, err = alice.DeleteEntry(team, namespace, key)
+	require.NoError(t, err)
+	require.Equal(t, expectedRevision, del.Revision)
 
 	// get
-	res10, err10 := alice.GetEntry(team, namespace, key)
-	require.NoError(t, err10)
-	require.Equal(t, "", res10.EntryValue)
+	get, err = alice.GetEntry(team, namespace, key)
+	require.NoError(t, err)
+	require.Equal(t, "", get.EntryValue)
+	require.Equal(t, expectedRevision, get.Revision)
 }
