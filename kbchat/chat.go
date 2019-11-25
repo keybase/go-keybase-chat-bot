@@ -178,6 +178,20 @@ func (a *API) SendAttachmentByTeam(teamName string, inChannel *string, filename 
 	return a.doSend(arg)
 }
 
+func (a *API) SendAttachmentByConvID(convID string, filename string, title string) (SendResponse, error) {
+	arg := sendMessageArg{
+		Method: "attach",
+		Params: sendMessageParams{
+			Options: sendMessageOptions{
+				ConversationID: convID,
+				Filename:       filename,
+				Title:          title,
+			},
+		},
+	}
+	return a.doSend(arg)
+}
+
 ////////////////////////////////////////////////////////
 // React to chat ///////////////////////////////////////
 ////////////////////////////////////////////////////////
