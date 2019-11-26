@@ -16,6 +16,7 @@ types:
 
 dependencies:
 	go get github.com/stretchr/testify/require
+	go get golang.org/x/sync/errgroup
 	go get gopkg.in/yaml.v2
 
 clean:

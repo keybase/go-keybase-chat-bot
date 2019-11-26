@@ -9,8 +9,7 @@ alice,alice),
   (2) persistent across logins
   (3) fast and durable.
 
-It supports putting, getting, listing, and deleting. There is also
-concurrency support, but check out 5_secret_storage for that. A team has many
+It supports putting, getting, listing, and deleting. A team has many
 namespaces, a namespace has many entryKeys, and an entryKey has one current
 entryValue. Namespaces and entryKeys are in cleartext, and the Keybase client
 service will encrypt and sign the entryValue on the way in (as well as
@@ -40,19 +39,17 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"strings"
-	"sync"
 
 	"github.com/keybase/go-keybase-chat-bot/kbchat"
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
+
+	"golang.org/x/sync/errgroup"
 )
 
-const Namespace = "rental"
-const SecretKey = "_secret"
-const KeyKey = "_key"
-
-// A SecretKeyKVStoreAPI is a KVStoreAPI that hides the entryKeys from Keybase servers.
+// SecretKeyKVStoreAPI is a KVStoreAPI that hides the entryKeys from Keybase servers.
 // It does so by HMACing entryKeys using a per-(team, namespace) secret,
 // and storing the HMAC instead of the plaintext entryKey. This approach
 // does not handle any secret rotation, and does not expect the secret to
@@ -67,16 +64,21 @@ const KeyKey = "_key"
 // knows the HMAC secret can check for the presence of specific entryKeys
 // (*but you probably have bigger issues to deal with in that case...).
 type SecretKeyKVStoreAPI struct {
-	api     kbchat.KVStoreAPI
-	secrets map[string](map[string][]byte)
+	api       kbchat.KVStoreAPI
+	secrets   map[string](map[string][]byte)
+	secretKey string
+	keyKey    string
+}
+
+func NewSecretKeyKVStoreAPI(api kbchat.KVStoreAPI) *SecretKeyKVStoreAPI {
+	secrets := make(map[string](map[string][]byte))
+	sc := SecretKeyKVStoreAPI{api, secrets, "_secret", "_key"}
+	return &sc
 }
 
 func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]byte, error) {
-	if sc.secrets == nil {
-		sc.secrets = map[string](map[string][]byte){}
-	}
 	if _, ok := sc.secrets[teamName]; !ok {
-		sc.secrets[teamName] = map[string][]byte{}
+		sc.secrets[teamName] = make(map[string][]byte)
 	}
 	if secret, ok := sc.secrets[teamName][namespace]; ok {
 		return secret, nil
@@ -88,9 +90,9 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 	}
 
 	// we don't expect SecretKey's revision > 0
-	if _, err := sc.api.PutEntryWithRevision(teamName, namespace, SecretKey, hex.EncodeToString(newSecret), 1); err != nil {
+	if _, err := sc.api.PutEntryWithRevision(teamName, namespace, sc.secretKey, hex.EncodeToString(newSecret), 1); err != nil {
 		// failed to put; get entry
-		res, err := sc.api.GetEntry(teamName, namespace, SecretKey)
+		res, err := sc.api.GetEntry(teamName, namespace, sc.secretKey)
 		if err != nil {
 			return nil, err
 		}
@@ -123,26 +125,26 @@ func (sc *SecretKeyKVStoreAPI) PutEntry(teamName string, namespace string, entry
 func (sc *SecretKeyKVStoreAPI) PutEntryWithRevision(teamName string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
 	var keyedValue map[string]string
 	if err = json.Unmarshal([]byte(entryValue), &keyedValue); err != nil {
-		return
+		return result, err
 	}
 
-	keyedValue[KeyKey] = entryKey
+	keyedValue[sc.keyKey] = entryKey
 	bytes, err := json.Marshal(keyedValue)
 	if err != nil {
-		return
+		return result, err
 	}
 
 	hmacEntryKey, err := sc.hmacKey(teamName, namespace, entryKey)
 	if err != nil {
-		return
+		return result, err
 	}
 
 	result, err = sc.api.PutEntryWithRevision(teamName, namespace, hmacEntryKey, string(bytes), revision)
 	if err != nil {
-		return
+		return result, err
 	}
 	result.EntryKey = entryKey
-	return
+	return result, err
 }
 
 func (sc *SecretKeyKVStoreAPI) DeleteEntry(teamName string, namespace string, entryKey string) (result keybase1.KVDeleteEntryResult, err error) {
@@ -152,27 +154,27 @@ func (sc *SecretKeyKVStoreAPI) DeleteEntry(teamName string, namespace string, en
 func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevision(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
 	hmacEntryKey, err := sc.hmacKey(teamName, namespace, entryKey)
 	if err != nil {
-		return
+		return result, err
 	}
 	result, err = sc.api.DeleteEntryWithRevision(teamName, namespace, hmacEntryKey, revision)
 	if err != nil {
-		return
+		return result, err
 	}
 	result.EntryKey = entryKey
-	return
+	return result, err
 }
 
 func (sc *SecretKeyKVStoreAPI) GetEntry(teamName string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
 	hmacEntryKey, err := sc.hmacKey(teamName, namespace, entryKey)
 	if err != nil {
-		return
+		return result, err
 	}
 	result, err = sc.api.GetEntry(teamName, namespace, hmacEntryKey)
 	if err != nil {
-		return
+		return result, err
 	}
 	result.EntryKey = entryKey
-	return
+	return result, err
 }
 
 func (sc *SecretKeyKVStoreAPI) ListNamespaces(teamName string) (keybase1.KVListNamespaceResult, error) {
@@ -182,7 +184,7 @@ func (sc *SecretKeyKVStoreAPI) ListNamespaces(teamName string) (keybase1.KVListN
 func (sc *SecretKeyKVStoreAPI) ListEntryKeys(teamName string, namespace string) (result keybase1.KVListEntryResult, err error) {
 	keys, err := sc.api.ListEntryKeys(teamName, namespace)
 	if err != nil {
-		return
+		return result, err
 	}
 	tmp := keys.EntryKeys[:0]
 	for _, e := range keys.EntryKeys {
@@ -199,25 +201,31 @@ func (sc *SecretKeyKVStoreAPI) ListEntryKeys(teamName string, namespace string) 
 		if err := json.Unmarshal([]byte(get.EntryValue), &keyedValue); err != nil {
 			return result, err
 		}
-		e.EntryKey = keyedValue[KeyKey]
+		e.EntryKey = keyedValue[sc.keyKey]
 		tmp = append(tmp, e)
 	}
 	keys.EntryKeys = tmp
 	return keys, nil
 }
 
-// Wraps a KVStoreClient to expose methods to handle tool rentals.
+// RentalBotClient wraps a KVStoreClient to expose methods to handle tool rentals.
 // Tries kvstore write actions with explicit revision numbers.
 // If it fails to write, it does a "get" and returns the get result.
 type RentalBotClient struct {
-	api kbchat.KVStoreAPI
+	api       kbchat.KVStoreAPI
+	namespace string
+}
+
+func NewRentalBotClient(api kbchat.KVStoreAPI, namespace string) *RentalBotClient {
+	r := RentalBotClient{api, namespace}
+	return &r
 }
 
 func (r *RentalBotClient) Lookup(teamName string, tool string) (keybase1.KVGetResult, error) {
-	return r.api.GetEntry(teamName, Namespace, tool)
+	return r.api.GetEntry(teamName, r.namespace, tool)
 }
 
-// returns (whether action is successful, most recent get result if applicable, error)
+// Add returns (whether action is successful, most recent get result if applicable, error)
 func (r *RentalBotClient) Add(teamName string, tool string) (ok bool, result keybase1.KVGetResult, err error) {
 	result, err = r.Lookup(teamName, tool)
 	if err != nil {
@@ -227,12 +235,12 @@ func (r *RentalBotClient) Add(teamName string, tool string) (ok bool, result key
 	}
 
 	expectedRevision := result.Revision + 1
-	val := map[string]string{}
+	val := make(map[string]string)
 	bytes, err := json.Marshal(val)
 	if err != nil {
 		return false, result, err
 	}
-	if _, err := r.api.PutEntryWithRevision(teamName, Namespace, tool, string(bytes), expectedRevision); err != nil {
+	if _, err := r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision); err != nil {
 		// failed put. try get
 		result, err := r.Lookup(teamName, tool)
 		if err != nil {
@@ -243,7 +251,7 @@ func (r *RentalBotClient) Add(teamName string, tool string) (ok bool, result key
 	return true, result, nil // successul put
 }
 
-// returns (whether action is successful, most recent get result if applicable, error)
+// Remove returns (whether action is successful, most recent get result if applicable, error)
 func (r *RentalBotClient) Remove(teamName string, tool string) (ok bool, result keybase1.KVGetResult, err error) {
 	result, err = r.Lookup(teamName, tool)
 	if err != nil {
@@ -253,7 +261,7 @@ func (r *RentalBotClient) Remove(teamName string, tool string) (ok bool, result 
 	}
 
 	expectedRevision := result.Revision + 1
-	if _, err := r.api.DeleteEntryWithRevision(teamName, Namespace, tool, expectedRevision); err != nil {
+	if _, err := r.api.DeleteEntryWithRevision(teamName, r.namespace, tool, expectedRevision); err != nil {
 		// failed delete. try get
 		result, err := r.Lookup(teamName, tool)
 		if err != nil {
@@ -264,16 +272,16 @@ func (r *RentalBotClient) Remove(teamName string, tool string) (ok bool, result 
 	return true, result, nil // successul delete
 }
 
-// reserve a tool for a given day if that day is already not reserved.
-// note: if you reserve a not-added or deleted tool, it will add the tool.
-// returns (whether action is successful, most recent get result if applicable, error)
+// Reserve reserve a tool for a given day if that day is already not reserved.
+// Note: if you reserve a not-added or deleted tool, it will add the tool.
+// Returns (whether action is successful, most recent get result if applicable, error)
 func (r *RentalBotClient) Reserve(teamName string, username string, tool string, day string) (ok bool, result keybase1.KVGetResult, err error) {
 	var val map[string]string
 	result, err = r.Lookup(teamName, tool)
 	if err != nil {
 		return false, result, err // api call failed
 	} else if result.EntryValue == "" {
-		val = map[string]string{}
+		val = make(map[string]string)
 	} else {
 		if err = json.Unmarshal([]byte(result.EntryValue), &val); err != nil {
 			return false, result, err
@@ -290,7 +298,7 @@ func (r *RentalBotClient) Reserve(teamName string, username string, tool string,
 	if err != nil {
 		return false, result, err
 	}
-	if _, err := r.api.PutEntryWithRevision(teamName, Namespace, tool, string(bytes), expectedRevision); err != nil {
+	if _, err := r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision); err != nil {
 		// failed put. try get
 		result, err := r.Lookup(teamName, tool)
 		if err != nil {
@@ -301,16 +309,16 @@ func (r *RentalBotClient) Reserve(teamName string, username string, tool string,
 	return true, result, nil // successul put
 }
 
-// unreserve a tool for a given day if that day is currently reserved by the given user.
-// note: if you unreserve a not-added or deleted tool, it will not add the tool.
-// returns (whether action is successful, most recent get result if applicable, error)
+// Unreserve a tool for a given day if that day is currently reserved by the given user.
+// Note: if you unreserve a not-added or deleted tool, it will not add the tool.
+// Returns (whether action is successful, most recent get result if applicable, error)
 func (r *RentalBotClient) Unreserve(teamName string, username string, tool string, day string) (ok bool, result keybase1.KVGetResult, err error) {
 	var val map[string]string
 	result, err = r.Lookup(teamName, tool)
 	if err != nil {
 		return false, result, err // api call failed
 	} else if result.EntryValue == "" {
-		val = map[string]string{}
+		val = make(map[string]string)
 	} else {
 		if err := json.Unmarshal([]byte(result.EntryValue), &val); err != nil {
 			return false, result, err
@@ -332,7 +340,7 @@ func (r *RentalBotClient) Unreserve(teamName string, username string, tool strin
 	if err != nil {
 		return false, result, err
 	}
-	if _, err := r.api.PutEntryWithRevision(teamName, Namespace, tool, string(bytes), expectedRevision); err != nil {
+	if _, err := r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision); err != nil {
 		// failed put. try get
 		result, err = r.Lookup(teamName, tool)
 		if err != nil {
@@ -345,7 +353,7 @@ func (r *RentalBotClient) Unreserve(teamName string, username string, tool strin
 
 func (r *RentalBotClient) ListTools(teamName string) ([]string, error) {
 	var tools []string
-	res, err := r.api.ListEntryKeys(teamName, Namespace)
+	res, err := r.api.ListEntryKeys(teamName, r.namespace)
 
 	if err != nil {
 		return tools, err
@@ -362,7 +370,7 @@ func fail(msg string, args ...interface{}) {
 	os.Exit(3)
 }
 
-func basicRentalUsers(rental RentalBotClient, team string) {
+func basicRentalUsers(rental *RentalBotClient, team string) error {
 	user1 := "Jo"
 	user2 := "Charlie"
 	date1 := "2044-03-12"
@@ -373,7 +381,7 @@ func basicRentalUsers(rental RentalBotClient, team string) {
 	ok, res, err := rental.Remove(team, tool)
 	fmt.Printf("REMOVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	var tools []string
@@ -386,37 +394,37 @@ func basicRentalUsers(rental RentalBotClient, team string) {
 	ok, res, err = rental.Add(team, "time travel machine")
 	fmt.Printf("ADD: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	ok, res, err = rental.Remove(team, tool)
 	fmt.Printf("REMOVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	ok, res, err = rental.Add(team, tool)
 	fmt.Printf("ADD: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	ok, res, err = rental.Reserve(team, user1, tool, date1)
 	fmt.Printf("RESERVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	ok, res, err = rental.Reserve(team, user1, tool, date1)
 	fmt.Printf("EXPECTING RESERVE FAIL: %v, %+v, %v\n", ok, res, err)
 	if ok && err == nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	ok, res, err = rental.Reserve(team, user2, tool, date2)
 	fmt.Printf("RESERVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	res, err = rental.Lookup(team, tool)
@@ -425,84 +433,79 @@ func basicRentalUsers(rental RentalBotClient, team string) {
 	ok, res, err = rental.Unreserve(team, user1, tool, date3)
 	fmt.Printf("UNRESERVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	ok, res, err = rental.Unreserve(team, user1, tool, date2)
 	fmt.Printf("EXPECTING UNRESERVE FAIL: %v, %+v, %v\n", ok, res, err)
 	if ok && err == nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	ok, res, err = rental.Unreserve(team, user1, tool, date1)
 	fmt.Printf("UNRESERVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
-		panic(fmt.Sprintf("Unexpected result: %v, %v", ok, err))
+		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	res, err = rental.Lookup(team, tool)
 	fmt.Printf("LOOKUP: %+v, %v\n", res, err)
+	return nil
 }
 
-func concurrentRentalUser(rental RentalBotClient, team string, tool string, userID int, wg *sync.WaitGroup) {
-	date := fmt.Sprintf("2044-10-0%d", userID)
-	user := fmt.Sprintf("user%d", userID)
+func concurrentRentalUsers(rental *RentalBotClient, team string) error {
+	tool := "time travel machine"
+	var g errgroup.Group
 
-	i := 0
-	// keep trying to reserve for user's unique date until successful
+	// pre
 	for {
-		ok, res, err := rental.Reserve(team, user, tool, date)
-		i++
-		fmt.Printf("%v, attempt %d, TRY TO RESERVE: %v, %+v, %+v\n", user, i, ok, res, err)
+		ok, res, err := rental.Remove(team, tool)
+		fmt.Printf("TRY TO REMOVE: %v, %+v, %+v\n", ok, res, err)
 		if ok && err == nil {
 			break
 		}
 	}
-	wg.Done()
-}
-
-func concurrentRentalUsers(rental RentalBotClient, team string) {
-	tool := "time travel machine"
-
-	var wg sync.WaitGroup
-
-	// pre
-	wg.Add(1)
-	go func() {
-		for {
-			ok, res, err := rental.Remove(team, tool)
-			fmt.Printf("TRY TO REMOVE: %v, %+v, %+v\n", ok, res, err)
-			if ok && err == nil {
-				break
-			}
-		}
-		wg.Done()
-	}()
-	wg.Wait()
+	g.Wait()
 
 	// have 5 users concurrently try to reserve the same tool for 5 unique dates
 	for i := 1; i <= 5; i++ {
-		wg.Add(1)
-		go concurrentRentalUser(rental, team, tool, i, &wg)
+		g.Go(func(userID int) func() error {
+			return func() error {
+				date := fmt.Sprintf("2044-10-0%d", userID)
+				user := fmt.Sprintf("user%d", userID)
+
+				i := 0
+				// keep trying to reserve for user's unique date until successful
+				for {
+					ok, res, err := rental.Reserve(team, user, tool, date)
+					i++
+					fmt.Printf("%v, attempt %d, TRY TO RESERVE: %v, %+v, %+v\n", user, i, ok, res, err)
+					if ok && err == nil {
+						break
+					}
+				}
+				return nil
+			}
+		}(i))
 	}
-	wg.Wait()
+	g.Wait()
 
 	// post: check that the tool has been reserved for all 5 unique dates
 	var val map[string]string
 	res, err := rental.Lookup(team, tool)
 	if err != nil {
-		panic(err)
+		return err
 	} else if res.EntryValue == "" {
-		val = map[string]string{}
+		val = make(map[string]string)
 	} else {
 		if err := json.Unmarshal([]byte(res.EntryValue), &val); err != nil {
-			panic(err)
+			return err
 		}
 	}
 	if len(val) != 6 {
-		panic(fmt.Sprintf("Unexpected result: %+v\n", val))
+		return fmt.Errorf("Unexpected result: %+v", val)
 	}
-
+	return nil
 }
 
 func main() {
@@ -523,13 +526,16 @@ func main() {
 
 	team := "yourhackerspace"
 
-	secretClient := new(SecretKeyKVStoreAPI)
-	secretClient.api = kbc
-	rental := RentalBotClient{api: secretClient}
+	secretClient := NewSecretKeyKVStoreAPI(kbc)
+	rental := NewRentalBotClient(secretClient, "!rental")
 
 	fmt.Println("...basic rental actions...")
-	basicRentalUsers(rental, team)
+	if err = basicRentalUsers(rental, team); err != nil {
+		log.Fatalf("Bot failed: %+v", err)
+	}
 	fmt.Println("...multiple users try to reserve...")
-	concurrentRentalUsers(rental, team)
+	if err = concurrentRentalUsers(rental, team); err != nil {
+		log.Fatalf("Bot failed: %+v", err)
+	}
 	fmt.Println("...5_secret_storage example is complete.")
 }
