@@ -518,7 +518,7 @@ func main() {
 	flag.StringVar(&kbLoc, "keybase", "keybase", "the location of the Keybase app")
 	flag.Parse()
 
-	fmt.Println("Starting 5_secret_storage example...")
+	fmt.Println("Starting secret_storage example...")
 
 	if kbc, err = kbchat.Start(kbchat.RunOptions{KeybaseLocation: kbLoc}); err != nil {
 		fail("Error creating API: %s", err.Error())
@@ -537,5 +537,5 @@ func main() {
 	if err = concurrentRentalUsers(rental, team); err != nil {
 		log.Fatalf("Bot failed: %+v", err)
 	}
-	fmt.Println("...5_secret_storage example is complete.")
+	fmt.Println("...secret_storage example is complete.")
 }
