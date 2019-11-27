@@ -68,7 +68,7 @@ func (a *API) GetConversations(unreadOnly bool) ([]chat1.ConvSummary, error) {
 }
 
 func (a *API) GetConversation(convID string) (res chat1.ConvSummary, err error) {
-	apiInput := fmt.Sprintf(`{"method":"list", "params": { "options": { "conversation_id": %s}}}`, convID)
+	apiInput := fmt.Sprintf(`{"method":"list", "params": { "options": { "conversation_id": "%s"}}}`, convID)
 	output, err := a.doFetch(apiInput)
 	if err != nil {
 		return res, err
