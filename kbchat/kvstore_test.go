@@ -48,6 +48,7 @@ func TestKVStore(t *testing.T) {
 	// fail put (wrong revision)
 	_, err = alice.PutEntryWithRevision(team, namespace, key, "value2", expectedRevision-1)
 	require.Error(t, err)
+	require.Equal(t, RevisionErrorCode, err.(Error).Code)
 
 	// list namespaces
 	listns, err := alice.ListNamespaces(team)
@@ -69,6 +70,7 @@ func TestKVStore(t *testing.T) {
 	// fail delete
 	_, err = alice.DeleteEntryWithRevision(team, namespace, key, expectedRevision+1)
 	require.Error(t, err)
+	require.Equal(t, RevisionErrorCode, err.(Error).Code)
 
 	// delete
 	del, err := alice.DeleteEntryWithRevision(team, namespace, key, expectedRevision)
@@ -78,6 +80,7 @@ func TestKVStore(t *testing.T) {
 	// fail delete (non existent)
 	_, err = alice.DeleteEntry(team, namespace, key)
 	require.Error(t, err)
+	require.Equal(t, DeleteNonExistentErrorCode, err.(Error).Code)
 
 	// put with default revision
 	expectedRevision++
