@@ -40,7 +40,7 @@ func (a *API) ListMembersOfTeam(teamName string) (keybase1.TeamMembersDetails, e
 		return empty, UnmarshalError{err}
 	}
 	if members.Error.Message != "" {
-		return empty, ResponseError{members.Error.Message}
+		return empty, members.Error
 	}
 	return members.Result.Members, nil
 }
@@ -62,7 +62,7 @@ func (a *API) ListUserMemberships(username string) ([]keybase1.AnnotatedMemberIn
 		return empty, UnmarshalError{err}
 	}
 	if members.Error.Message != "" {
-		return empty, ResponseError{members.Error.Message}
+		return empty, members.Error
 	}
 	return members.Result.Teams, nil
 }

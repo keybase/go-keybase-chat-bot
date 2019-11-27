@@ -12,8 +12,3 @@ type SendResponse struct {
 	Result chat1.SendRes `json:"result"`
 	Error  *Error        `json:"error,omitempty"`
 }
-
-type Error struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}

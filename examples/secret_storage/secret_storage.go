@@ -90,7 +90,13 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 	}
 
 	// we don't expect SecretKey's revision > 0
-	if _, err := sc.api.PutEntryWithRevision(teamName, namespace, sc.secretKey, hex.EncodeToString(newSecret), 1); err != nil {
+	_, err := sc.api.PutEntryWithRevision(teamName, namespace, sc.secretKey, hex.EncodeToString(newSecret), 1)
+	if err != nil {
+		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
+			// unexpected error
+			return nil, err
+		}
+
 		// failed to put; get entry
 		res, err := sc.api.GetEntry(teamName, namespace, sc.secretKey)
 		if err != nil {
@@ -240,7 +246,13 @@ func (r *RentalBotClient) Add(teamName string, tool string) (ok bool, result key
 	if err != nil {
 		return false, result, err
 	}
-	if _, err := r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision); err != nil {
+	_, err = r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision)
+	if err != nil {
+		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
+			// unexpected error
+			return false, result, err
+		}
+
 		// failed put. try get
 		result, err := r.Lookup(teamName, tool)
 		if err != nil {
@@ -261,7 +273,13 @@ func (r *RentalBotClient) Remove(teamName string, tool string) (ok bool, result 
 	}
 
 	expectedRevision := result.Revision + 1
-	if _, err := r.api.DeleteEntryWithRevision(teamName, r.namespace, tool, expectedRevision); err != nil {
+	_, err = r.api.DeleteEntryWithRevision(teamName, r.namespace, tool, expectedRevision)
+	if err != nil {
+		if _, ok := err.(kbchat.Error); !ok {
+			// unexpected error
+			return false, result, err
+		}
+
 		// failed delete. try get
 		result, err := r.Lookup(teamName, tool)
 		if err != nil {
@@ -298,7 +316,13 @@ func (r *RentalBotClient) Reserve(teamName string, username string, tool string,
 	if err != nil {
 		return false, result, err
 	}
-	if _, err := r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision); err != nil {
+	_, err = r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision)
+	if err != nil {
+		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
+			// unexpected error
+			return false, result, err
+		}
+
 		// failed put. try get
 		result, err := r.Lookup(teamName, tool)
 		if err != nil {
@@ -340,7 +364,14 @@ func (r *RentalBotClient) Unreserve(teamName string, username string, tool strin
 	if err != nil {
 		return false, result, err
 	}
-	if _, err := r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision); err != nil {
+
+	_, err = r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision)
+	if err != nil {
+		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
+			// unexpected error
+			return false, result, err
+		}
+
 		// failed put. try get
 		result, err = r.Lookup(teamName, tool)
 		if err != nil {

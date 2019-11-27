@@ -90,7 +90,7 @@ func (a *API) PutEntryWithRevision(teamName string, namespace string, entryKey s
 		return result, UnmarshalError{err}
 	}
 	if entry.Error.Message != "" {
-		return result, ResponseError{entry.Error.Message}
+		return result, entry.Error
 	}
 	return entry.Result, nil
 }
@@ -140,7 +140,7 @@ func (a *API) DeleteEntryWithRevision(teamName string, namespace string, entryKe
 		return result, UnmarshalError{err}
 	}
 	if entry.Error.Message != "" {
-		return result, ResponseError{entry.Error.Message}
+		return result, entry.Error
 	}
 	return entry.Result, nil
 }
@@ -181,7 +181,7 @@ func (a *API) GetEntry(teamName string, namespace string, entryKey string) (resu
 		return result, UnmarshalError{err}
 	}
 	if entry.Error.Message != "" {
-		return result, ResponseError{entry.Error.Message}
+		return result, entry.Error
 	}
 	return entry.Result, nil
 }
@@ -201,7 +201,7 @@ func (a *API) ListNamespaces(teamName string) (result keybase1.KVListNamespaceRe
 		return result, UnmarshalError{err}
 	}
 	if namespaces.Error.Message != "" {
-		return result, ResponseError{namespaces.Error.Message}
+		return result, namespaces.Error
 	}
 	return namespaces.Result, nil
 }
@@ -221,7 +221,7 @@ func (a *API) ListEntryKeys(teamName string, namespace string) (result keybase1.
 		return result, UnmarshalError{err}
 	}
 	if entryKeys.Error.Message != "" {
-		return result, ResponseError{entryKeys.Error.Message}
+		return result, entryKeys.Error
 	}
 	return entryKeys.Result, nil
 }
