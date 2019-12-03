@@ -49,30 +49,42 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// SecretKeyKVStoreAPI is a KVStoreAPI that hides the entryKeys from Keybase servers.
-// It does so by HMACing entryKeys using a per-(team, namespace) secret,
-// and storing the HMAC instead of the plaintext entryKey. This approach
-// does not handle any secret rotation, and does not expect the secret to
-// change.
+// SecretKeyKVStoreAPI implements the KVStoreAPI interface, and that hides the
+// plaintext of entryKeys from Keybase servers.  It does so by HMACing
+// entryKeys using a per-(team, namespace) secret, and storing the HMAC instead
+// of the plaintext entryKey. This approach does not handle any secret
+// rotation, and does not expect the secret to change. The secret is stored
+// under the entryKey "_secret".
 //
-// The plaintext entryKey is stored in it's corresponding JSON entryValue
-// under the key "_key" to enable listing.
+// The plaintext entryKey is stored in a JSON entryValue under the entryKey
+// "_key" to enable listing.
 //
-// This approach does not hide memory access patterns. Also, Keybase
-// servers prevent a removed team member from continuing to access a team's
-// data, but if that were somehow bypassed*, a former team member who still
-// knows the HMAC secret can check for the presence of specific entryKeys
-// (*but you probably have bigger issues to deal with in that case...).
+// This approach does not hide memory access patterns. Also, Keybase servers
+// prevent a removed team member from continuing to access a team's data, but
+// if that were somehow bypassed*, a former team member who still knows the
+// HMAC secret could check for the presence of specific entryKeys (*but you
+// probably have bigger issues to deal with in that case...).
 type SecretKeyKVStoreAPI struct {
-	api       kbchat.KVStoreAPI
-	secrets   map[string](map[string][]byte)
-	secretKey string
-	keyKey    string
+	api     kbchat.KVStoreAPI
+	secrets map[string](map[string][]byte)
+	config  SecretKeyKVStoreAPIConfig
+}
+
+type SecretKeyKVStoreAPIConfig struct {
+	secretName            string
+	plaintextEntryKeyName string
 }
 
 func NewSecretKeyKVStoreAPI(api kbchat.KVStoreAPI) *SecretKeyKVStoreAPI {
-	secrets := make(map[string](map[string][]byte))
-	sc := SecretKeyKVStoreAPI{api, secrets, "_secret", "_key"}
+	config := SecretKeyKVStoreAPIConfig{
+		secretName:            "_secret",
+		plaintextEntryKeyName: "_key",
+	}
+	sc := SecretKeyKVStoreAPI{
+		api:     api,
+		secrets: make(map[string](map[string][]byte)),
+		config:  config,
+	}
 	return &sc
 }
 
@@ -90,7 +102,7 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 	}
 
 	// we don't expect SecretKey's revision > 0
-	_, err := sc.api.PutEntryWithRevision(teamName, namespace, sc.secretKey, hex.EncodeToString(newSecret), 1)
+	_, err := sc.api.PutEntryWithRevision(teamName, namespace, sc.config.secretName, hex.EncodeToString(newSecret), 1)
 	if err != nil {
 		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
@@ -98,7 +110,7 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 		}
 
 		// failed to put; get entry
-		res, err := sc.api.GetEntry(teamName, namespace, sc.secretKey)
+		res, err := sc.api.GetEntry(teamName, namespace, sc.config.secretName)
 		if err != nil {
 			return nil, err
 		}
@@ -113,7 +125,7 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 	return sc.secrets[teamName][namespace], nil
 }
 
-func (sc *SecretKeyKVStoreAPI) hmacKey(teamName string, namespace string, entryKey string) (string, error) {
+func (sc *SecretKeyKVStoreAPI) obfuscateEntryKey(teamName string, namespace string, entryKey string) (string, error) {
 	secret, err := sc.loadSecret(teamName, namespace)
 	if err != nil {
 		return "", err
@@ -134,13 +146,13 @@ func (sc *SecretKeyKVStoreAPI) PutEntryWithRevision(teamName string, namespace s
 		return result, err
 	}
 
-	keyedValue[sc.keyKey] = entryKey
+	keyedValue[sc.config.plaintextEntryKeyName] = entryKey
 	bytes, err := json.Marshal(keyedValue)
 	if err != nil {
 		return result, err
 	}
 
-	hmacEntryKey, err := sc.hmacKey(teamName, namespace, entryKey)
+	hmacEntryKey, err := sc.obfuscateEntryKey(teamName, namespace, entryKey)
 	if err != nil {
 		return result, err
 	}
@@ -158,7 +170,7 @@ func (sc *SecretKeyKVStoreAPI) DeleteEntry(teamName string, namespace string, en
 }
 
 func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevision(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
-	hmacEntryKey, err := sc.hmacKey(teamName, namespace, entryKey)
+	hmacEntryKey, err := sc.obfuscateEntryKey(teamName, namespace, entryKey)
 	if err != nil {
 		return result, err
 	}
@@ -171,7 +183,8 @@ func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevision(teamName string, namespac
 }
 
 func (sc *SecretKeyKVStoreAPI) GetEntry(teamName string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
-	hmacEntryKey, err := sc.hmacKey(teamName, namespace, entryKey)
+
+	hmacEntryKey, err := sc.obfuscateEntryKey(teamName, namespace, entryKey)
 	if err != nil {
 		return result, err
 	}
@@ -207,7 +220,7 @@ func (sc *SecretKeyKVStoreAPI) ListEntryKeys(teamName string, namespace string) 
 		if err := json.Unmarshal([]byte(get.EntryValue), &keyedValue); err != nil {
 			return result, err
 		}
-		e.EntryKey = keyedValue[sc.keyKey]
+		e.EntryKey = keyedValue[sc.config.plaintextEntryKeyName]
 		tmp = append(tmp, e)
 	}
 	keys.EntryKeys = tmp
@@ -219,21 +232,22 @@ func (sc *SecretKeyKVStoreAPI) ListEntryKeys(teamName string, namespace string) 
 // If it fails to write, it does a "get" and returns the get result.
 type RentalBotClient struct {
 	api       kbchat.KVStoreAPI
+	team      string
 	namespace string
 }
 
-func NewRentalBotClient(api kbchat.KVStoreAPI, namespace string) *RentalBotClient {
-	r := RentalBotClient{api, namespace}
+func NewRentalBotClient(api kbchat.KVStoreAPI, teamName string, namespace string) *RentalBotClient {
+	r := RentalBotClient{api: api, team: teamName, namespace: namespace}
 	return &r
 }
 
-func (r *RentalBotClient) Lookup(teamName string, tool string) (keybase1.KVGetResult, error) {
-	return r.api.GetEntry(teamName, r.namespace, tool)
+func (r *RentalBotClient) Lookup(tool string) (keybase1.KVGetResult, error) {
+	return r.api.GetEntry(r.team, r.namespace, tool)
 }
 
 // Add returns (whether action is successful, most recent get result if applicable, error)
-func (r *RentalBotClient) Add(teamName string, tool string) (ok bool, result keybase1.KVGetResult, err error) {
-	result, err = r.Lookup(teamName, tool)
+func (r *RentalBotClient) Add(tool string) (ok bool, result keybase1.KVGetResult, err error) {
+	result, err = r.Lookup(tool)
 	if err != nil {
 		return false, result, err // api call failed
 	} else if result.EntryValue != "" {
@@ -246,7 +260,7 @@ func (r *RentalBotClient) Add(teamName string, tool string) (ok bool, result key
 	if err != nil {
 		return false, result, err
 	}
-	_, err = r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision)
+	_, err = r.api.PutEntryWithRevision(r.team, r.namespace, tool, string(bytes), expectedRevision)
 	if err != nil {
 		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
@@ -254,7 +268,7 @@ func (r *RentalBotClient) Add(teamName string, tool string) (ok bool, result key
 		}
 
 		// failed put. try get
-		result, err := r.Lookup(teamName, tool)
+		result, err := r.Lookup(tool)
 		if err != nil {
 			return false, result, err // api call failed
 		}
@@ -264,8 +278,8 @@ func (r *RentalBotClient) Add(teamName string, tool string) (ok bool, result key
 }
 
 // Remove returns (whether action is successful, most recent get result if applicable, error)
-func (r *RentalBotClient) Remove(teamName string, tool string) (ok bool, result keybase1.KVGetResult, err error) {
-	result, err = r.Lookup(teamName, tool)
+func (r *RentalBotClient) Remove(tool string) (ok bool, result keybase1.KVGetResult, err error) {
+	result, err = r.Lookup(tool)
 	if err != nil {
 		return false, result, err // api call failed
 	} else if result.EntryValue == "" {
@@ -273,50 +287,50 @@ func (r *RentalBotClient) Remove(teamName string, tool string) (ok bool, result 
 	}
 
 	expectedRevision := result.Revision + 1
-	_, err = r.api.DeleteEntryWithRevision(teamName, r.namespace, tool, expectedRevision)
-	if err != nil {
-		if _, ok := err.(kbchat.Error); !ok {
-			// unexpected error
-			return false, result, err
-		}
 
+	_, err = r.api.DeleteEntryWithRevision(r.team, r.namespace, tool, expectedRevision)
+	switch err.(type) {
+	case nil:
+		// successul delete
+		return true, result, nil
+	case kbchat.Error:
 		// failed delete. try get
-		result, err := r.Lookup(teamName, tool)
+		result, err := r.Lookup(tool)
 		if err != nil {
 			return false, result, err // api call failed
 		}
 		return false, result, nil // failed delete. return KVGetResult
+	default:
+		// unexpected error
+		return false, result, err
 	}
-	return true, result, nil // successul delete
 }
 
-// Reserve reserve a tool for a given day if that day is already not reserved.
+// Reserve reserves a tool for a given day if that day is not already reserved.
 // Note: if you reserve a not-added or deleted tool, it will add the tool.
 // Returns (whether action is successful, most recent get result if applicable, error)
-func (r *RentalBotClient) Reserve(teamName string, username string, tool string, day string) (ok bool, result keybase1.KVGetResult, err error) {
-	var val map[string]string
-	result, err = r.Lookup(teamName, tool)
+func (r *RentalBotClient) Reserve(username string, tool string, day string) (ok bool, result keybase1.KVGetResult, err error) {
+	var reservations map[string]string
+	result, err = r.Lookup(tool)
 	if err != nil {
 		return false, result, err // api call failed
 	} else if result.EntryValue == "" {
-		val = make(map[string]string)
-	} else {
-		if err = json.Unmarshal([]byte(result.EntryValue), &val); err != nil {
-			return false, result, err
-		}
+		reservations = make(map[string]string)
+	} else if err = json.Unmarshal([]byte(result.EntryValue), &reservations); err != nil {
+		return false, result, err
 	}
 
-	if _, ok := val[day]; ok {
+	if _, ok := reservations[day]; ok {
 		return false, result, nil // failed to put because day is already reserved
 	}
-	val[day] = username
+	reservations[day] = username
 	expectedRevision := result.Revision + 1
 
-	bytes, err := json.Marshal(val)
+	bytes, err := json.Marshal(reservations)
 	if err != nil {
 		return false, result, err
 	}
-	_, err = r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision)
+	_, err = r.api.PutEntryWithRevision(r.team, r.namespace, tool, string(bytes), expectedRevision)
 	if err != nil {
 		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
@@ -324,7 +338,7 @@ func (r *RentalBotClient) Reserve(teamName string, username string, tool string,
 		}
 
 		// failed put. try get
-		result, err := r.Lookup(teamName, tool)
+		result, err := r.Lookup(tool)
 		if err != nil {
 			return false, result, err // api call failed
 		}
@@ -336,20 +350,18 @@ func (r *RentalBotClient) Reserve(teamName string, username string, tool string,
 // Unreserve a tool for a given day if that day is currently reserved by the given user.
 // Note: if you unreserve a not-added or deleted tool, it will not add the tool.
 // Returns (whether action is successful, most recent get result if applicable, error)
-func (r *RentalBotClient) Unreserve(teamName string, username string, tool string, day string) (ok bool, result keybase1.KVGetResult, err error) {
-	var val map[string]string
-	result, err = r.Lookup(teamName, tool)
+func (r *RentalBotClient) Unreserve(username string, tool string, day string) (ok bool, result keybase1.KVGetResult, err error) {
+	var reservations map[string]string
+	result, err = r.Lookup(tool)
 	if err != nil {
 		return false, result, err // api call failed
 	} else if result.EntryValue == "" {
-		val = make(map[string]string)
-	} else {
-		if err := json.Unmarshal([]byte(result.EntryValue), &val); err != nil {
-			return false, result, err
-		}
+		reservations = make(map[string]string)
+	} else if err := json.Unmarshal([]byte(result.EntryValue), &reservations); err != nil {
+		return false, result, err
 	}
 
-	reserver, ok := val[day]
+	reserver, ok := reservations[day]
 	if !ok {
 		// a noop because currently not reserved
 		return true, result, nil
@@ -358,14 +370,14 @@ func (r *RentalBotClient) Unreserve(teamName string, username string, tool strin
 		return false, result, nil
 	}
 	expectedRevision := result.Revision + 1
-	delete(val, day)
+	delete(reservations, day)
 
-	bytes, err := json.Marshal(val)
+	bytes, err := json.Marshal(reservations)
 	if err != nil {
 		return false, result, err
 	}
 
-	_, err = r.api.PutEntryWithRevision(teamName, r.namespace, tool, string(bytes), expectedRevision)
+	_, err = r.api.PutEntryWithRevision(r.team, r.namespace, tool, string(bytes), expectedRevision)
 	if err != nil {
 		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
@@ -373,7 +385,7 @@ func (r *RentalBotClient) Unreserve(teamName string, username string, tool strin
 		}
 
 		// failed put. try get
-		result, err = r.Lookup(teamName, tool)
+		result, err = r.Lookup(tool)
 		if err != nil {
 			return false, result, err // api call failed
 		}
@@ -382,9 +394,9 @@ func (r *RentalBotClient) Unreserve(teamName string, username string, tool strin
 	return true, result, nil // successul put
 }
 
-func (r *RentalBotClient) ListTools(teamName string) ([]string, error) {
+func (r *RentalBotClient) ListTools() ([]string, error) {
 	var tools []string
-	res, err := r.api.ListEntryKeys(teamName, r.namespace)
+	res, err := r.api.ListEntryKeys(r.team, r.namespace)
 
 	if err != nil {
 		return tools, err
@@ -401,7 +413,7 @@ func fail(msg string, args ...interface{}) {
 	os.Exit(3)
 }
 
-func basicRentalUsers(rental *RentalBotClient, team string) error {
+func basicRentalUsers(rental *RentalBotClient) error {
 	user1 := "Jo"
 	user2 := "Charlie"
 	date1 := "2044-03-12"
@@ -409,94 +421,99 @@ func basicRentalUsers(rental *RentalBotClient, team string) error {
 	date3 := "2044-06-13"
 	tool := "laz0rs"
 
-	ok, res, err := rental.Remove(team, tool)
+	ok, res, err := rental.Remove(tool)
 	fmt.Printf("REMOVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
 	var tools []string
-	tools, err = rental.ListTools(team)
+	tools, err = rental.ListTools()
 	fmt.Printf("LIST TOOLS: %+v, %v\n", tools, err)
+	if err != nil {
+		return fmt.Errorf("Unexpected result: %v", err)
+	}
 
-	res, err = rental.Lookup(team, tool)
+	res, err = rental.Lookup(tool)
 	fmt.Printf("LOOKUP: %+v, %v\n", res, err)
+	if err != nil {
+		return fmt.Errorf("Unexpected result: %v", err)
+	}
 
-	ok, res, err = rental.Add(team, "time travel machine")
+	ok, res, err = rental.Add("time travel machine")
 	fmt.Printf("ADD: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
-	ok, res, err = rental.Remove(team, tool)
+	ok, res, err = rental.Remove(tool)
 	fmt.Printf("REMOVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
-	ok, res, err = rental.Add(team, tool)
+	ok, res, err = rental.Add(tool)
 	fmt.Printf("ADD: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
-	ok, res, err = rental.Reserve(team, user1, tool, date1)
+	ok, res, err = rental.Reserve(user1, tool, date1)
 	fmt.Printf("RESERVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
-	ok, res, err = rental.Reserve(team, user1, tool, date1)
+	ok, res, err = rental.Reserve(user1, tool, date1)
 	fmt.Printf("EXPECTING RESERVE FAIL: %v, %+v, %v\n", ok, res, err)
 	if ok && err == nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
-	ok, res, err = rental.Reserve(team, user2, tool, date2)
+	ok, res, err = rental.Reserve(user2, tool, date2)
 	fmt.Printf("RESERVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
-	res, err = rental.Lookup(team, tool)
+	res, err = rental.Lookup(tool)
 	fmt.Printf("LOOKUP: %+v, %v\n", res, err)
 
-	ok, res, err = rental.Unreserve(team, user1, tool, date3)
+	ok, res, err = rental.Unreserve(user1, tool, date3)
 	fmt.Printf("UNRESERVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
-	ok, res, err = rental.Unreserve(team, user1, tool, date2)
+	ok, res, err = rental.Unreserve(user1, tool, date2)
 	fmt.Printf("EXPECTING UNRESERVE FAIL: %v, %+v, %v\n", ok, res, err)
 	if ok && err == nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
-	ok, res, err = rental.Unreserve(team, user1, tool, date1)
+	ok, res, err = rental.Unreserve(user1, tool, date1)
 	fmt.Printf("UNRESERVE: %v, %+v, %v\n", ok, res, err)
 	if !ok || err != nil {
 		return fmt.Errorf("Unexpected result: %v, %v", ok, err)
 	}
 
-	res, err = rental.Lookup(team, tool)
+	res, err = rental.Lookup(tool)
 	fmt.Printf("LOOKUP: %+v, %v\n", res, err)
 	return nil
 }
 
-func concurrentRentalUsers(rental *RentalBotClient, team string) error {
+func concurrentRentalUsers(rental *RentalBotClient) error {
 	tool := "time travel machine"
 	var g errgroup.Group
 
 	// pre
 	for {
-		ok, res, err := rental.Remove(team, tool)
+		ok, res, err := rental.Remove(tool)
 		fmt.Printf("TRY TO REMOVE: %v, %+v, %+v\n", ok, res, err)
 		if ok && err == nil {
 			break
 		}
 	}
-	g.Wait()
 
 	// have 5 users concurrently try to reserve the same tool for 5 unique dates
 	for i := 1; i <= 5; i++ {
@@ -508,7 +525,7 @@ func concurrentRentalUsers(rental *RentalBotClient, team string) error {
 				i := 0
 				// keep trying to reserve for user's unique date until successful
 				for {
-					ok, res, err := rental.Reserve(team, user, tool, date)
+					ok, res, err := rental.Reserve(user, tool, date)
 					i++
 					fmt.Printf("%v, attempt %d, TRY TO RESERVE: %v, %+v, %+v\n", user, i, ok, res, err)
 					if ok && err == nil {
@@ -523,7 +540,7 @@ func concurrentRentalUsers(rental *RentalBotClient, team string) error {
 
 	// post: check that the tool has been reserved for all 5 unique dates
 	var val map[string]string
-	res, err := rental.Lookup(team, tool)
+	res, err := rental.Lookup(tool)
 	if err != nil {
 		return err
 	} else if res.EntryValue == "" {
@@ -558,14 +575,14 @@ func main() {
 	team := "yourhackerspace"
 
 	secretClient := NewSecretKeyKVStoreAPI(kbc)
-	rental := NewRentalBotClient(secretClient, "!rental")
+	rental := NewRentalBotClient(secretClient, team, "!rental")
 
 	fmt.Println("...basic rental actions...")
-	if err = basicRentalUsers(rental, team); err != nil {
+	if err = basicRentalUsers(rental); err != nil {
 		log.Fatalf("Bot failed: %+v", err)
 	}
 	fmt.Println("...multiple users try to reserve...")
-	if err = concurrentRentalUsers(rental, team); err != nil {
+	if err = concurrentRentalUsers(rental); err != nil {
 		log.Fatalf("Bot failed: %+v", err)
 	}
 	fmt.Println("...secret_storage example is complete.")

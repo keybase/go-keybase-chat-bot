@@ -2,33 +2,51 @@ package kbchat
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )
 
-type GetEntry struct {
+type kvstoreMethod string
+
+type kvstoreOptions struct {
+	Team       string  `json:"team"`
+	Namespace  *string `json:"namespace,omitempty"`
+	EntryKey   *string `json:"entryKey,omitempty"`
+	EntryValue *string `json:"entryValue,omitempty"`
+	Revision   *int    `json:"revision,omitempty"`
+}
+
+type kvstoreParams struct {
+	Options kvstoreOptions `json:"options"`
+}
+
+type kvstoreAPIReq struct {
+	Method kvstoreMethod `json:"method"`
+	Params kvstoreParams `json:"params"`
+}
+
+type GetEntryRes struct {
 	Result keybase1.KVGetResult `json:"result"`
 	Error  Error                `json:"error,omitempty"`
 }
 
-type PutEntry struct {
+type PutEntryRes struct {
 	Result keybase1.KVPutResult `json:"result"`
 	Error  Error                `json:"error,omitempty"`
 }
 
-type DeleteEntry struct {
+type DeleteEntryRes struct {
 	Result keybase1.KVDeleteEntryResult `json:"result"`
 	Error  Error                        `json:"error,omitempty"`
 }
 
-type ListNamespaces struct {
+type ListNamespacesRes struct {
 	Result keybase1.KVListNamespaceResult `json:"result"`
 	Error  Error                          `json:"error,omitempty"`
 }
 
-type ListEntryKeys struct {
+type ListEntryKeysRes struct {
 	Result keybase1.KVListEntryResult `json:"result"`
 	Error  Error                      `json:"error,omitempty"`
 }
@@ -49,29 +67,16 @@ func (a *API) PutEntry(teamName string, namespace string, entryKey string, entry
 
 func (a *API) PutEntryWithRevision(teamName string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
 
-	type PutArgs struct {
-		Method string `json:"method"`
-		Params struct {
-			Options struct {
-				Team       string `json:"team"`
-				Namespace  string `json:"namespace"`
-				EntryKey   string `json:"entryKey"`
-				EntryValue string `json:"entryValue"`
-				Revision   int    `json:"revision,omitempty"`
-			} `json:"options"`
-		} `json:"params"`
+	opts := kvstoreOptions{
+		Team:       teamName,
+		Namespace:  &namespace,
+		EntryKey:   &entryKey,
+		EntryValue: &entryValue,
 	}
-
-	args := PutArgs{Method: "put"}
-	args.Params.Options.Team = teamName
-	args.Params.Options.Namespace = namespace
-	args.Params.Options.EntryKey = entryKey
-	args.Params.Options.EntryValue = entryValue
-
 	if revision != 0 {
-		args.Params.Options.Revision = revision
+		opts.Revision = &revision
 	}
-
+	args := kvstoreAPIReq{Method: "put", Params: kvstoreParams{Options: opts}}
 	apiInput, err := json.Marshal(args)
 	if err != nil {
 		return result, err
@@ -84,7 +89,7 @@ func (a *API) PutEntryWithRevision(teamName string, namespace string, entryKey s
 		return result, APIError{err}
 	}
 
-	entry := PutEntry{}
+	entry := PutEntryRes{}
 	err = json.Unmarshal(bytes, &entry)
 	if err != nil {
 		return result, UnmarshalError{err}
@@ -101,27 +106,15 @@ func (a *API) DeleteEntry(teamName string, namespace string, entryKey string) (r
 
 func (a *API) DeleteEntryWithRevision(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
 
-	type DeleteArgs struct {
-		Method string `json:"method"`
-		Params struct {
-			Options struct {
-				Team      string `json:"team"`
-				Namespace string `json:"namespace"`
-				EntryKey  string `json:"entryKey"`
-				Revision  int    `json:"revision,omitempty"`
-			} `json:"options"`
-		} `json:"params"`
+	opts := kvstoreOptions{
+		Team:      teamName,
+		Namespace: &namespace,
+		EntryKey:  &entryKey,
 	}
-
-	args := DeleteArgs{Method: "del"}
-	args.Params.Options.Team = teamName
-	args.Params.Options.Namespace = namespace
-	args.Params.Options.EntryKey = entryKey
-
 	if revision != 0 {
-		args.Params.Options.Revision = revision
+		opts.Revision = &revision
 	}
-
+	args := kvstoreAPIReq{Method: "del", Params: kvstoreParams{Options: opts}}
 	apiInput, err := json.Marshal(args)
 	if err != nil {
 		return result, err
@@ -134,7 +127,7 @@ func (a *API) DeleteEntryWithRevision(teamName string, namespace string, entryKe
 		return result, APIError{err}
 	}
 
-	entry := DeleteEntry{}
+	entry := DeleteEntryRes{}
 	err = json.Unmarshal(bytes, &entry)
 	if err != nil {
 		return result, UnmarshalError{err}
@@ -147,22 +140,40 @@ func (a *API) DeleteEntryWithRevision(teamName string, namespace string, entryKe
 
 func (a *API) GetEntry(teamName string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
 
-	type GetArgs struct {
-		Method string `json:"method"`
-		Params struct {
-			Options struct {
-				Team      string `json:"team"`
-				Namespace string `json:"namespace"`
-				EntryKey  string `json:"entryKey"`
-			} `json:"options"`
-		} `json:"params"`
+	opts := kvstoreOptions{
+		Team:      teamName,
+		Namespace: &namespace,
+		EntryKey:  &entryKey,
+	}
+	args := kvstoreAPIReq{Method: "get", Params: kvstoreParams{Options: opts}}
+	apiInput, err := json.Marshal(args)
+	if err != nil {
+		return result, err
+	}
+	cmd := a.runOpts.Command("kvstore", "api")
+	cmd.Stdin = strings.NewReader(string(apiInput))
+	bytes, err := cmd.Output()
+	if err != nil {
+		return result, APIError{err}
 	}
 
-	args := GetArgs{Method: "get"}
-	args.Params.Options.Team = teamName
-	args.Params.Options.Namespace = namespace
-	args.Params.Options.EntryKey = entryKey
+	entry := GetEntryRes{}
+	err = json.Unmarshal(bytes, &entry)
+	if err != nil {
+		return result, UnmarshalError{err}
+	}
+	if entry.Error.Message != "" {
+		return result, entry.Error
+	}
+	return entry.Result, nil
+}
 
+func (a *API) ListNamespaces(teamName string) (result keybase1.KVListNamespaceResult, err error) {
+
+	opts := kvstoreOptions{
+		Team: teamName,
+	}
+	args := kvstoreAPIReq{Method: "list", Params: kvstoreParams{Options: opts}}
 	apiInput, err := json.Marshal(args)
 	if err != nil {
 		return result, err
@@ -175,27 +186,7 @@ func (a *API) GetEntry(teamName string, namespace string, entryKey string) (resu
 		return result, APIError{err}
 	}
 
-	entry := GetEntry{}
-	err = json.Unmarshal(bytes, &entry)
-	if err != nil {
-		return result, UnmarshalError{err}
-	}
-	if entry.Error.Message != "" {
-		return result, entry.Error
-	}
-	return entry.Result, nil
-}
-
-func (a *API) ListNamespaces(teamName string) (result keybase1.KVListNamespaceResult, err error) {
-	apiInput := fmt.Sprintf(`{"method": "list", "params": {"options": {"team": "%s"}}}`, teamName)
-	cmd := a.runOpts.Command("kvstore", "api")
-	cmd.Stdin = strings.NewReader(apiInput)
-	bytes, err := cmd.Output()
-	if err != nil {
-		return result, APIError{err}
-	}
-
-	var namespaces ListNamespaces
+	var namespaces ListNamespacesRes
 	err = json.Unmarshal(bytes, &namespaces)
 	if err != nil {
 		return result, UnmarshalError{err}
@@ -207,15 +198,25 @@ func (a *API) ListNamespaces(teamName string) (result keybase1.KVListNamespaceRe
 }
 
 func (a *API) ListEntryKeys(teamName string, namespace string) (result keybase1.KVListEntryResult, err error) {
-	apiInput := fmt.Sprintf(`{"method": "list", "params": {"options": {"team": "%s", "namespace": "%s"}}}`, teamName, namespace)
+
+	opts := kvstoreOptions{
+		Team:      teamName,
+		Namespace: &namespace,
+	}
+	args := kvstoreAPIReq{Method: "list", Params: kvstoreParams{Options: opts}}
+	apiInput, err := json.Marshal(args)
+	if err != nil {
+		return result, err
+	}
+
 	cmd := a.runOpts.Command("kvstore", "api")
-	cmd.Stdin = strings.NewReader(apiInput)
+	cmd.Stdin = strings.NewReader(string(apiInput))
 	bytes, err := cmd.Output()
 	if err != nil {
 		return result, APIError{err}
 	}
 
-	entryKeys := ListEntryKeys{}
+	entryKeys := ListEntryKeysRes{}
 	err = json.Unmarshal(bytes, &entryKeys)
 	if err != nil {
 		return result, UnmarshalError{err}
