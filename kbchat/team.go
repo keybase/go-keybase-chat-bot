@@ -31,16 +31,16 @@ func (a *API) ListMembersOfTeam(teamName string) (keybase1.TeamMembersDetails, e
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.CombinedOutput()
 	if err != nil {
-		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
+		return empty, APIError{err}
 	}
 
 	members := ListTeamMembers{}
 	err = json.Unmarshal(bytes, &members)
 	if err != nil {
-		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+		return empty, UnmarshalError{err}
 	}
 	if members.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", members.Error.Message)
+		return empty, members.Error
 	}
 	return members.Result.Members, nil
 }
@@ -53,16 +53,16 @@ func (a *API) ListUserMemberships(username string) ([]keybase1.AnnotatedMemberIn
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.CombinedOutput()
 	if err != nil {
-		return empty, fmt.Errorf("failed to call keybase team api: %v", err)
+		return empty, APIError{err}
 	}
 
 	members := ListUserMemberships{}
 	err = json.Unmarshal(bytes, &members)
 	if err != nil {
-		return empty, fmt.Errorf("failed to parse output from keybase team api: %v", err)
+		return empty, UnmarshalError{err}
 	}
 	if members.Error.Message != "" {
-		return empty, fmt.Errorf("received error from keybase team api: %s", members.Error.Message)
+		return empty, members.Error
 	}
 	return members.Result.Teams, nil
 }
