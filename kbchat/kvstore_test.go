@@ -30,6 +30,9 @@ func containsKey(a []keybase1.KVListEntryKey, x string) bool {
 func clearNamespace(bot *API, team string, namespace string) error {
 	fmt.Printf("Clearing namespace %s\n", namespace)
 	listek, err := bot.ListEntryKeys(team, namespace)
+	if err != nil {
+		return err
+	}
 
 	for _, entryKey := range listek.EntryKeys {
 		if _, err = bot.DeleteEntry(team, namespace, entryKey.EntryKey); err != nil {
