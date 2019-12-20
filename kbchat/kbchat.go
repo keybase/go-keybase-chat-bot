@@ -104,6 +104,10 @@ func Start(runOpts RunOptions) (*API, error) {
 	return api, nil
 }
 
+func (a *API) Command(args ...string) *exec.Cmd {
+	return a.runOpts.Command(args...)
+}
+
 func (a *API) auth() (string, error) {
 	username, err := getUsername(a.runOpts)
 	if err == nil {
