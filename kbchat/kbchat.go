@@ -44,9 +44,10 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 			doneCh <- errors.New("unable to find Keybase username")
 			return
 		}
-		toks := strings.Fields(scanner.Text())
+		text := scanner.Text()
+		toks := strings.Fields(text)
 		if len(toks) != 2 {
-			doneCh <- errors.New("invalid Keybase username output")
+			doneCh <- fmt.Errorf("invalid Keybase username output: %q", text)
 			return
 		}
 		username = toks[1]
