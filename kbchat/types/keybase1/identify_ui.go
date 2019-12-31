@@ -99,6 +99,7 @@ type StellarAccount struct {
 	AccountID         string `codec:"accountID" json:"accountID"`
 	FederationAddress string `codec:"federationAddress" json:"federationAddress"`
 	SigID             SigID  `codec:"sigID" json:"sigID"`
+	Hidden            bool   `codec:"hidden" json:"hidden"`
 }
 
 func (o StellarAccount) DeepCopy() StellarAccount {
@@ -106,6 +107,7 @@ func (o StellarAccount) DeepCopy() StellarAccount {
 		AccountID:         o.AccountID,
 		FederationAddress: o.FederationAddress,
 		SigID:             o.SigID.DeepCopy(),
+		Hidden:            o.Hidden,
 	}
 }
 
@@ -348,7 +350,9 @@ type UserCard struct {
 	TheyFollowYou        bool               `codec:"theyFollowYou" json:"theyFollowYou"`
 	TeamShowcase         []UserTeamShowcase `codec:"teamShowcase" json:"teamShowcase"`
 	RegisteredForAirdrop bool               `codec:"registeredForAirdrop" json:"registeredForAirdrop"`
+	StellarHidden        bool               `codec:"stellarHidden" json:"stellarHidden"`
 	Blocked              bool               `codec:"blocked" json:"blocked"`
+	HidFromFollowers     bool               `codec:"hidFromFollowers" json:"hidFromFollowers"`
 }
 
 func (o UserCard) DeepCopy() UserCard {
@@ -376,7 +380,9 @@ func (o UserCard) DeepCopy() UserCard {
 			return ret
 		})(o.TeamShowcase),
 		RegisteredForAirdrop: o.RegisteredForAirdrop,
+		StellarHidden:        o.StellarHidden,
 		Blocked:              o.Blocked,
+		HidFromFollowers:     o.HidFromFollowers,
 	}
 }
 

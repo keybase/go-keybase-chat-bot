@@ -476,7 +476,6 @@ type ChatList struct {
 	Conversations    []ConvSummary                 `codec:"conversations" json:"conversations"`
 	Offline          bool                          `codec:"offline" json:"offline"`
 	IdentifyFailures []keybase1.TLFIdentifyFailure `codec:"identifyFailures,omitempty" json:"identify_failures,omitempty"`
-	Pagination       *Pagination                   `codec:"pagination,omitempty" json:"pagination,omitempty"`
 	RateLimits       []RateLimitRes                `codec:"rateLimits,omitempty" json:"ratelimits,omitempty"`
 }
 
@@ -505,13 +504,6 @@ func (o ChatList) DeepCopy() ChatList {
 			}
 			return ret
 		})(o.IdentifyFailures),
-		Pagination: (func(x *Pagination) *Pagination {
-			if x == nil {
-				return nil
-			}
-			tmp := (*x).DeepCopy()
-			return &tmp
-		})(o.Pagination),
 		RateLimits: (func(x []RateLimitRes) []RateLimitRes {
 			if x == nil {
 				return nil
@@ -779,6 +771,32 @@ func (o MsgNotification) DeepCopy() MsgNotification {
 			tmp := (*x).DeepCopy()
 			return &tmp
 		})(o.Pagination),
+	}
+}
+
+type ConvNotification struct {
+	Type  string       `codec:"type" json:"type"`
+	Conv  *ConvSummary `codec:"conv,omitempty" json:"conv,omitempty"`
+	Error *string      `codec:"error,omitempty" json:"error,omitempty"`
+}
+
+func (o ConvNotification) DeepCopy() ConvNotification {
+	return ConvNotification{
+		Type: o.Type,
+		Conv: (func(x *ConvSummary) *ConvSummary {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Conv),
+		Error: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.Error),
 	}
 }
 

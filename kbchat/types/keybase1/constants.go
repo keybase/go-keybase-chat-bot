@@ -147,7 +147,7 @@ const (
 	StatusCode_SCTeamExists                                StatusCode = 2619
 	StatusCode_SCTeamReadError                             StatusCode = 2623
 	StatusCode_SCTeamWritePermDenied                       StatusCode = 2625
-	StatusCode_SCTeamBadGeneration                         StatusCode = 2636
+	StatusCode_SCTeamBadGeneration                         StatusCode = 2634
 	StatusCode_SCNoOp                                      StatusCode = 2638
 	StatusCode_SCTeamInviteBadCancel                       StatusCode = 2645
 	StatusCode_SCTeamInviteBadToken                        StatusCode = 2646
@@ -186,6 +186,7 @@ const (
 	StatusCode_SCTeamStorageWrongRevision                  StatusCode = 2760
 	StatusCode_SCTeamStorageBadGeneration                  StatusCode = 2761
 	StatusCode_SCTeamStorageNotFound                       StatusCode = 2762
+	StatusCode_SCTeamContactSettingsBlock                  StatusCode = 2763
 	StatusCode_SCEphemeralKeyBadGeneration                 StatusCode = 2900
 	StatusCode_SCEphemeralKeyUnexpectedBox                 StatusCode = 2901
 	StatusCode_SCEphemeralKeyMissingBox                    StatusCode = 2902
@@ -382,7 +383,7 @@ var StatusCodeMap = map[string]StatusCode{
 	"SCTeamExists":                                2619,
 	"SCTeamReadError":                             2623,
 	"SCTeamWritePermDenied":                       2625,
-	"SCTeamBadGeneration":                         2636,
+	"SCTeamBadGeneration":                         2634,
 	"SCNoOp":                                      2638,
 	"SCTeamInviteBadCancel":                       2645,
 	"SCTeamInviteBadToken":                        2646,
@@ -421,6 +422,7 @@ var StatusCodeMap = map[string]StatusCode{
 	"SCTeamStorageWrongRevision":                  2760,
 	"SCTeamStorageBadGeneration":                  2761,
 	"SCTeamStorageNotFound":                       2762,
+	"SCTeamContactSettingsBlock":                  2763,
 	"SCEphemeralKeyBadGeneration":                 2900,
 	"SCEphemeralKeyUnexpectedBox":                 2901,
 	"SCEphemeralKeyMissingBox":                    2902,
@@ -615,7 +617,7 @@ var StatusCodeRevMap = map[StatusCode]string{
 	2619: "SCTeamExists",
 	2623: "SCTeamReadError",
 	2625: "SCTeamWritePermDenied",
-	2636: "SCTeamBadGeneration",
+	2634: "SCTeamBadGeneration",
 	2638: "SCNoOp",
 	2645: "SCTeamInviteBadCancel",
 	2646: "SCTeamInviteBadToken",
@@ -654,6 +656,7 @@ var StatusCodeRevMap = map[StatusCode]string{
 	2760: "SCTeamStorageWrongRevision",
 	2761: "SCTeamStorageBadGeneration",
 	2762: "SCTeamStorageNotFound",
+	2763: "SCTeamContactSettingsBlock",
 	2900: "SCEphemeralKeyBadGeneration",
 	2901: "SCEphemeralKeyUnexpectedBox",
 	2902: "SCEphemeralKeyMissingBox",

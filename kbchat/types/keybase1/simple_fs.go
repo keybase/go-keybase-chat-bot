@@ -449,6 +449,7 @@ type Dirent struct {
 	Writable             bool             `codec:"writable" json:"writable"`
 	PrefetchStatus       PrefetchStatus   `codec:"prefetchStatus" json:"prefetchStatus"`
 	PrefetchProgress     PrefetchProgress `codec:"prefetchProgress" json:"prefetchProgress"`
+	SymlinkTarget        string           `codec:"symlinkTarget" json:"symlinkTarget"`
 }
 
 func (o Dirent) DeepCopy() Dirent {
@@ -461,6 +462,7 @@ func (o Dirent) DeepCopy() Dirent {
 		Writable:             o.Writable,
 		PrefetchStatus:       o.PrefetchStatus.DeepCopy(),
 		PrefetchProgress:     o.PrefetchProgress.DeepCopy(),
+		SymlinkTarget:        o.SymlinkTarget,
 	}
 }
 
@@ -1252,6 +1254,35 @@ func (o FolderWithFavFlags) DeepCopy() FolderWithFavFlags {
 	}
 }
 
+type KbfsOnlineStatus int
+
+const (
+	KbfsOnlineStatus_OFFLINE KbfsOnlineStatus = 0
+	KbfsOnlineStatus_TRYING  KbfsOnlineStatus = 1
+	KbfsOnlineStatus_ONLINE  KbfsOnlineStatus = 2
+)
+
+func (o KbfsOnlineStatus) DeepCopy() KbfsOnlineStatus { return o }
+
+var KbfsOnlineStatusMap = map[string]KbfsOnlineStatus{
+	"OFFLINE": 0,
+	"TRYING":  1,
+	"ONLINE":  2,
+}
+
+var KbfsOnlineStatusRevMap = map[KbfsOnlineStatus]string{
+	0: "OFFLINE",
+	1: "TRYING",
+	2: "ONLINE",
+}
+
+func (e KbfsOnlineStatus) String() string {
+	if v, ok := KbfsOnlineStatusRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
+}
+
 type FSSettings struct {
 	SpaceAvailableNotificationThreshold int64 `codec:"spaceAvailableNotificationThreshold" json:"spaceAvailableNotificationThreshold"`
 }
@@ -1311,21 +1342,23 @@ func (o SimpleFSStats) DeepCopy() SimpleFSStats {
 type SubscriptionTopic int
 
 const (
-	SubscriptionTopic_FAVORITES       SubscriptionTopic = 0
-	SubscriptionTopic_JOURNAL_STATUS  SubscriptionTopic = 1
-	SubscriptionTopic_ONLINE_STATUS   SubscriptionTopic = 2
-	SubscriptionTopic_DOWNLOAD_STATUS SubscriptionTopic = 3
-	SubscriptionTopic_FILES_TAB_BADGE SubscriptionTopic = 4
+	SubscriptionTopic_FAVORITES           SubscriptionTopic = 0
+	SubscriptionTopic_JOURNAL_STATUS      SubscriptionTopic = 1
+	SubscriptionTopic_ONLINE_STATUS       SubscriptionTopic = 2
+	SubscriptionTopic_DOWNLOAD_STATUS     SubscriptionTopic = 3
+	SubscriptionTopic_FILES_TAB_BADGE     SubscriptionTopic = 4
+	SubscriptionTopic_OVERALL_SYNC_STATUS SubscriptionTopic = 5
 )
 
 func (o SubscriptionTopic) DeepCopy() SubscriptionTopic { return o }
 
 var SubscriptionTopicMap = map[string]SubscriptionTopic{
-	"FAVORITES":       0,
-	"JOURNAL_STATUS":  1,
-	"ONLINE_STATUS":   2,
-	"DOWNLOAD_STATUS": 3,
-	"FILES_TAB_BADGE": 4,
+	"FAVORITES":           0,
+	"JOURNAL_STATUS":      1,
+	"ONLINE_STATUS":       2,
+	"DOWNLOAD_STATUS":     3,
+	"FILES_TAB_BADGE":     4,
+	"OVERALL_SYNC_STATUS": 5,
 }
 
 var SubscriptionTopicRevMap = map[SubscriptionTopic]string{
@@ -1334,6 +1367,7 @@ var SubscriptionTopicRevMap = map[SubscriptionTopic]string{
 	2: "ONLINE_STATUS",
 	3: "DOWNLOAD_STATUS",
 	4: "FILES_TAB_BADGE",
+	5: "OVERALL_SYNC_STATUS",
 }
 
 func (e SubscriptionTopic) String() string {
