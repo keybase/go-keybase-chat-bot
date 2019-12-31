@@ -3030,27 +3030,27 @@ func (o MessageUnboxedPlaceholder) DeepCopy() MessageUnboxedPlaceholder {
 type JourneycardType int
 
 const (
-	JourneycardType_WELCOME            JourneycardType = 0
-	JourneycardType_POPULAR_CHANNELS   JourneycardType = 1
-	JourneycardType_ADD_PEOPLE         JourneycardType = 2
-	JourneycardType_CREATE_CHANNELS    JourneycardType = 3
-	JourneycardType_MSG_ATTENTION      JourneycardType = 4
-	JourneycardType_USER_AWAY_FOR_LONG JourneycardType = 5
-	JourneycardType_CHANNEL_INACTIVE   JourneycardType = 6
-	JourneycardType_MSG_NO_ANSWER      JourneycardType = 7
+	JourneycardType_WELCOME          JourneycardType = 0
+	JourneycardType_POPULAR_CHANNELS JourneycardType = 1
+	JourneycardType_ADD_PEOPLE       JourneycardType = 2
+	JourneycardType_CREATE_CHANNELS  JourneycardType = 3
+	JourneycardType_MSG_ATTENTION    JourneycardType = 4
+	JourneycardType_UNUSED           JourneycardType = 5
+	JourneycardType_CHANNEL_INACTIVE JourneycardType = 6
+	JourneycardType_MSG_NO_ANSWER    JourneycardType = 7
 )
 
 func (o JourneycardType) DeepCopy() JourneycardType { return o }
 
 var JourneycardTypeMap = map[string]JourneycardType{
-	"WELCOME":            0,
-	"POPULAR_CHANNELS":   1,
-	"ADD_PEOPLE":         2,
-	"CREATE_CHANNELS":    3,
-	"MSG_ATTENTION":      4,
-	"USER_AWAY_FOR_LONG": 5,
-	"CHANNEL_INACTIVE":   6,
-	"MSG_NO_ANSWER":      7,
+	"WELCOME":          0,
+	"POPULAR_CHANNELS": 1,
+	"ADD_PEOPLE":       2,
+	"CREATE_CHANNELS":  3,
+	"MSG_ATTENTION":    4,
+	"UNUSED":           5,
+	"CHANNEL_INACTIVE": 6,
+	"MSG_NO_ANSWER":    7,
 }
 
 var JourneycardTypeRevMap = map[JourneycardType]string{
@@ -3059,7 +3059,7 @@ var JourneycardTypeRevMap = map[JourneycardType]string{
 	2: "ADD_PEOPLE",
 	3: "CREATE_CHANNELS",
 	4: "MSG_ATTENTION",
-	5: "USER_AWAY_FOR_LONG",
+	5: "UNUSED",
 	6: "CHANNEL_INACTIVE",
 	7: "MSG_NO_ANSWER",
 }
@@ -3076,6 +3076,7 @@ type MessageUnboxedJourneycard struct {
 	Ordinal        int             `codec:"ordinal" json:"ordinal"`
 	CardType       JourneycardType `codec:"cardType" json:"cardType"`
 	HighlightMsgID MessageID       `codec:"highlightMsgID" json:"highlightMsgID"`
+	OpenTeam       bool            `codec:"openTeam" json:"openTeam"`
 }
 
 func (o MessageUnboxedJourneycard) DeepCopy() MessageUnboxedJourneycard {
@@ -3084,6 +3085,7 @@ func (o MessageUnboxedJourneycard) DeepCopy() MessageUnboxedJourneycard {
 		Ordinal:        o.Ordinal,
 		CardType:       o.CardType.DeepCopy(),
 		HighlightMsgID: o.HighlightMsgID.DeepCopy(),
+		OpenTeam:       o.OpenTeam,
 	}
 }
 
@@ -3557,6 +3559,7 @@ type ConversationLocal struct {
 	ConvSettings     *ConversationSettingsLocal    `codec:"convSettings,omitempty" json:"convSettings,omitempty"`
 	Commands         ConversationCommandGroups     `codec:"commands" json:"commands"`
 	BotCommands      ConversationCommandGroups     `codec:"botCommands" json:"botCommands"`
+	BotAliases       map[string]string             `codec:"botAliases" json:"botAliases"`
 }
 
 func (o ConversationLocal) DeepCopy() ConversationLocal {
@@ -3653,6 +3656,18 @@ func (o ConversationLocal) DeepCopy() ConversationLocal {
 		})(o.ConvSettings),
 		Commands:    o.Commands.DeepCopy(),
 		BotCommands: o.BotCommands.DeepCopy(),
+		BotAliases: (func(x map[string]string) map[string]string {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string]string, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := v
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.BotAliases),
 	}
 }
 
@@ -4080,7 +4095,6 @@ func (o GetInboxLocalQuery) DeepCopy() GetInboxLocalQuery {
 
 type GetInboxAndUnboxLocalRes struct {
 	Conversations    []ConversationLocal           `codec:"conversations" json:"conversations"`
-	Pagination       *Pagination                   `codec:"pagination,omitempty" json:"pagination,omitempty"`
 	Offline          bool                          `codec:"offline" json:"offline"`
 	RateLimits       []RateLimit                   `codec:"rateLimits" json:"rateLimits"`
 	IdentifyFailures []keybase1.TLFIdentifyFailure `codec:"identifyFailures" json:"identifyFailures"`
@@ -4099,13 +4113,6 @@ func (o GetInboxAndUnboxLocalRes) DeepCopy() GetInboxAndUnboxLocalRes {
 			}
 			return ret
 		})(o.Conversations),
-		Pagination: (func(x *Pagination) *Pagination {
-			if x == nil {
-				return nil
-			}
-			tmp := (*x).DeepCopy()
-			return &tmp
-		})(o.Pagination),
 		Offline: o.Offline,
 		RateLimits: (func(x []RateLimit) []RateLimit {
 			if x == nil {
@@ -4134,7 +4141,6 @@ func (o GetInboxAndUnboxLocalRes) DeepCopy() GetInboxAndUnboxLocalRes {
 
 type GetInboxAndUnboxUILocalRes struct {
 	Conversations    []InboxUIItem                 `codec:"conversations" json:"conversations"`
-	Pagination       *Pagination                   `codec:"pagination,omitempty" json:"pagination,omitempty"`
 	Offline          bool                          `codec:"offline" json:"offline"`
 	RateLimits       []RateLimit                   `codec:"rateLimits" json:"rateLimits"`
 	IdentifyFailures []keybase1.TLFIdentifyFailure `codec:"identifyFailures" json:"identifyFailures"`
@@ -4153,13 +4159,6 @@ func (o GetInboxAndUnboxUILocalRes) DeepCopy() GetInboxAndUnboxUILocalRes {
 			}
 			return ret
 		})(o.Conversations),
-		Pagination: (func(x *Pagination) *Pagination {
-			if x == nil {
-				return nil
-			}
-			tmp := (*x).DeepCopy()
-			return &tmp
-		})(o.Pagination),
 		Offline: o.Offline,
 		RateLimits: (func(x []RateLimit) []RateLimit {
 			if x == nil {
@@ -5773,4 +5772,60 @@ func (o LocalMtimeUpdate) DeepCopy() LocalMtimeUpdate {
 		ConvID: o.ConvID.DeepCopy(),
 		Mtime:  o.Mtime.DeepCopy(),
 	}
+}
+
+type SnippetDecoration int
+
+const (
+	SnippetDecoration_NONE                   SnippetDecoration = 0
+	SnippetDecoration_PENDING_MESSAGE        SnippetDecoration = 1
+	SnippetDecoration_FAILED_PENDING_MESSAGE SnippetDecoration = 2
+	SnippetDecoration_EXPLODING_MESSAGE      SnippetDecoration = 3
+	SnippetDecoration_EXPLODED_MESSAGE       SnippetDecoration = 4
+	SnippetDecoration_AUDIO_ATTACHMENT       SnippetDecoration = 5
+	SnippetDecoration_VIDEO_ATTACHMENT       SnippetDecoration = 6
+	SnippetDecoration_PHOTO_ATTACHMENT       SnippetDecoration = 7
+	SnippetDecoration_FILE_ATTACHMENT        SnippetDecoration = 8
+	SnippetDecoration_STELLAR_RECEIVED       SnippetDecoration = 9
+	SnippetDecoration_STELLAR_SENT           SnippetDecoration = 10
+	SnippetDecoration_PINNED_MESSAGE         SnippetDecoration = 11
+)
+
+func (o SnippetDecoration) DeepCopy() SnippetDecoration { return o }
+
+var SnippetDecorationMap = map[string]SnippetDecoration{
+	"NONE":                   0,
+	"PENDING_MESSAGE":        1,
+	"FAILED_PENDING_MESSAGE": 2,
+	"EXPLODING_MESSAGE":      3,
+	"EXPLODED_MESSAGE":       4,
+	"AUDIO_ATTACHMENT":       5,
+	"VIDEO_ATTACHMENT":       6,
+	"PHOTO_ATTACHMENT":       7,
+	"FILE_ATTACHMENT":        8,
+	"STELLAR_RECEIVED":       9,
+	"STELLAR_SENT":           10,
+	"PINNED_MESSAGE":         11,
+}
+
+var SnippetDecorationRevMap = map[SnippetDecoration]string{
+	0:  "NONE",
+	1:  "PENDING_MESSAGE",
+	2:  "FAILED_PENDING_MESSAGE",
+	3:  "EXPLODING_MESSAGE",
+	4:  "EXPLODED_MESSAGE",
+	5:  "AUDIO_ATTACHMENT",
+	6:  "VIDEO_ATTACHMENT",
+	7:  "PHOTO_ATTACHMENT",
+	8:  "FILE_ATTACHMENT",
+	9:  "STELLAR_RECEIVED",
+	10: "STELLAR_SENT",
+	11: "PINNED_MESSAGE",
+}
+
+func (e SnippetDecoration) String() string {
+	if v, ok := SnippetDecorationRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
 }

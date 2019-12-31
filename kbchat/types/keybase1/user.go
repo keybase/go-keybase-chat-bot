@@ -394,3 +394,194 @@ func (o UserPassphraseStateMsg) DeepCopy() UserPassphraseStateMsg {
 		PassphraseState: o.PassphraseState.DeepCopy(),
 	}
 }
+
+type UserBlockedRow struct {
+	Uid      UID    `codec:"uid" json:"block_uid"`
+	Username string `codec:"username" json:"block_username"`
+	Chat     *bool  `codec:"chat,omitempty" json:"chat,omitempty"`
+	Follow   *bool  `codec:"follow,omitempty" json:"follow,omitempty"`
+}
+
+func (o UserBlockedRow) DeepCopy() UserBlockedRow {
+	return UserBlockedRow{
+		Uid:      o.Uid.DeepCopy(),
+		Username: o.Username,
+		Chat: (func(x *bool) *bool {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.Chat),
+		Follow: (func(x *bool) *bool {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.Follow),
+	}
+}
+
+type UserBlockType int
+
+const (
+	UserBlockType_CHAT   UserBlockType = 0
+	UserBlockType_FOLLOW UserBlockType = 1
+)
+
+func (o UserBlockType) DeepCopy() UserBlockType { return o }
+
+var UserBlockTypeMap = map[string]UserBlockType{
+	"CHAT":   0,
+	"FOLLOW": 1,
+}
+
+var UserBlockTypeRevMap = map[UserBlockType]string{
+	0: "CHAT",
+	1: "FOLLOW",
+}
+
+func (e UserBlockType) String() string {
+	if v, ok := UserBlockTypeRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
+}
+
+type UserBlockedBody struct {
+	Blocks   []UserBlockedRow `codec:"blocks" json:"blocks"`
+	Uid      UID              `codec:"uid" json:"blocker_uid"`
+	Username string           `codec:"username" json:"blocker_username"`
+}
+
+func (o UserBlockedBody) DeepCopy() UserBlockedBody {
+	return UserBlockedBody{
+		Blocks: (func(x []UserBlockedRow) []UserBlockedRow {
+			if x == nil {
+				return nil
+			}
+			ret := make([]UserBlockedRow, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Blocks),
+		Uid:      o.Uid.DeepCopy(),
+		Username: o.Username,
+	}
+}
+
+type UserBlockState struct {
+	BlockType UserBlockType `codec:"blockType" json:"blockType"`
+	Blocked   bool          `codec:"blocked" json:"blocked"`
+}
+
+func (o UserBlockState) DeepCopy() UserBlockState {
+	return UserBlockState{
+		BlockType: o.BlockType.DeepCopy(),
+		Blocked:   o.Blocked,
+	}
+}
+
+type UserBlockedSummary struct {
+	Blocker string                      `codec:"blocker" json:"blocker"`
+	Blocks  map[string][]UserBlockState `codec:"blocks" json:"blocks"`
+}
+
+func (o UserBlockedSummary) DeepCopy() UserBlockedSummary {
+	return UserBlockedSummary{
+		Blocker: o.Blocker,
+		Blocks: (func(x map[string][]UserBlockState) map[string][]UserBlockState {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string][]UserBlockState, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := (func(x []UserBlockState) []UserBlockState {
+					if x == nil {
+						return nil
+					}
+					ret := make([]UserBlockState, len(x))
+					for i, v := range x {
+						vCopy := v.DeepCopy()
+						ret[i] = vCopy
+					}
+					return ret
+				})(v)
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.Blocks),
+	}
+}
+
+type UserBlock struct {
+	Username      string `codec:"username" json:"username"`
+	ChatBlocked   bool   `codec:"chatBlocked" json:"chatBlocked"`
+	FollowBlocked bool   `codec:"followBlocked" json:"followBlocked"`
+	CreateTime    *Time  `codec:"createTime,omitempty" json:"createTime,omitempty"`
+	ModifyTime    *Time  `codec:"modifyTime,omitempty" json:"modifyTime,omitempty"`
+}
+
+func (o UserBlock) DeepCopy() UserBlock {
+	return UserBlock{
+		Username:      o.Username,
+		ChatBlocked:   o.ChatBlocked,
+		FollowBlocked: o.FollowBlocked,
+		CreateTime: (func(x *Time) *Time {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.CreateTime),
+		ModifyTime: (func(x *Time) *Time {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.ModifyTime),
+	}
+}
+
+type UserBlockArg struct {
+	Username       string `codec:"username" json:"username"`
+	SetChatBlock   *bool  `codec:"setChatBlock,omitempty" json:"setChatBlock,omitempty"`
+	SetFollowBlock *bool  `codec:"setFollowBlock,omitempty" json:"setFollowBlock,omitempty"`
+}
+
+func (o UserBlockArg) DeepCopy() UserBlockArg {
+	return UserBlockArg{
+		Username: o.Username,
+		SetChatBlock: (func(x *bool) *bool {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.SetChatBlock),
+		SetFollowBlock: (func(x *bool) *bool {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.SetFollowBlock),
+	}
+}
+
+type TeamBlock struct {
+	TeamName   string `codec:"teamName" json:"fq_name"`
+	CreateTime Time   `codec:"createTime" json:"ctime"`
+}
+
+func (o TeamBlock) DeepCopy() TeamBlock {
+	return TeamBlock{
+		TeamName:   o.TeamName,
+		CreateTime: o.CreateTime.DeepCopy(),
+	}
+}

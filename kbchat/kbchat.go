@@ -236,6 +236,10 @@ type SubscriptionMessage struct {
 	Conversation chat1.ConvSummary
 }
 
+type SubscriptionConversation struct {
+	Conversation chat1.ConvSummary
+}
+
 type SubscriptionWalletEvent struct {
 	Payment stellar1.PaymentDetailsLocal
 }
@@ -243,6 +247,7 @@ type SubscriptionWalletEvent struct {
 // NewSubscription has methods to control the background message fetcher loop
 type NewSubscription struct {
 	newMsgsCh   <-chan SubscriptionMessage
+	newConvsCh  <-chan SubscriptionConversation
 	newWalletCh <-chan SubscriptionWalletEvent
 	errorCh     <-chan error
 	shutdownCh  chan struct{}
@@ -255,6 +260,15 @@ func (m NewSubscription) Read() (SubscriptionMessage, error) {
 		return msg, nil
 	case err := <-m.errorCh:
 		return SubscriptionMessage{}, err
+	}
+}
+
+func (m NewSubscription) ReadNewConvs() (SubscriptionConversation, error) {
+	select {
+	case conv := <-m.newConvsCh:
+		return conv, nil
+	case err := <-m.errorCh:
+		return SubscriptionConversation{}, err
 	}
 }
 
@@ -275,6 +289,7 @@ func (m NewSubscription) Shutdown() {
 
 type ListenOptions struct {
 	Wallet bool
+	Convs  bool
 }
 
 type PaymentHolder struct {
@@ -294,14 +309,16 @@ func (a *API) ListenForNewTextMessages() (NewSubscription, error) {
 // Listen fires of a background loop and puts chat messages and wallet
 // events into channels
 func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
-	newMsgCh := make(chan SubscriptionMessage, 100)
+	newMsgsCh := make(chan SubscriptionMessage, 100)
+	newConvsCh := make(chan SubscriptionConversation, 100)
 	newWalletCh := make(chan SubscriptionWalletEvent, 100)
 	errorCh := make(chan error, 100)
 	shutdownCh := make(chan struct{})
 	done := make(chan struct{})
 
 	sub := NewSubscription{
-		newMsgsCh:   newMsgCh,
+		newMsgsCh:   newMsgsCh,
+		newConvsCh:  newConvsCh,
 		newWalletCh: newWalletCh,
 		shutdownCh:  shutdownCh,
 		errorCh:     errorCh,
@@ -333,7 +350,21 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 							Channel: notification.Msg.Channel,
 						},
 					}
-					newMsgCh <- subscriptionMessage
+					newMsgsCh <- subscriptionMessage
+				}
+			case "chat_conv":
+				var notification chat1.ConvNotification
+				if err := json.Unmarshal([]byte(t), &notification); err != nil {
+					errorCh <- err
+					break
+				}
+				if notification.Error != nil {
+					log.Printf("error message received: %s", *notification.Error)
+				} else if notification.Conv != nil {
+					subscriptionConv := SubscriptionConversation{
+						Conversation: *notification.Conv,
+					}
+					newConvsCh <- subscriptionConv
 				}
 			case "wallet":
 				var holder PaymentHolder
@@ -366,6 +397,9 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 			cmdElements := []string{"chat", "api-listen"}
 			if opts.Wallet {
 				cmdElements = append(cmdElements, "--wallet")
+			}
+			if opts.Convs {
+				cmdElements = append(cmdElements, "--convs")
 			}
 			p := a.runOpts.Command(cmdElements...)
 			output, err := p.StdoutPipe()

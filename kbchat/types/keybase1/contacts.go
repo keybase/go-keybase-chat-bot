@@ -93,3 +93,35 @@ func (o ProcessedContact) DeepCopy() ProcessedContact {
 		DisplayLabel: o.DisplayLabel,
 	}
 }
+
+type ContactListResolutionResult struct {
+	NewlyResolved []ProcessedContact `codec:"newlyResolved" json:"newlyResolved"`
+	Resolved      []ProcessedContact `codec:"resolved" json:"resolved"`
+}
+
+func (o ContactListResolutionResult) DeepCopy() ContactListResolutionResult {
+	return ContactListResolutionResult{
+		NewlyResolved: (func(x []ProcessedContact) []ProcessedContact {
+			if x == nil {
+				return nil
+			}
+			ret := make([]ProcessedContact, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.NewlyResolved),
+		Resolved: (func(x []ProcessedContact) []ProcessedContact {
+			if x == nil {
+				return nil
+			}
+			ret := make([]ProcessedContact, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Resolved),
+	}
+}
