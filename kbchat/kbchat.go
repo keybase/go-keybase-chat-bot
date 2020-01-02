@@ -20,11 +20,12 @@ import (
 // API is the main object used for communicating with the Keybase JSON API
 type API struct {
 	sync.Mutex
-	apiInput  io.Writer
-	apiOutput *bufio.Reader
-	apiCmd    *exec.Cmd
-	username  string
-	runOpts   RunOptions
+	apiInput      io.Writer
+	apiOutput     *bufio.Reader
+	apiCmd        *exec.Cmd
+	username      string
+	runOpts       RunOptions
+	subscriptions []*NewSubscription
 }
 
 func getUsername(runOpts RunOptions) (username string, err error) {
@@ -321,6 +322,12 @@ func (a *API) ListenForNewTextMessages() (*NewSubscription, error) {
 	return a.Listen(opts)
 }
 
+func (a *API) registerSubscription(sub *NewSubscription) {
+	a.Lock()
+	defer a.Unlock()
+	a.subscriptions = append(a.subscriptions, sub)
+}
+
 // Listen fires of a background loop and puts chat messages and wallet
 // events into channels
 func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
@@ -339,6 +346,7 @@ func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 		errorCh:     errorCh,
 		running:     true,
 	}
+	a.registerSubscription(sub)
 	pause := 2 * time.Second
 	readScanner := func(boutput *bufio.Scanner) {
 		for {
@@ -481,6 +489,12 @@ func (a *API) LogSend(feedback string) error {
 }
 
 func (a *API) Shutdown() error {
+	a.Lock()
+	defer a.Unlock()
+	for _, sub := range a.subscriptions {
+		sub.Shutdown()
+	}
+
 	if a.runOpts.Oneshot != nil {
 		err := a.runOpts.Command("logout", "--force").Run()
 		if err != nil {
