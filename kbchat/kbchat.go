@@ -20,11 +20,12 @@ import (
 // API is the main object used for communicating with the Keybase JSON API
 type API struct {
 	sync.Mutex
-	apiInput  io.Writer
-	apiOutput *bufio.Reader
-	apiCmd    *exec.Cmd
-	username  string
-	runOpts   RunOptions
+	apiInput      io.Writer
+	apiOutput     *bufio.Reader
+	apiCmd        *exec.Cmd
+	username      string
+	runOpts       RunOptions
+	subscriptions []*NewSubscription
 }
 
 func getUsername(runOpts RunOptions) (username string, err error) {
@@ -247,45 +248,59 @@ type SubscriptionWalletEvent struct {
 
 // NewSubscription has methods to control the background message fetcher loop
 type NewSubscription struct {
+	sync.Mutex
+
 	newMsgsCh   <-chan SubscriptionMessage
 	newConvsCh  <-chan SubscriptionConversation
 	newWalletCh <-chan SubscriptionWalletEvent
 	errorCh     <-chan error
+	running     bool
 	shutdownCh  chan struct{}
 }
 
 // Read blocks until a new message arrives
-func (m NewSubscription) Read() (SubscriptionMessage, error) {
+func (m *NewSubscription) Read() (SubscriptionMessage, error) {
 	select {
 	case msg := <-m.newMsgsCh:
 		return msg, nil
 	case err := <-m.errorCh:
 		return SubscriptionMessage{}, err
+	case <-m.shutdownCh:
+		return SubscriptionMessage{}, errors.New("Subscription shutdown")
 	}
 }
 
-func (m NewSubscription) ReadNewConvs() (SubscriptionConversation, error) {
+func (m *NewSubscription) ReadNewConvs() (SubscriptionConversation, error) {
 	select {
 	case conv := <-m.newConvsCh:
 		return conv, nil
 	case err := <-m.errorCh:
 		return SubscriptionConversation{}, err
+	case <-m.shutdownCh:
+		return SubscriptionConversation{}, errors.New("Subscription shutdown")
 	}
 }
 
 // Read blocks until a new message arrives
-func (m NewSubscription) ReadWallet() (SubscriptionWalletEvent, error) {
+func (m *NewSubscription) ReadWallet() (SubscriptionWalletEvent, error) {
 	select {
 	case msg := <-m.newWalletCh:
 		return msg, nil
 	case err := <-m.errorCh:
 		return SubscriptionWalletEvent{}, err
+	case <-m.shutdownCh:
+		return SubscriptionWalletEvent{}, errors.New("Subscription shutdown")
 	}
 }
 
 // Shutdown terminates the background process
-func (m NewSubscription) Shutdown() {
-	m.shutdownCh <- struct{}{}
+func (m *NewSubscription) Shutdown() {
+	m.Lock()
+	defer m.Unlock()
+	if m.running {
+		close(m.shutdownCh)
+		m.running = false
+	}
 }
 
 type ListenOptions struct {
@@ -302,14 +317,20 @@ type TypeHolder struct {
 }
 
 // ListenForNewTextMessages proxies to Listen without wallet events
-func (a *API) ListenForNewTextMessages() (NewSubscription, error) {
+func (a *API) ListenForNewTextMessages() (*NewSubscription, error) {
 	opts := ListenOptions{Wallet: false}
 	return a.Listen(opts)
 }
 
+func (a *API) registerSubscription(sub *NewSubscription) {
+	a.Lock()
+	defer a.Unlock()
+	a.subscriptions = append(a.subscriptions, sub)
+}
+
 // Listen fires of a background loop and puts chat messages and wallet
 // events into channels
-func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
+func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 	newMsgsCh := make(chan SubscriptionMessage, 100)
 	newConvsCh := make(chan SubscriptionConversation, 100)
 	newWalletCh := make(chan SubscriptionWalletEvent, 100)
@@ -317,13 +338,15 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 	shutdownCh := make(chan struct{})
 	done := make(chan struct{})
 
-	sub := NewSubscription{
+	sub := &NewSubscription{
 		newMsgsCh:   newMsgsCh,
 		newConvsCh:  newConvsCh,
 		newWalletCh: newWalletCh,
 		shutdownCh:  shutdownCh,
 		errorCh:     errorCh,
+		running:     true,
 	}
+	a.registerSubscription(sub)
 	pause := 2 * time.Second
 	readScanner := func(boutput *bufio.Scanner) {
 		for {
@@ -386,6 +409,13 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 	maxAttempts := 1800
 	go func() {
 		for {
+			select {
+			case <-shutdownCh:
+				log.Printf("Listen: received shutdown")
+				return
+			default:
+			}
+
 			if attempts >= maxAttempts {
 				panic("Listen: failed to auth, giving up")
 			}
@@ -459,6 +489,12 @@ func (a *API) LogSend(feedback string) error {
 }
 
 func (a *API) Shutdown() error {
+	a.Lock()
+	defer a.Unlock()
+	for _, sub := range a.subscriptions {
+		sub.Shutdown()
+	}
+
 	if a.runOpts.Oneshot != nil {
 		err := a.runOpts.Command("logout", "--force").Run()
 		if err != nil {
