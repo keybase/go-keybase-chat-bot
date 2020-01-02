@@ -261,6 +261,8 @@ func (m NewSubscription) Read() (SubscriptionMessage, error) {
 		return msg, nil
 	case err := <-m.errorCh:
 		return SubscriptionMessage{}, err
+	case <-m.shutdownCh:
+		return SubscriptionMessage{}, errors.New("Subscription shutdown")
 	}
 }
 
@@ -270,6 +272,8 @@ func (m NewSubscription) ReadNewConvs() (SubscriptionConversation, error) {
 		return conv, nil
 	case err := <-m.errorCh:
 		return SubscriptionConversation{}, err
+	case <-m.shutdownCh:
+		return SubscriptionConversation{}, errors.New("Subscription shutdown")
 	}
 }
 
@@ -280,6 +284,8 @@ func (m NewSubscription) ReadWallet() (SubscriptionWalletEvent, error) {
 		return msg, nil
 	case err := <-m.errorCh:
 		return SubscriptionWalletEvent{}, err
+	case <-m.shutdownCh:
+		return SubscriptionWalletEvent{}, errors.New("Subscription shutdown")
 	}
 }
 
@@ -386,6 +392,13 @@ func (a *API) Listen(opts ListenOptions) (NewSubscription, error) {
 	maxAttempts := 1800
 	go func() {
 		for {
+			select {
+			case <-shutdownCh:
+				log.Printf("Listen: received shutdown")
+				return
+			default:
+			}
+
 			if attempts >= maxAttempts {
 				panic("Listen: failed to auth, giving up")
 			}
