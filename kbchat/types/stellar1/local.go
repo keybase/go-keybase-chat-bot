@@ -845,6 +845,41 @@ func (o SendResultCLILocal) DeepCopy() SendResultCLILocal {
 	}
 }
 
+type PublicNoteType int
+
+const (
+	PublicNoteType_NONE   PublicNoteType = 0
+	PublicNoteType_TEXT   PublicNoteType = 1
+	PublicNoteType_ID     PublicNoteType = 2
+	PublicNoteType_HASH   PublicNoteType = 3
+	PublicNoteType_RETURN PublicNoteType = 4
+)
+
+func (o PublicNoteType) DeepCopy() PublicNoteType { return o }
+
+var PublicNoteTypeMap = map[string]PublicNoteType{
+	"NONE":   0,
+	"TEXT":   1,
+	"ID":     2,
+	"HASH":   3,
+	"RETURN": 4,
+}
+
+var PublicNoteTypeRevMap = map[PublicNoteType]string{
+	0: "NONE",
+	1: "TEXT",
+	2: "ID",
+	3: "HASH",
+	4: "RETURN",
+}
+
+func (e PublicNoteType) String() string {
+	if v, ok := PublicNoteTypeRevMap[e]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(e))
+}
+
 type PaymentOrErrorCLILocal struct {
 	Payment *PaymentCLILocal `codec:"payment,omitempty" json:"payment,omitempty"`
 	Err     *string          `codec:"err,omitempty" json:"err,omitempty"`
