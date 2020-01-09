@@ -25,7 +25,7 @@ type sendMessageBody struct {
 
 type sendMessageOptions struct {
 	Channel          chat1.ChatChannel `json:"channel,omitempty"`
-	ConversationID   string            `json:"conversation_id,omitempty"`
+	ConversationID   chat1.APIConvID   `json:"conversation_id,omitempty"`
 	Message          sendMessageBody   `json:",omitempty"`
 	Filename         string            `json:"filename,omitempty"`
 	Title            string            `json:"title,omitempty"`
@@ -68,7 +68,7 @@ func (a *API) GetConversations(unreadOnly bool) ([]chat1.ConvSummary, error) {
 	return inbox.Result.Convs, nil
 }
 
-func (a *API) GetConversation(convID string) (res chat1.ConvSummary, err error) {
+func (a *API) GetConversation(convID chat1.APIConvID) (res chat1.ConvSummary, err error) {
 	apiInput := fmt.Sprintf(`{"method":"list", "params": { "options": { "conversation_id": "%s"}}}`, convID)
 	output, err := a.doFetch(apiInput)
 	if err != nil {
@@ -134,7 +134,7 @@ func (a *API) Broadcast(body string, args ...interface{}) (SendResponse, error) 
 	}, fmt.Sprintf(body, args...))
 }
 
-func (a *API) SendMessageByConvID(convID string, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) SendMessageByConvID(convID chat1.APIConvID, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{
@@ -197,7 +197,7 @@ func (a *API) SendAttachmentByTeam(teamName string, inChannel *string, filename 
 	return a.doSend(arg)
 }
 
-func (a *API) SendAttachmentByConvID(convID string, filename string, title string) (SendResponse, error) {
+func (a *API) SendAttachmentByConvID(convID chat1.APIConvID, filename string, title string) (SendResponse, error) {
 	arg := sendMessageArg{
 		Method: "attach",
 		Params: sendMessageParams{
@@ -216,7 +216,7 @@ func (a *API) SendAttachmentByConvID(convID string, filename string, title strin
 ////////////////////////////////////////////////////////
 
 type reactionOptions struct {
-	ConversationID string `json:"conversation_id"`
+	ConversationID chat1.APIConvID `json:"conversation_id"`
 	Message        sendMessageBody
 	MsgID          chat1.MessageID   `json:"message_id"`
 	Channel        chat1.ChatChannel `json:"channel"`
@@ -247,7 +247,7 @@ func (a *API) ReactByChannel(channel chat1.ChatChannel, msgID chat1.MessageID, r
 	return a.doSend(arg)
 }
 
-func (a *API) ReactByConvID(convID string, msgID chat1.MessageID, reaction string) (SendResponse, error) {
+func (a *API) ReactByConvID(convID chat1.APIConvID, msgID chat1.MessageID, reaction string) (SendResponse, error) {
 	arg := newReactionArg(reactionOptions{
 		Message:        sendMessageBody{Body: reaction},
 		MsgID:          msgID,
@@ -256,7 +256,7 @@ func (a *API) ReactByConvID(convID string, msgID chat1.MessageID, reaction strin
 	return a.doSend(arg)
 }
 
-func (a *API) EditByConvID(convID string, msgID chat1.MessageID, text string) (SendResponse, error) {
+func (a *API) EditByConvID(convID chat1.APIConvID, msgID chat1.MessageID, text string) (SendResponse, error) {
 	arg := reactionArg{
 		Method: "edit",
 		Params: reactionParams{Options: reactionOptions{
@@ -363,7 +363,7 @@ func (a *API) InChatSend(channel chat1.ChatChannel, body string, args ...interfa
 	return a.doSend(arg)
 }
 
-func (a *API) InChatSendByConvID(convID string, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) InChatSendByConvID(convID chat1.APIConvID, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{

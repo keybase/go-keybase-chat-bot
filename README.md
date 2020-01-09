@@ -63,7 +63,7 @@ This must be run first in order to start the Keybase JSON API stdin/stdout inter
 
 send a new message by specifying a channel
 
-#### `API.SendMessageByConvID(convID string, body string) (SendResponse, error)`
+#### `API.SendMessageByConvID(convID chat1.APIConvID, body string) (SendResponse, error)`
 
 send a new message by specifying a conversation ID
 
@@ -90,7 +90,7 @@ to receive any new message across all conversations (except the bots own message
 
 send a new message which can contain in-chat-send payments (i.e. `+5XLM@joshblum`) by specifying a channel
 
-#### `API.InChatSendByConvID(convID string, body string) (SendResponse, error)`
+#### `API.InChatSendByConvID(convID chat1.APIConvID, body string) (SendResponse, error)`
 
 send a new message which can contain in-chat-send payments (i.e. `+5XLM@joshblum`) by specifying a conversation ID
 

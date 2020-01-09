@@ -154,3 +154,53 @@ func (o SaltpackEncryptedMessageInfo) DeepCopy() SaltpackEncryptedMessageInfo {
 		Sender:           o.Sender.DeepCopy(),
 	}
 }
+
+type SaltpackFrontendEncryptOptions struct {
+	Recipients  []string `codec:"recipients" json:"recipients"`
+	Signed      bool     `codec:"signed" json:"signed"`
+	IncludeSelf bool     `codec:"includeSelf" json:"includeSelf"`
+}
+
+func (o SaltpackFrontendEncryptOptions) DeepCopy() SaltpackFrontendEncryptOptions {
+	return SaltpackFrontendEncryptOptions{
+		Recipients: (func(x []string) []string {
+			if x == nil {
+				return nil
+			}
+			ret := make([]string, len(x))
+			for i, v := range x {
+				vCopy := v
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Recipients),
+		Signed:      o.Signed,
+		IncludeSelf: o.IncludeSelf,
+	}
+}
+
+type SaltpackPlaintextResult struct {
+	Info      SaltpackEncryptedMessageInfo `codec:"info" json:"info"`
+	Plaintext string                       `codec:"plaintext" json:"plaintext"`
+}
+
+func (o SaltpackPlaintextResult) DeepCopy() SaltpackPlaintextResult {
+	return SaltpackPlaintextResult{
+		Info:      o.Info.DeepCopy(),
+		Plaintext: o.Plaintext,
+	}
+}
+
+type SaltpackVerifyResult struct {
+	SigningKID KID            `codec:"signingKID" json:"signingKID"`
+	Sender     SaltpackSender `codec:"sender" json:"sender"`
+	Plaintext  string         `codec:"plaintext" json:"plaintext"`
+}
+
+func (o SaltpackVerifyResult) DeepCopy() SaltpackVerifyResult {
+	return SaltpackVerifyResult{
+		SigningKID: o.SigningKID.DeepCopy(),
+		Sender:     o.Sender.DeepCopy(),
+		Plaintext:  o.Plaintext,
+	}
+}
