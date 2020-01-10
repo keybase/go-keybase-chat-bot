@@ -436,8 +436,8 @@ func (a *API) ClearCommands() error {
 }
 
 type listCmdsOptions struct {
-	Channel        chat1.ChatChannel
-	ConversationID string
+	Channel        chat1.ChatChannel `json:"channel,omitempty"`
+	ConversationID chat1.APIConvID   `json:"conversation_id,omitempty"`
 }
 
 type listCmdsParams struct {
@@ -465,9 +465,9 @@ func (a *API) ListCommands(channel chat1.ChatChannel) ([]chat1.UserBotCommandOut
 	return a.listCommands(arg)
 }
 
-func (a *API) ListCommandsByConvID(conversationID string) ([]chat1.UserBotCommandOutput, error) {
+func (a *API) ListCommandsByConvID(convID chat1.APIConvID) ([]chat1.UserBotCommandOutput, error) {
 	arg := newListCmdsArg(listCmdsOptions{
-		ConversationID: conversationID,
+		ConversationID: convID,
 	})
 	return a.listCommands(arg)
 }
