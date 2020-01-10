@@ -77,6 +77,10 @@ type RunOptions struct {
 	HomeDir         string
 	Oneshot         *OneshotOptions
 	StartService    bool
+	// Have the bot send/receive typing notifications
+	EnableTyping bool
+	// Disable bot lite mode
+	DisableBotLiteMode bool
 }
 
 func (r RunOptions) Location() string {
@@ -149,9 +153,15 @@ func (a *API) startPipes() (err error) {
 	a.apiCmd = nil
 
 	if a.runOpts.StartService {
-		if err := a.runOpts.Command("service").Start(); err != nil {
+		args := []string{fmt.Sprintf("-enable-bot-lite-mode=%v", a.runOpts.DisableBotLiteMode), "service"}
+		if err := a.runOpts.Command(args...).Start(); err != nil {
 			return err
 		}
+	}
+
+	cmd := a.runOpts.Command("chat", "notification-settings", "disable-typing", fmt.Sprintf("%v", !a.runOpts.EnableTyping))
+	if err = cmd.Run(); err != nil {
+		return err
 	}
 
 	if a.username, err = a.auth(); err != nil {
