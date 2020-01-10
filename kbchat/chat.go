@@ -527,22 +527,22 @@ func (a *API) ListMembersByConvID(conversationID string) (keybase1.TeamMembersDe
 	return a.listMembers(arg)
 }
 
-func (a *API) listMembers(arg listMembersArg) (keybase1.TeamMembersDetails, error) {
+func (a *API) listMembers(arg listMembersArg) (res keybase1.TeamMembersDetails, err error) {
 	bArg, err := json.Marshal(arg)
 	if err != nil {
-		return nil, err
+		return res, err
 	}
 	output, err := a.doFetch(string(bArg))
 	if err != nil {
-		return nil, err
+		return res, err
 	}
 	members := ListTeamMembers{}
 	err = json.Unmarshal(output, &members)
 	if err != nil {
-		return empty, UnmarshalError{err}
+		return res, UnmarshalError{err}
 	}
 	if members.Error.Message != "" {
-		return empty, members.Error
+		return res, members.Error
 	}
 	return members.Result.Members, nil
 }
