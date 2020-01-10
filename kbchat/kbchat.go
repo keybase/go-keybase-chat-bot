@@ -159,14 +159,15 @@ func (a *API) startPipes() (err error) {
 		}
 	}
 
-	cmd := a.runOpts.Command("chat", "notification-settings", "disable-typing", fmt.Sprintf("%v", !a.runOpts.EnableTyping))
+	if a.username, err = a.auth(); err != nil {
+		return err
+	}
+
+	cmd := a.runOpts.Command("chat", "notification-settings", fmt.Sprintf("-disable-typing=%v", !a.runOpts.EnableTyping))
 	if err = cmd.Run(); err != nil {
 		return err
 	}
 
-	if a.username, err = a.auth(); err != nil {
-		return err
-	}
 	a.apiCmd = a.runOpts.Command("chat", "api")
 	if a.apiInput, err = a.apiCmd.StdinPipe(); err != nil {
 		return err
