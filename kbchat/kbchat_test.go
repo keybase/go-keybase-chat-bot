@@ -75,7 +75,7 @@ func getMostRecentMessage(t *testing.T, bot *API, channel chat1.ChatChannel) cha
 	return messages[0]
 }
 
-func getConvIDForChannel(t *testing.T, bot *API, channel chat1.ChatChannel) string {
+func getConvIDForChannel(t *testing.T, bot *API, channel chat1.ChatChannel) chat1.APIConvID {
 	messages, err := bot.GetTextMessages(channel, false)
 	require.NoError(t, err)
 	convID := messages[0].ConvID
