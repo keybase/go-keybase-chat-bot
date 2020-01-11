@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )
 
 type Thread struct {
@@ -487,4 +488,61 @@ func (a *API) listCommands(arg listCmdsArg) ([]chat1.UserBotCommandOutput, error
 		return nil, errors.New(res.Error.Message)
 	}
 	return res.Result.Commands, nil
+}
+
+type listMembersOptions struct {
+	Channel        chat1.ChatChannel `json:"channel,omitempty"`
+	ConversationID string            `json:"conversation_id,omitempty"`
+}
+
+type listMembersParams struct {
+	Options listMembersOptions
+}
+
+type listMembersArg struct {
+	Method string
+	Params listMembersParams
+}
+
+func newListMembersArg(options listMembersOptions) listMembersArg {
+	return listMembersArg{
+		Method: "listmembers",
+		Params: listMembersParams{
+			Options: options,
+		},
+	}
+}
+
+func (a *API) ListMembers(channel chat1.ChatChannel) (keybase1.TeamMembersDetails, error) {
+	arg := newListMembersArg(listMembersOptions{
+		Channel: channel,
+	})
+	return a.listMembers(arg)
+}
+
+func (a *API) ListMembersByConvID(conversationID string) (keybase1.TeamMembersDetails, error) {
+	arg := newListMembersArg(listMembersOptions{
+		ConversationID: conversationID,
+	})
+	return a.listMembers(arg)
+}
+
+func (a *API) listMembers(arg listMembersArg) (res keybase1.TeamMembersDetails, err error) {
+	bArg, err := json.Marshal(arg)
+	if err != nil {
+		return res, err
+	}
+	output, err := a.doFetch(string(bArg))
+	if err != nil {
+		return res, err
+	}
+	members := ListTeamMembers{}
+	err = json.Unmarshal(output, &members)
+	if err != nil {
+		return res, UnmarshalError{err}
+	}
+	if members.Error.Message != "" {
+		return res, members.Error
+	}
+	return members.Result.Members, nil
 }

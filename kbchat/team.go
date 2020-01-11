@@ -23,46 +23,42 @@ type ListUserMemberships struct {
 	Error  Error                      `json:"error"`
 }
 
-func (a *API) ListMembersOfTeam(teamName string) (keybase1.TeamMembersDetails, error) {
-	empty := keybase1.TeamMembersDetails{}
-
+func (a *API) ListMembersOfTeam(teamName string) (res keybase1.TeamMembersDetails, err error) {
 	apiInput := fmt.Sprintf(`{"method": "list-team-memberships", "params": {"options": {"team": "%s"}}}`, teamName)
 	cmd := a.runOpts.Command("team", "api")
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.CombinedOutput()
 	if err != nil {
-		return empty, APIError{err}
+		return res, APIError{err}
 	}
 
 	members := ListTeamMembers{}
 	err = json.Unmarshal(bytes, &members)
 	if err != nil {
-		return empty, UnmarshalError{err}
+		return res, UnmarshalError{err}
 	}
 	if members.Error.Message != "" {
-		return empty, members.Error
+		return res, members.Error
 	}
 	return members.Result.Members, nil
 }
 
 func (a *API) ListUserMemberships(username string) ([]keybase1.AnnotatedMemberInfo, error) {
-	empty := []keybase1.AnnotatedMemberInfo{}
-
 	apiInput := fmt.Sprintf(`{"method": "list-user-memberships", "params": {"options": {"username": "%s"}}}`, username)
 	cmd := a.runOpts.Command("team", "api")
 	cmd.Stdin = strings.NewReader(apiInput)
 	bytes, err := cmd.CombinedOutput()
 	if err != nil {
-		return empty, APIError{err}
+		return nil, APIError{err}
 	}
 
 	members := ListUserMemberships{}
 	err = json.Unmarshal(bytes, &members)
 	if err != nil {
-		return empty, UnmarshalError{err}
+		return nil, UnmarshalError{err}
 	}
 	if members.Error.Message != "" {
-		return empty, members.Error
+		return nil, members.Error
 	}
 	return members.Result.Teams, nil
 }
