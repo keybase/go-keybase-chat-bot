@@ -492,7 +492,7 @@ func (a *API) listCommands(arg listCmdsArg) ([]chat1.UserBotCommandOutput, error
 
 type listMembersOptions struct {
 	Channel        chat1.ChatChannel `json:"channel,omitempty"`
-	ConversationID string            `json:"conversation_id,omitempty"`
+	ConversationID chat1.APIConvID   `json:"conversation_id,omitempty"`
 }
 
 type listMembersParams struct {
@@ -520,7 +520,7 @@ func (a *API) ListMembers(channel chat1.ChatChannel) (keybase1.TeamMembersDetail
 	return a.listMembers(arg)
 }
 
-func (a *API) ListMembersByConvID(conversationID string) (keybase1.TeamMembersDetails, error) {
+func (a *API) ListMembersByConvID(conversationID chat1.APIConvID) (keybase1.TeamMembersDetails, error) {
 	arg := newListMembersArg(listMembersOptions{
 		ConversationID: conversationID,
 	})
