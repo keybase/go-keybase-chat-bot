@@ -5770,6 +5770,32 @@ func (o PinMessageRes) DeepCopy() PinMessageRes {
 	}
 }
 
+type AddBotConvSearchHit struct {
+	Name   string         `codec:"name" json:"name"`
+	ConvID ConversationID `codec:"convID" json:"convID"`
+	IsTeam bool           `codec:"isTeam" json:"isTeam"`
+	Parts  []string       `codec:"parts" json:"parts"`
+}
+
+func (o AddBotConvSearchHit) DeepCopy() AddBotConvSearchHit {
+	return AddBotConvSearchHit{
+		Name:   o.Name,
+		ConvID: o.ConvID.DeepCopy(),
+		IsTeam: o.IsTeam,
+		Parts: (func(x []string) []string {
+			if x == nil {
+				return nil
+			}
+			ret := make([]string, len(x))
+			for i, v := range x {
+				vCopy := v
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Parts),
+	}
+}
+
 type LocalMtimeUpdate struct {
 	ConvID ConversationID `codec:"convID" json:"convID"`
 	Mtime  gregor1.Time   `codec:"mtime" json:"mtime"`

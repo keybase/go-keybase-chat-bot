@@ -154,3 +154,87 @@ func (o SaltpackEncryptedMessageInfo) DeepCopy() SaltpackEncryptedMessageInfo {
 		Sender:           o.Sender.DeepCopy(),
 	}
 }
+
+type SaltpackFrontendEncryptOptions struct {
+	Recipients  []string `codec:"recipients" json:"recipients"`
+	Signed      bool     `codec:"signed" json:"signed"`
+	IncludeSelf bool     `codec:"includeSelf" json:"includeSelf"`
+}
+
+func (o SaltpackFrontendEncryptOptions) DeepCopy() SaltpackFrontendEncryptOptions {
+	return SaltpackFrontendEncryptOptions{
+		Recipients: (func(x []string) []string {
+			if x == nil {
+				return nil
+			}
+			ret := make([]string, len(x))
+			for i, v := range x {
+				vCopy := v
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Recipients),
+		Signed:      o.Signed,
+		IncludeSelf: o.IncludeSelf,
+	}
+}
+
+type SaltpackPlaintextResult struct {
+	Info      SaltpackEncryptedMessageInfo `codec:"info" json:"info"`
+	Plaintext string                       `codec:"plaintext" json:"plaintext"`
+	Signed    bool                         `codec:"signed" json:"signed"`
+}
+
+func (o SaltpackPlaintextResult) DeepCopy() SaltpackPlaintextResult {
+	return SaltpackPlaintextResult{
+		Info:      o.Info.DeepCopy(),
+		Plaintext: o.Plaintext,
+		Signed:    o.Signed,
+	}
+}
+
+type SaltpackFileResult struct {
+	Info              SaltpackEncryptedMessageInfo `codec:"info" json:"info"`
+	DecryptedFilename string                       `codec:"decryptedFilename" json:"decryptedFilename"`
+	Signed            bool                         `codec:"signed" json:"signed"`
+}
+
+func (o SaltpackFileResult) DeepCopy() SaltpackFileResult {
+	return SaltpackFileResult{
+		Info:              o.Info.DeepCopy(),
+		DecryptedFilename: o.DecryptedFilename,
+		Signed:            o.Signed,
+	}
+}
+
+type SaltpackVerifyResult struct {
+	SigningKID KID            `codec:"signingKID" json:"signingKID"`
+	Sender     SaltpackSender `codec:"sender" json:"sender"`
+	Plaintext  string         `codec:"plaintext" json:"plaintext"`
+	Verified   bool           `codec:"verified" json:"verified"`
+}
+
+func (o SaltpackVerifyResult) DeepCopy() SaltpackVerifyResult {
+	return SaltpackVerifyResult{
+		SigningKID: o.SigningKID.DeepCopy(),
+		Sender:     o.Sender.DeepCopy(),
+		Plaintext:  o.Plaintext,
+		Verified:   o.Verified,
+	}
+}
+
+type SaltpackVerifyFileResult struct {
+	SigningKID       KID            `codec:"signingKID" json:"signingKID"`
+	Sender           SaltpackSender `codec:"sender" json:"sender"`
+	VerifiedFilename string         `codec:"verifiedFilename" json:"verifiedFilename"`
+	Verified         bool           `codec:"verified" json:"verified"`
+}
+
+func (o SaltpackVerifyFileResult) DeepCopy() SaltpackVerifyFileResult {
+	return SaltpackVerifyFileResult{
+		SigningKID:       o.SigningKID.DeepCopy(),
+		Sender:           o.Sender.DeepCopy(),
+		VerifiedFilename: o.VerifiedFilename,
+		Verified:         o.Verified,
+	}
+}

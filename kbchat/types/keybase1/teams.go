@@ -125,23 +125,26 @@ func (e TeamStatus) String() string {
 type AuditMode int
 
 const (
-	AuditMode_STANDARD     AuditMode = 0
-	AuditMode_JUST_CREATED AuditMode = 1
-	AuditMode_SKIP         AuditMode = 2
+	AuditMode_STANDARD           AuditMode = 0
+	AuditMode_JUST_CREATED       AuditMode = 1
+	AuditMode_SKIP               AuditMode = 2
+	AuditMode_STANDARD_NO_HIDDEN AuditMode = 3
 )
 
 func (o AuditMode) DeepCopy() AuditMode { return o }
 
 var AuditModeMap = map[string]AuditMode{
-	"STANDARD":     0,
-	"JUST_CREATED": 1,
-	"SKIP":         2,
+	"STANDARD":           0,
+	"JUST_CREATED":       1,
+	"SKIP":               2,
+	"STANDARD_NO_HIDDEN": 3,
 }
 
 var AuditModeRevMap = map[AuditMode]string{
 	0: "STANDARD",
 	1: "JUST_CREATED",
 	2: "SKIP",
+	3: "STANDARD_NO_HIDDEN",
 }
 
 func (e AuditMode) String() string {
@@ -1307,6 +1310,7 @@ type Audit struct {
 	Time           Time  `codec:"time" json:"time"`
 	MaxMerkleSeqno Seqno `codec:"mms" json:"mms"`
 	MaxChainSeqno  Seqno `codec:"mcs" json:"mcs"`
+	MaxHiddenSeqno Seqno `codec:"mhs" json:"mhs"`
 	MaxMerkleProbe Seqno `codec:"mmp" json:"mmp"`
 }
 
@@ -1315,19 +1319,22 @@ func (o Audit) DeepCopy() Audit {
 		Time:           o.Time.DeepCopy(),
 		MaxMerkleSeqno: o.MaxMerkleSeqno.DeepCopy(),
 		MaxChainSeqno:  o.MaxChainSeqno.DeepCopy(),
+		MaxHiddenSeqno: o.MaxHiddenSeqno.DeepCopy(),
 		MaxMerkleProbe: o.MaxMerkleProbe.DeepCopy(),
 	}
 }
 
 type Probe struct {
-	Index     int   `codec:"i" json:"i"`
-	TeamSeqno Seqno `codec:"s" json:"t"`
+	Index           int   `codec:"i" json:"i"`
+	TeamSeqno       Seqno `codec:"s" json:"t"`
+	TeamHiddenSeqno Seqno `codec:"h" json:"h"`
 }
 
 func (o Probe) DeepCopy() Probe {
 	return Probe{
-		Index:     o.Index,
-		TeamSeqno: o.TeamSeqno.DeepCopy(),
+		Index:           o.Index,
+		TeamSeqno:       o.TeamSeqno.DeepCopy(),
+		TeamHiddenSeqno: o.TeamHiddenSeqno.DeepCopy(),
 	}
 }
 
@@ -1338,6 +1345,7 @@ const (
 	AuditVersion_V1 AuditVersion = 1
 	AuditVersion_V2 AuditVersion = 2
 	AuditVersion_V3 AuditVersion = 3
+	AuditVersion_V4 AuditVersion = 4
 )
 
 func (o AuditVersion) DeepCopy() AuditVersion { return o }
@@ -1347,6 +1355,7 @@ var AuditVersionMap = map[string]AuditVersion{
 	"V1": 1,
 	"V2": 2,
 	"V3": 3,
+	"V4": 4,
 }
 
 var AuditVersionRevMap = map[AuditVersion]string{
@@ -1354,6 +1363,7 @@ var AuditVersionRevMap = map[AuditVersion]string{
 	1: "V1",
 	2: "V2",
 	3: "V3",
+	4: "V4",
 }
 
 func (e AuditVersion) String() string {
@@ -1372,6 +1382,7 @@ type AuditHistory struct {
 	PreProbes        map[Seqno]Probe  `codec:"preProbes" json:"preProbes"`
 	PostProbes       map[Seqno]Probe  `codec:"postProbes" json:"postProbes"`
 	Tails            map[Seqno]LinkID `codec:"tails" json:"tails"`
+	HiddenTails      map[Seqno]LinkID `codec:"hiddenTails" json:"hiddenTails"`
 	SkipUntil        Time             `codec:"skipUntil" json:"skipUntil"`
 }
 
@@ -1428,6 +1439,18 @@ func (o AuditHistory) DeepCopy() AuditHistory {
 			}
 			return ret
 		})(o.Tails),
+		HiddenTails: (func(x map[Seqno]LinkID) map[Seqno]LinkID {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[Seqno]LinkID, len(x))
+			for k, v := range x {
+				kCopy := k.DeepCopy()
+				vCopy := v.DeepCopy()
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.HiddenTails),
 		SkipUntil: o.SkipUntil.DeepCopy(),
 	}
 }
