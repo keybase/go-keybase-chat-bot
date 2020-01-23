@@ -129,6 +129,18 @@ func (o SaltpackVerifyOptions) DeepCopy() SaltpackVerifyOptions {
 	}
 }
 
+type SaltpackEncryptResult struct {
+	UsedUnresolvedSBS      bool   `codec:"usedUnresolvedSBS" json:"usedUnresolvedSBS"`
+	UnresolvedSBSAssertion string `codec:"unresolvedSBSAssertion" json:"unresolvedSBSAssertion"`
+}
+
+func (o SaltpackEncryptResult) DeepCopy() SaltpackEncryptResult {
+	return SaltpackEncryptResult{
+		UsedUnresolvedSBS:      o.UsedUnresolvedSBS,
+		UnresolvedSBSAssertion: o.UnresolvedSBSAssertion,
+	}
+}
+
 type SaltpackEncryptedMessageInfo struct {
 	Devices          []Device       `codec:"devices" json:"devices"`
 	NumAnonReceivers int            `codec:"numAnonReceivers" json:"numAnonReceivers"`
@@ -176,6 +188,34 @@ func (o SaltpackFrontendEncryptOptions) DeepCopy() SaltpackFrontendEncryptOption
 		})(o.Recipients),
 		Signed:      o.Signed,
 		IncludeSelf: o.IncludeSelf,
+	}
+}
+
+type SaltpackEncryptStringResult struct {
+	UsedUnresolvedSBS      bool   `codec:"usedUnresolvedSBS" json:"usedUnresolvedSBS"`
+	UnresolvedSBSAssertion string `codec:"unresolvedSBSAssertion" json:"unresolvedSBSAssertion"`
+	Ciphertext             string `codec:"ciphertext" json:"ciphertext"`
+}
+
+func (o SaltpackEncryptStringResult) DeepCopy() SaltpackEncryptStringResult {
+	return SaltpackEncryptStringResult{
+		UsedUnresolvedSBS:      o.UsedUnresolvedSBS,
+		UnresolvedSBSAssertion: o.UnresolvedSBSAssertion,
+		Ciphertext:             o.Ciphertext,
+	}
+}
+
+type SaltpackEncryptFileResult struct {
+	UsedUnresolvedSBS      bool   `codec:"usedUnresolvedSBS" json:"usedUnresolvedSBS"`
+	UnresolvedSBSAssertion string `codec:"unresolvedSBSAssertion" json:"unresolvedSBSAssertion"`
+	Filename               string `codec:"filename" json:"filename"`
+}
+
+func (o SaltpackEncryptFileResult) DeepCopy() SaltpackEncryptFileResult {
+	return SaltpackEncryptFileResult{
+		UsedUnresolvedSBS:      o.UsedUnresolvedSBS,
+		UnresolvedSBSAssertion: o.UnresolvedSBSAssertion,
+		Filename:               o.Filename,
 	}
 }
 
