@@ -10,7 +10,7 @@ import (
 type kvstoreMethod string
 
 type kvstoreOptions struct {
-	Team       string  `json:"team"`
+	Team       *string `json:"team"`
 	Namespace  *string `json:"namespace,omitempty"`
 	EntryKey   *string `json:"entryKey,omitempty"`
 	EntryValue *string `json:"entryValue,omitempty"`
@@ -52,20 +52,20 @@ type ListEntryKeysRes struct {
 }
 
 type KVStoreAPI interface {
-	PutEntry(teamName string, namespace string, entryKey string, entryValue string) (keybase1.KVPutResult, error)
-	PutEntryWithRevision(teamName string, namespace string, entryKey string, entryValue string, revision int) (keybase1.KVPutResult, error)
-	DeleteEntry(teamName string, namespace string, entryKey string) (keybase1.KVDeleteEntryResult, error)
-	DeleteEntryWithRevision(teamName string, namespace string, entryKey string, revision int) (keybase1.KVDeleteEntryResult, error)
-	GetEntry(teamName string, namespace string, entryKey string) (keybase1.KVGetResult, error)
-	ListNamespaces(teamName string) (keybase1.KVListNamespaceResult, error)
-	ListEntryKeys(teamName string, namespace string) (keybase1.KVListEntryResult, error)
+	PutEntry(teamName *string, namespace string, entryKey string, entryValue string) (keybase1.KVPutResult, error)
+	PutEntryWithRevision(teamName *string, namespace string, entryKey string, entryValue string, revision int) (keybase1.KVPutResult, error)
+	DeleteEntry(teamName *string, namespace string, entryKey string) (keybase1.KVDeleteEntryResult, error)
+	DeleteEntryWithRevision(teamName *string, namespace string, entryKey string, revision int) (keybase1.KVDeleteEntryResult, error)
+	GetEntry(teamName *string, namespace string, entryKey string) (keybase1.KVGetResult, error)
+	ListNamespaces(teamName *string) (keybase1.KVListNamespaceResult, error)
+	ListEntryKeys(teamName *string, namespace string) (keybase1.KVListEntryResult, error)
 }
 
-func (a *API) PutEntry(teamName string, namespace string, entryKey string, entryValue string) (result keybase1.KVPutResult, err error) {
+func (a *API) PutEntry(teamName *string, namespace string, entryKey string, entryValue string) (result keybase1.KVPutResult, err error) {
 	return a.PutEntryWithRevision(teamName, namespace, entryKey, entryValue, 0)
 }
 
-func (a *API) PutEntryWithRevision(teamName string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
+func (a *API) PutEntryWithRevision(teamName *string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
 
 	opts := kvstoreOptions{
 		Team:       teamName,
@@ -100,11 +100,11 @@ func (a *API) PutEntryWithRevision(teamName string, namespace string, entryKey s
 	return entry.Result, nil
 }
 
-func (a *API) DeleteEntry(teamName string, namespace string, entryKey string) (result keybase1.KVDeleteEntryResult, err error) {
+func (a *API) DeleteEntry(teamName *string, namespace string, entryKey string) (result keybase1.KVDeleteEntryResult, err error) {
 	return a.DeleteEntryWithRevision(teamName, namespace, entryKey, 0)
 }
 
-func (a *API) DeleteEntryWithRevision(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
+func (a *API) DeleteEntryWithRevision(teamName *string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
 
 	opts := kvstoreOptions{
 		Team:      teamName,
@@ -138,7 +138,7 @@ func (a *API) DeleteEntryWithRevision(teamName string, namespace string, entryKe
 	return entry.Result, nil
 }
 
-func (a *API) GetEntry(teamName string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
+func (a *API) GetEntry(teamName *string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
 
 	opts := kvstoreOptions{
 		Team:      teamName,
@@ -168,7 +168,7 @@ func (a *API) GetEntry(teamName string, namespace string, entryKey string) (resu
 	return entry.Result, nil
 }
 
-func (a *API) ListNamespaces(teamName string) (result keybase1.KVListNamespaceResult, err error) {
+func (a *API) ListNamespaces(teamName *string) (result keybase1.KVListNamespaceResult, err error) {
 
 	opts := kvstoreOptions{
 		Team: teamName,
@@ -197,7 +197,7 @@ func (a *API) ListNamespaces(teamName string) (result keybase1.KVListNamespaceRe
 	return namespaces.Result, nil
 }
 
-func (a *API) ListEntryKeys(teamName string, namespace string) (result keybase1.KVListEntryResult, err error) {
+func (a *API) ListEntryKeys(teamName *string, namespace string) (result keybase1.KVListEntryResult, err error) {
 
 	opts := kvstoreOptions{
 		Team:      teamName,

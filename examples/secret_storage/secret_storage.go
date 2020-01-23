@@ -102,7 +102,7 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 	}
 
 	// we don't expect SecretKey's revision > 0
-	_, err := sc.api.PutEntryWithRevision(teamName, namespace, sc.config.secretName, hex.EncodeToString(newSecret), 1)
+	_, err := sc.api.PutEntryWithRevision(&teamName, namespace, sc.config.secretName, hex.EncodeToString(newSecret), 1)
 	if err != nil {
 		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
@@ -110,7 +110,7 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 		}
 
 		// failed to put; get entry
-		res, err := sc.api.GetEntry(teamName, namespace, sc.config.secretName)
+		res, err := sc.api.GetEntry(&teamName, namespace, sc.config.secretName)
 		if err != nil {
 			return nil, err
 		}
@@ -136,11 +136,11 @@ func (sc *SecretKeyKVStoreAPI) obfuscateEntryKey(teamName string, namespace stri
 	return hex.EncodeToString(hmacEntryKey), nil
 }
 
-func (sc *SecretKeyKVStoreAPI) PutEntry(teamName string, namespace string, entryKey string, entryValue string) (result keybase1.KVPutResult, err error) {
+func (sc *SecretKeyKVStoreAPI) PutEntry(teamName *string, namespace string, entryKey string, entryValue string) (result keybase1.KVPutResult, err error) {
 	return sc.PutEntryWithRevision(teamName, namespace, entryKey, entryValue, 0)
 }
 
-func (sc *SecretKeyKVStoreAPI) PutEntryWithRevision(teamName string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
+func (sc *SecretKeyKVStoreAPI) PutEntryWithRevision(teamName *string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
 	var keyedValue map[string]string
 	if err = json.Unmarshal([]byte(entryValue), &keyedValue); err != nil {
 		return result, err
@@ -152,7 +152,7 @@ func (sc *SecretKeyKVStoreAPI) PutEntryWithRevision(teamName string, namespace s
 		return result, err
 	}
 
-	hmacEntryKey, err := sc.obfuscateEntryKey(teamName, namespace, entryKey)
+	hmacEntryKey, err := sc.obfuscateEntryKey(*teamName, namespace, entryKey)
 	if err != nil {
 		return result, err
 	}
@@ -165,12 +165,12 @@ func (sc *SecretKeyKVStoreAPI) PutEntryWithRevision(teamName string, namespace s
 	return result, err
 }
 
-func (sc *SecretKeyKVStoreAPI) DeleteEntry(teamName string, namespace string, entryKey string) (result keybase1.KVDeleteEntryResult, err error) {
+func (sc *SecretKeyKVStoreAPI) DeleteEntry(teamName *string, namespace string, entryKey string) (result keybase1.KVDeleteEntryResult, err error) {
 	return sc.DeleteEntryWithRevision(teamName, namespace, entryKey, 0)
 }
 
-func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevision(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
-	hmacEntryKey, err := sc.obfuscateEntryKey(teamName, namespace, entryKey)
+func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevision(teamName *string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
+	hmacEntryKey, err := sc.obfuscateEntryKey(*teamName, namespace, entryKey)
 	if err != nil {
 		return result, err
 	}
@@ -182,9 +182,9 @@ func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevision(teamName string, namespac
 	return result, err
 }
 
-func (sc *SecretKeyKVStoreAPI) GetEntry(teamName string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
+func (sc *SecretKeyKVStoreAPI) GetEntry(teamName *string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
 
-	hmacEntryKey, err := sc.obfuscateEntryKey(teamName, namespace, entryKey)
+	hmacEntryKey, err := sc.obfuscateEntryKey(*teamName, namespace, entryKey)
 	if err != nil {
 		return result, err
 	}
@@ -196,11 +196,11 @@ func (sc *SecretKeyKVStoreAPI) GetEntry(teamName string, namespace string, entry
 	return result, err
 }
 
-func (sc *SecretKeyKVStoreAPI) ListNamespaces(teamName string) (keybase1.KVListNamespaceResult, error) {
+func (sc *SecretKeyKVStoreAPI) ListNamespaces(teamName *string) (keybase1.KVListNamespaceResult, error) {
 	return sc.ListNamespaces(teamName)
 }
 
-func (sc *SecretKeyKVStoreAPI) ListEntryKeys(teamName string, namespace string) (result keybase1.KVListEntryResult, err error) {
+func (sc *SecretKeyKVStoreAPI) ListEntryKeys(teamName *string, namespace string) (result keybase1.KVListEntryResult, err error) {
 	keys, err := sc.api.ListEntryKeys(teamName, namespace)
 	if err != nil {
 		return result, err
@@ -242,7 +242,7 @@ func NewRentalBotClient(api kbchat.KVStoreAPI, teamName string, namespace string
 }
 
 func (r *RentalBotClient) Lookup(tool string) (keybase1.KVGetResult, error) {
-	return r.api.GetEntry(r.team, r.namespace, tool)
+	return r.api.GetEntry(&r.team, r.namespace, tool)
 }
 
 // Add returns (whether action is successful, most recent get result if applicable, error)
@@ -260,7 +260,7 @@ func (r *RentalBotClient) Add(tool string) (ok bool, result keybase1.KVGetResult
 	if err != nil {
 		return false, result, err
 	}
-	_, err = r.api.PutEntryWithRevision(r.team, r.namespace, tool, string(bytes), expectedRevision)
+	_, err = r.api.PutEntryWithRevision(&r.team, r.namespace, tool, string(bytes), expectedRevision)
 	if err != nil {
 		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
@@ -288,7 +288,7 @@ func (r *RentalBotClient) Remove(tool string) (ok bool, result keybase1.KVGetRes
 
 	expectedRevision := result.Revision + 1
 
-	_, err = r.api.DeleteEntryWithRevision(r.team, r.namespace, tool, expectedRevision)
+	_, err = r.api.DeleteEntryWithRevision(&r.team, r.namespace, tool, expectedRevision)
 	switch err.(type) {
 	case nil:
 		// successul delete
@@ -330,7 +330,7 @@ func (r *RentalBotClient) Reserve(username string, tool string, day string) (ok 
 	if err != nil {
 		return false, result, err
 	}
-	_, err = r.api.PutEntryWithRevision(r.team, r.namespace, tool, string(bytes), expectedRevision)
+	_, err = r.api.PutEntryWithRevision(&r.team, r.namespace, tool, string(bytes), expectedRevision)
 	if err != nil {
 		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
@@ -377,7 +377,7 @@ func (r *RentalBotClient) Unreserve(username string, tool string, day string) (o
 		return false, result, err
 	}
 
-	_, err = r.api.PutEntryWithRevision(r.team, r.namespace, tool, string(bytes), expectedRevision)
+	_, err = r.api.PutEntryWithRevision(&r.team, r.namespace, tool, string(bytes), expectedRevision)
 	if err != nil {
 		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
@@ -396,7 +396,7 @@ func (r *RentalBotClient) Unreserve(username string, tool string, day string) (o
 
 func (r *RentalBotClient) ListTools() ([]string, error) {
 	var tools []string
-	res, err := r.api.ListEntryKeys(r.team, r.namespace)
+	res, err := r.api.ListEntryKeys(&r.team, r.namespace)
 
 	if err != nil {
 		return tools, err
