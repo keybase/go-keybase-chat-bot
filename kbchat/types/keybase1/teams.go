@@ -360,6 +360,7 @@ type TeamMember struct {
 	Role        TeamRole         `codec:"role" json:"role"`
 	EldestSeqno Seqno            `codec:"eldestSeqno" json:"eldestSeqno"`
 	Status      TeamMemberStatus `codec:"status" json:"status"`
+	BotSettings *TeamBotSettings `codec:"botSettings,omitempty" json:"botSettings,omitempty"`
 }
 
 func (o TeamMember) DeepCopy() TeamMember {
@@ -368,6 +369,13 @@ func (o TeamMember) DeepCopy() TeamMember {
 		Role:        o.Role.DeepCopy(),
 		EldestSeqno: o.EldestSeqno.DeepCopy(),
 		Status:      o.Status.DeepCopy(),
+		BotSettings: (func(x *TeamBotSettings) *TeamBotSettings {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.BotSettings),
 	}
 }
 
@@ -579,6 +587,7 @@ func (o TeamMembersDetails) DeepCopy() TeamMembersDetails {
 }
 
 type TeamDetails struct {
+	Name                   string                               `codec:"name" json:"name"`
 	Members                TeamMembersDetails                   `codec:"members" json:"members"`
 	KeyGeneration          PerTeamKeyGeneration                 `codec:"keyGeneration" json:"keyGeneration"`
 	AnnotatedActiveInvites map[TeamInviteID]AnnotatedTeamInvite `codec:"annotatedActiveInvites" json:"annotatedActiveInvites"`
@@ -588,6 +597,7 @@ type TeamDetails struct {
 
 func (o TeamDetails) DeepCopy() TeamDetails {
 	return TeamDetails{
+		Name:          o.Name,
 		Members:       o.Members.DeepCopy(),
 		KeyGeneration: o.KeyGeneration.DeepCopy(),
 		AnnotatedActiveInvites: (func(x map[TeamInviteID]AnnotatedTeamInvite) map[TeamInviteID]AnnotatedTeamInvite {
