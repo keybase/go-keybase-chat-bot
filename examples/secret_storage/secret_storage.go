@@ -28,6 +28,8 @@ Additionally this example handles concurrent writes by using explicit revision
 numbers to prevent one user from unintentionally clobbering another user's
 rental updates.
 
+Here we've stored the HMAC secret and other entries in the team's kvstore; you
+could also store the entries in the bot's own kvstore (the default team).
 */
 package main
 
@@ -141,6 +143,13 @@ func (sc *SecretKeyKVStoreAPI) PutEntry(teamName *string, namespace string, entr
 }
 
 func (sc *SecretKeyKVStoreAPI) PutEntryWithRevision(teamName *string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
+	if teamName == nil {
+		return result, fmt.Errorf("teamName must be defined for SecretKeyKVStoreAPI methods")
+	}
+	return sc.PutEntryWithRevisionAndTeam(*teamName, namespace, entryKey, entryValue, revision)
+}
+
+func (sc *SecretKeyKVStoreAPI) PutEntryWithRevisionAndTeam(teamName string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
 	var keyedValue map[string]string
 	if err = json.Unmarshal([]byte(entryValue), &keyedValue); err != nil {
 		return result, err
@@ -151,13 +160,12 @@ func (sc *SecretKeyKVStoreAPI) PutEntryWithRevision(teamName *string, namespace 
 	if err != nil {
 		return result, err
 	}
-
-	hmacEntryKey, err := sc.obfuscateEntryKey(*teamName, namespace, entryKey)
+	hmacEntryKey, err := sc.obfuscateEntryKey(teamName, namespace, entryKey)
 	if err != nil {
 		return result, err
 	}
 
-	result, err = sc.api.PutEntryWithRevision(teamName, namespace, hmacEntryKey, string(bytes), revision)
+	result, err = sc.api.PutEntryWithRevision(&teamName, namespace, hmacEntryKey, string(bytes), revision)
 	if err != nil {
 		return result, err
 	}
@@ -170,11 +178,18 @@ func (sc *SecretKeyKVStoreAPI) DeleteEntry(teamName *string, namespace string, e
 }
 
 func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevision(teamName *string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
-	hmacEntryKey, err := sc.obfuscateEntryKey(*teamName, namespace, entryKey)
+	if teamName == nil {
+		return result, fmt.Errorf("teamName must be defined for SecretKeyKVStoreAPI methods")
+	}
+	return sc.DeleteEntryWithRevisionAndTeam(*teamName, namespace, entryKey, revision)
+}
+
+func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevisionAndTeam(teamName string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
+	hmacEntryKey, err := sc.obfuscateEntryKey(teamName, namespace, entryKey)
 	if err != nil {
 		return result, err
 	}
-	result, err = sc.api.DeleteEntryWithRevision(teamName, namespace, hmacEntryKey, revision)
+	result, err = sc.api.DeleteEntryWithRevision(&teamName, namespace, hmacEntryKey, revision)
 	if err != nil {
 		return result, err
 	}
@@ -183,12 +198,18 @@ func (sc *SecretKeyKVStoreAPI) DeleteEntryWithRevision(teamName *string, namespa
 }
 
 func (sc *SecretKeyKVStoreAPI) GetEntry(teamName *string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
+	if teamName == nil {
+		return result, fmt.Errorf("teamName must be defined for SecretKeyKVStoreAPI methods")
+	}
+	return sc.GetEntryWithTeam(*teamName, namespace, entryKey)
+}
 
-	hmacEntryKey, err := sc.obfuscateEntryKey(*teamName, namespace, entryKey)
+func (sc *SecretKeyKVStoreAPI) GetEntryWithTeam(teamName string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
+	hmacEntryKey, err := sc.obfuscateEntryKey(teamName, namespace, entryKey)
 	if err != nil {
 		return result, err
 	}
-	result, err = sc.api.GetEntry(teamName, namespace, hmacEntryKey)
+	result, err = sc.api.GetEntry(&teamName, namespace, hmacEntryKey)
 	if err != nil {
 		return result, err
 	}
