@@ -31,6 +31,7 @@ type sendMessageOptions struct {
 	Title            string            `json:"title,omitempty"`
 	MsgID            chat1.MessageID   `json:"message_id,omitempty"`
 	ConfirmLumenSend bool              `json:"confirm_lumen_send"`
+	ReplyTo          int               `json:"reply_to"`
 }
 
 type sendMessageParams struct {
@@ -123,6 +124,17 @@ func (a *API) SendMessage(channel chat1.ChatChannel, body string, args ...interf
 		Message: sendMessageBody{
 			Body: fmt.Sprintf(body, args...),
 		},
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) SendReply(channel chat1.ChatChannel, replyTo int, body string, args ...interface{}) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: channel,
+		Message: sendMessageBody{
+			Body: fmt.Sprintf(body, args...),
+		},
+		ReplyTo: replyTo,
 	})
 	return a.doSend(arg)
 }
