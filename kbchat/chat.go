@@ -128,17 +128,6 @@ func (a *API) SendMessage(channel chat1.ChatChannel, body string, args ...interf
 	return a.doSend(arg)
 }
 
-func (a *API) SendReply(channel chat1.ChatChannel, replyTo int, body string, args ...interface{}) (SendResponse, error) {
-	arg := newSendArg(sendMessageOptions{
-		Channel: channel,
-		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
-		},
-		ReplyTo: replyTo,
-	})
-	return a.doSend(arg)
-}
-
 func (a *API) Broadcast(body string, args ...interface{}) (SendResponse, error) {
 	return a.SendMessage(chat1.ChatChannel{
 		Name:   a.GetUsername(),
@@ -183,6 +172,41 @@ func (a *API) SendMessageByTeamName(teamName string, inChannel *string, body str
 		Message: sendMessageBody{
 			Body: fmt.Sprintf(body, args...),
 		},
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) SendReply(channel chat1.ChatChannel, replyTo int, body string, args ...interface{}) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: channel,
+		Message: sendMessageBody{
+			Body: fmt.Sprintf(body, args...),
+		},
+		ReplyTo: replyTo,
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) SendReplyByConvID(convID chat1.ConvIDStr, replyTo int, body string, args ...interface{}) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		ConversationID: convID,
+		Message: sendMessageBody{
+			Body: fmt.Sprintf(body, args...),
+		},
+		ReplyTo: replyTo,
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) SendReplyByTlfName(tlfName string, replyTo int, body string, args ...interface{}) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: chat1.ChatChannel{
+			Name: tlfName,
+		},
+		Message: sendMessageBody{
+			Body: fmt.Sprintf(body, args...),
+		},
+		ReplyTo: replyTo,
 	})
 	return a.doSend(arg)
 }
