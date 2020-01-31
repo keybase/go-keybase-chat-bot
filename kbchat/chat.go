@@ -546,3 +546,70 @@ func (a *API) listMembers(arg listMembersArg) (res keybase1.TeamMembersDetails, 
 	}
 	return members.Result.Members, nil
 }
+
+type GetMessagesResult struct {
+	Error  *Error `json:"error,omitempty"`
+	Result struct {
+		Messages []chat1.MsgSummary `json:"messages,omitempty"`
+	} `json:"result"`
+}
+
+type getMessagesOptions struct {
+	Channel        chat1.ChatChannel `json:"channel,omitempty"`
+	ConversationID chat1.ConvIDStr   `json:"conversation_id,omitempty"`
+	MessageIDs     []chat1.MessageID `json:"message_ids,omitempty"`
+}
+
+type getMessagesParams struct {
+	Options getMessagesOptions
+}
+
+type getMessagesArg struct {
+	Method string
+	Params getMessagesParams
+}
+
+func newGetMessagesArg(options getMessagesOptions) getMessagesArg {
+	return getMessagesArg{
+		Method: "get",
+		Params: getMessagesParams{
+			Options: options,
+		},
+	}
+}
+
+func (a *API) GetMessages(channel chat1.ChatChannel, msgIDs []chat1.MessageID) ([]chat1.MsgSummary, error) {
+	arg := newGetMessagesArg(getMessagesOptions{
+		Channel:    channel,
+		MessageIDs: msgIDs,
+	})
+	return a.getMessages(arg)
+}
+
+func (a *API) GetMessagesByConvID(conversationID chat1.ConvIDStr, msgIDs []chat1.MessageID) ([]chat1.MsgSummary, error) {
+	arg := newGetMessagesArg(getMessagesOptions{
+		ConversationID: conversationID,
+		MessageIDs:     msgIDs,
+	})
+	return a.getMessages(arg)
+}
+
+func (a *API) getMessages(arg getMessagesArg) ([]chat1.MsgSummary, error) {
+	bArg, err := json.Marshal(arg)
+	if err != nil {
+		return nil, err
+	}
+	output, err := a.doFetch(string(bArg))
+	if err != nil {
+		return nil, err
+	}
+	var res GetMessagesResult
+	err = json.Unmarshal(output, &res)
+	if err != nil {
+		return nil, UnmarshalError{err}
+	}
+	if res.Error.Message != "" {
+		return nil, res.Error
+	}
+	return res.Result.Messages, nil
+}
