@@ -548,10 +548,10 @@ func (a *API) listMembers(arg listMembersArg) (res keybase1.TeamMembersDetails, 
 }
 
 type GetMessagesResult struct {
-	Error  *Error `json:"error,omitempty"`
 	Result struct {
-		Messages []chat1.MsgSummary `json:"messages,omitempty"`
+		Messages []chat1.MsgSummary `json:"messages"`
 	} `json:"result"`
+	Error *Error `json:"error,omitempty"`
 }
 
 type getMessagesOptions struct {
