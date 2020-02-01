@@ -549,7 +549,7 @@ func (a *API) listMembers(arg listMembersArg) (res keybase1.TeamMembersDetails, 
 
 type GetMessagesResult struct {
 	Result struct {
-		Messages []chat1.MsgSummary `json:"messages"`
+		Thread chat1.Thread `json:"thread"`
 	} `json:"result"`
 	Error *Error `json:"error,omitempty"`
 }
