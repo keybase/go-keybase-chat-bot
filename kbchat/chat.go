@@ -603,6 +603,7 @@ func (a *API) getMessages(arg getMessagesArg) ([]chat1.MsgSummary, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("%s", output)
 	var res GetMessagesResult
 	err = json.Unmarshal(output, &res)
 	if err != nil {
