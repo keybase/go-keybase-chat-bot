@@ -549,7 +549,7 @@ func (a *API) listMembers(arg listMembersArg) (res keybase1.TeamMembersDetails, 
 
 type GetMessagesResult struct {
 	Result struct {
-		Thread chat1.Thread `json:"thread"`
+		Messages []chat1.Message `json:"messages"`
 	} `json:"result"`
 	Error *Error `json:"error,omitempty"`
 }
@@ -578,7 +578,7 @@ func newGetMessagesArg(options getMessagesOptions) getMessagesArg {
 	}
 }
 
-func (a *API) GetMessages(channel chat1.ChatChannel, msgIDs []chat1.MessageID) ([]chat1.MsgSummary, error) {
+func (a *API) GetMessages(channel chat1.ChatChannel, msgIDs []chat1.MessageID) ([]chat1.Message, error) {
 	arg := newGetMessagesArg(getMessagesOptions{
 		Channel:    channel,
 		MessageIDs: msgIDs,
@@ -586,7 +586,7 @@ func (a *API) GetMessages(channel chat1.ChatChannel, msgIDs []chat1.MessageID) (
 	return a.getMessages(arg)
 }
 
-func (a *API) GetMessagesByConvID(conversationID chat1.ConvIDStr, msgIDs []chat1.MessageID) ([]chat1.MsgSummary, error) {
+func (a *API) GetMessagesByConvID(conversationID chat1.ConvIDStr, msgIDs []chat1.MessageID) ([]chat1.Message, error) {
 	arg := newGetMessagesArg(getMessagesOptions{
 		ConversationID: conversationID,
 		MessageIDs:     msgIDs,
@@ -594,7 +594,7 @@ func (a *API) GetMessagesByConvID(conversationID chat1.ConvIDStr, msgIDs []chat1
 	return a.getMessages(arg)
 }
 
-func (a *API) getMessages(arg getMessagesArg) ([]chat1.MsgSummary, error) {
+func (a *API) getMessages(arg getMessagesArg) ([]chat1.Message, error) {
 	bArg, err := json.Marshal(arg)
 	if err != nil {
 		return nil, err
