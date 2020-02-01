@@ -608,7 +608,7 @@ func (a *API) getMessages(arg getMessagesArg) ([]chat1.MsgSummary, error) {
 	if err != nil {
 		return nil, UnmarshalError{err}
 	}
-	if res.Error.Message != "" {
+	if res.Error != nil {
 		return nil, res.Error
 	}
 	return res.Result.Messages, nil
