@@ -31,6 +31,7 @@ type sendMessageOptions struct {
 	Title            string            `json:"title,omitempty"`
 	MsgID            chat1.MessageID   `json:"message_id,omitempty"`
 	ConfirmLumenSend bool              `json:"confirm_lumen_send"`
+	ReplyTo          int               `json:"reply_to"`
 }
 
 type sendMessageParams struct {
@@ -171,6 +172,41 @@ func (a *API) SendMessageByTeamName(teamName string, inChannel *string, body str
 		Message: sendMessageBody{
 			Body: fmt.Sprintf(body, args...),
 		},
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) SendReply(channel chat1.ChatChannel, replyTo int, body string, args ...interface{}) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: channel,
+		Message: sendMessageBody{
+			Body: fmt.Sprintf(body, args...),
+		},
+		ReplyTo: replyTo,
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) SendReplyByConvID(convID chat1.ConvIDStr, replyTo int, body string, args ...interface{}) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		ConversationID: convID,
+		Message: sendMessageBody{
+			Body: fmt.Sprintf(body, args...),
+		},
+		ReplyTo: replyTo,
+	})
+	return a.doSend(arg)
+}
+
+func (a *API) SendReplyByTlfName(tlfName string, replyTo int, body string, args ...interface{}) (SendResponse, error) {
+	arg := newSendArg(sendMessageOptions{
+		Channel: chat1.ChatChannel{
+			Name: tlfName,
+		},
+		Message: sendMessageBody{
+			Body: fmt.Sprintf(body, args...),
+		},
+		ReplyTo: replyTo,
 	})
 	return a.doSend(arg)
 }
