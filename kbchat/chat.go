@@ -31,7 +31,7 @@ type sendMessageOptions struct {
 	Title            string            `json:"title,omitempty"`
 	MsgID            chat1.MessageID   `json:"message_id,omitempty"`
 	ConfirmLumenSend bool              `json:"confirm_lumen_send"`
-	ReplyTo          chat1.MessageID   `json:"reply_to"`
+	ReplyTo          *chat1.MessageID  `json:"reply_to,omitempty"`
 }
 
 type sendMessageParams struct {
@@ -176,7 +176,7 @@ func (a *API) SendMessageByTeamName(teamName string, inChannel *string, body str
 	return a.doSend(arg)
 }
 
-func (a *API) SendReply(channel chat1.ChatChannel, replyTo chat1.MessageID, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) SendReply(channel chat1.ChatChannel, replyTo *chat1.MessageID, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: channel,
 		Message: sendMessageBody{
@@ -187,7 +187,7 @@ func (a *API) SendReply(channel chat1.ChatChannel, replyTo chat1.MessageID, body
 	return a.doSend(arg)
 }
 
-func (a *API) SendReplyByConvID(convID chat1.ConvIDStr, replyTo chat1.MessageID, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) SendReplyByConvID(convID chat1.ConvIDStr, replyTo *chat1.MessageID, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{
@@ -198,7 +198,7 @@ func (a *API) SendReplyByConvID(convID chat1.ConvIDStr, replyTo chat1.MessageID,
 	return a.doSend(arg)
 }
 
-func (a *API) SendReplyByTlfName(tlfName string, replyTo chat1.MessageID, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) SendReplyByTlfName(tlfName string, replyTo *chat1.MessageID, body string, args ...interface{}) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: chat1.ChatChannel{
 			Name: tlfName,
