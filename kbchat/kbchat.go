@@ -40,13 +40,13 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 
 	doneCh := make(chan error)
 	go func() {
-		scanner := bufio.NewScanner(output)
-		if !scanner.Scan() {
-			doneCh <- errors.New("unable to find Keybase username")
+		statusJSON, err := ioutil.ReadAll(output)
+		if err != nil {
+			doneCh <- fmt.Errorf("error reading whoami output: %v", err)
 			return
 		}
 		var status keybase1.CurrentStatus
-		if err := json.Unmarshal(scanner.Bytes(), &status); err != nil {
+		if err := json.Unmarshal(statusJSON, &status); err != nil {
 			doneCh <- fmt.Errorf("invalid whoami %v", err)
 			return
 		}
