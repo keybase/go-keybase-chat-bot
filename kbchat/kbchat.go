@@ -9,11 +9,11 @@ import (
 	"io/ioutil"
 	"log"
 	"os/exec"
-	"strings"
 	"sync"
 	"time"
 
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
+	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/stellar1"
 )
 
@@ -29,7 +29,7 @@ type API struct {
 }
 
 func getUsername(runOpts RunOptions) (username string, err error) {
-	p := runOpts.Command("status")
+	p := runOpts.Command("whoami", "-json")
 	output, err := p.StdoutPipe()
 	if err != nil {
 		return "", err
@@ -45,13 +45,14 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 			doneCh <- errors.New("unable to find Keybase username")
 			return
 		}
-		text := scanner.Text()
-		toks := strings.Fields(text)
-		if len(toks) != 2 {
-			doneCh <- fmt.Errorf("invalid Keybase username output: %q", text)
+		var status keybase1.CurrentStatus
+		if err := json.Unmarshal(scanner.Bytes(), &status); err != nil {
+			doneCh <- fmt.Errorf("invalid whoami %v", err)
 			return
 		}
-		username = toks[1]
+		if status.LoggedIn && status.User != nil {
+			username = status.User.Username
+		}
 		doneCh <- nil
 	}()
 
