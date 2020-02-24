@@ -52,8 +52,10 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 		}
 		if status.LoggedIn && status.User != nil {
 			username = status.User.Username
+			doneCh <- nil
+		} else {
+			doneCh <- fmt.Errorf("unable to authenticate to keybase service: logged in: %v user: %+v", status.LoggedIn, status.User)
 		}
-		doneCh <- nil
 	}()
 
 	select {
