@@ -41,7 +41,6 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 	doneCh := make(chan error)
 	go func() {
 		defer close(doneCh)
-		time.Sleep(10 * time.Second)
 		statusJSON, err := ioutil.ReadAll(output)
 		if err != nil {
 			doneCh <- fmt.Errorf("error reading whoami output: %v", err)
@@ -365,7 +364,14 @@ func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 	a.registerSubscription(sub)
 	pause := 2 * time.Second
 	readScanner := func(boutput *bufio.Scanner) {
+		defer func() { done <- struct{}{} }()
 		for {
+			select {
+			case <-shutdownCh:
+				log.Printf("readScanner: received shutdown")
+				return
+			default:
+			}
 			boutput.Scan()
 			t := boutput.Text()
 			var typeHolder TypeHolder
@@ -418,12 +424,17 @@ func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 				continue
 			}
 		}
-		done <- struct{}{}
 	}
 
 	attempts := 0
 	maxAttempts := 1800
 	go func() {
+		defer func() {
+			close(newMsgsCh)
+			close(newConvsCh)
+			close(newWalletCh)
+			close(errorCh)
+		}()
 		for {
 			select {
 			case <-shutdownCh:
