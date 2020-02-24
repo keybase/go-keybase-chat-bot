@@ -47,7 +47,7 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 		}
 		var status keybase1.CurrentStatus
 		if err := json.Unmarshal(statusJSON, &status); err != nil {
-			doneCh <- fmt.Errorf("invalid whoami %v", err)
+			doneCh <- fmt.Errorf("invalid whoami %s, %v", statusJSON, err)
 			return
 		}
 		if status.LoggedIn && status.User != nil {
