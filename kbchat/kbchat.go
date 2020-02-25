@@ -186,7 +186,7 @@ func (a *API) startPipes() (err error) {
 	if err != nil {
 		return err
 	}
-	a.apiCmd.ExtraFiles = []*os.File{a.apiInput.(*os.File), output.(*os.File)}
+	a.apiCmd.ExtraFiles = []*os.File{output.(*os.File)}
 	if err := a.apiCmd.Start(); err != nil {
 		return err
 	}
