@@ -186,6 +186,7 @@ func (a *API) startPipes() (err error) {
 	if err != nil {
 		return err
 	}
+	a.apiCmd.ExtraFiles = []*os.File{a.apiInput.(*os.File), output.(*os.File)}
 	if err := a.apiCmd.Start(); err != nil {
 		return err
 	}
@@ -478,8 +479,10 @@ func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 				time.Sleep(pause)
 				continue
 			}
+			p.ExtraFiles = []*os.File{stderr.(*os.File), output.(*os.File)}
 			boutput := bufio.NewScanner(output)
 			if err := p.Start(); err != nil {
+
 				log.Printf("Listen: failed to make listen scanner: %s", err)
 				time.Sleep(pause)
 				continue
@@ -526,6 +529,11 @@ func (a *API) Shutdown() error {
 	defer a.Unlock()
 	for _, sub := range a.subscriptions {
 		sub.Shutdown()
+	}
+	if a.apiCmd != nil {
+		if err := a.apiCmd.Wait(); err != nil {
+			return err
+		}
 	}
 
 	if a.runOpts.Oneshot != nil {
