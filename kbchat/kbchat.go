@@ -53,7 +53,7 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 	doneCh := make(chan error)
 	go func() {
 		defer func() { close(doneCh) }()
-		statusJSON, err := ioutil.ReadAll(w)
+		statusJSON, err := ioutil.ReadAll(r)
 		if err != nil {
 			doneCh <- fmt.Errorf("error reading whoami output: %v", err)
 			return
