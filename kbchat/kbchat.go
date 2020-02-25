@@ -43,6 +43,7 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 			log.Printf("unable to close writer: %v", err)
 		}
 	}()
+	p.Stdin = r
 	p.Stdout = w
 	p.Stderr = w
 	p.ExtraFiles = []*os.File{w}
@@ -68,6 +69,9 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 			doneCh <- nil
 		} else {
 			doneCh <- fmt.Errorf("unable to authenticate to keybase service: logged in: %v user: %+v", status.LoggedIn, status.User)
+		}
+		if err := p.Wait(); err != nil {
+			log.Printf("unable to wait for cmd: %v", err)
 		}
 	}()
 
