@@ -31,22 +31,11 @@ type API struct {
 
 func getUsername(runOpts RunOptions) (username string, err error) {
 	p := runOpts.Command("whoami", "-json")
-	r, w, err := os.Pipe()
+	output, err := p.StdoutPipe()
 	if err != nil {
 		return "", err
 	}
-	defer func() {
-		if err := r.Close(); err != nil {
-			log.Printf("unable to close reader: %v", err)
-		}
-		if err := w.Close(); err != nil {
-			log.Printf("unable to close writer: %v", err)
-		}
-	}()
-	p.Stdin = r
-	p.Stdout = w
-	p.Stderr = w
-	p.ExtraFiles = []*os.File{w}
+	p.ExtraFiles = []*os.File{output.(*os.File)}
 	if err = p.Start(); err != nil {
 		return "", err
 	}
@@ -54,7 +43,7 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 	doneCh := make(chan error)
 	go func() {
 		defer func() { close(doneCh) }()
-		statusJSON, err := ioutil.ReadAll(r)
+		statusJSON, err := ioutil.ReadAll(output)
 		if err != nil {
 			doneCh <- fmt.Errorf("error reading whoami output: %v", err)
 			return
@@ -70,6 +59,7 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 		} else {
 			doneCh <- fmt.Errorf("unable to authenticate to keybase service: logged in: %v user: %+v", status.LoggedIn, status.User)
 		}
+		// Cleanup the command
 		if err := p.Wait(); err != nil {
 			log.Printf("unable to wait for cmd: %v", err)
 		}
