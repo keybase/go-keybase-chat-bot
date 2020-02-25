@@ -27,7 +27,7 @@ func (a *API) ListMembersOfTeam(teamName string) (res keybase1.TeamMembersDetail
 	apiInput := fmt.Sprintf(`{"method": "list-team-memberships", "params": {"options": {"team": "%s"}}}`, teamName)
 	cmd := a.runOpts.Command("team", "api")
 	cmd.Stdin = strings.NewReader(apiInput)
-	bytes, err := cmd.CombinedOutput()
+	bytes, err := cmd.Output()
 	if err != nil {
 		return res, APIError{err}
 	}
@@ -47,7 +47,7 @@ func (a *API) ListUserMemberships(username string) ([]keybase1.AnnotatedMemberIn
 	apiInput := fmt.Sprintf(`{"method": "list-user-memberships", "params": {"options": {"username": "%s"}}}`, username)
 	cmd := a.runOpts.Command("team", "api")
 	cmd.Stdin = strings.NewReader(apiInput)
-	bytes, err := cmd.CombinedOutput()
+	bytes, err := cmd.Output()
 	if err != nil {
 		return nil, APIError{err}
 	}
