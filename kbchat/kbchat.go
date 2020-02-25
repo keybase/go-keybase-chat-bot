@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 	"sync"
 	"time"
@@ -30,18 +31,29 @@ type API struct {
 
 func getUsername(runOpts RunOptions) (username string, err error) {
 	p := runOpts.Command("whoami", "-json")
-	output, err := p.StdoutPipe()
+	r, w, err := os.Pipe()
 	if err != nil {
 		return "", err
 	}
+	defer func() {
+		if err := r.Close(); err != nil {
+			log.Printf("unable to close reader: %v", err)
+		}
+		if err := w.Close(); err != nil {
+			log.Printf("unable to close writer: %v", err)
+		}
+	}()
+	p.Stdout = w
+	p.Stderr = w
+	p.ExtraFiles = []*os.File{w}
 	if err = p.Start(); err != nil {
 		return "", err
 	}
 
 	doneCh := make(chan error)
 	go func() {
-		defer close(doneCh)
-		statusJSON, err := ioutil.ReadAll(output)
+		defer func() { close(doneCh) }()
+		statusJSON, err := ioutil.ReadAll(w)
 		if err != nil {
 			doneCh <- fmt.Errorf("error reading whoami output: %v", err)
 			return
