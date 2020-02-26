@@ -431,6 +431,9 @@ func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 			}
 
 			if attempts >= maxAttempts {
+				if err := a.LogSend("Listen: failed to auth, giving up"); err != nil {
+					log.Printf("Listen: logsend failed to send: %v", err)
+				}
 				panic("Listen: failed to auth, giving up")
 			}
 			attempts++
