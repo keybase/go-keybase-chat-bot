@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 	"sync"
 	"time"
@@ -34,12 +35,14 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 	if err != nil {
 		return "", err
 	}
+	p.ExtraFiles = []*os.File{output.(*os.File)}
 	if err = p.Start(); err != nil {
 		return "", err
 	}
 
 	doneCh := make(chan error)
 	go func() {
+		defer func() { close(doneCh) }()
 		statusJSON, err := ioutil.ReadAll(output)
 		if err != nil {
 			doneCh <- fmt.Errorf("error reading whoami output: %v", err)
@@ -55,6 +58,10 @@ func getUsername(runOpts RunOptions) (username string, err error) {
 			doneCh <- nil
 		} else {
 			doneCh <- fmt.Errorf("unable to authenticate to keybase service: logged in: %v user: %+v", status.LoggedIn, status.User)
+		}
+		// Cleanup the command
+		if err := p.Wait(); err != nil {
+			log.Printf("unable to wait for cmd: %v", err)
 		}
 	}()
 
@@ -179,6 +186,7 @@ func (a *API) startPipes() (err error) {
 	if err != nil {
 		return err
 	}
+	a.apiCmd.ExtraFiles = []*os.File{output.(*os.File)}
 	if err := a.apiCmd.Start(); err != nil {
 		return err
 	}
@@ -363,7 +371,14 @@ func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 	a.registerSubscription(sub)
 	pause := 2 * time.Second
 	readScanner := func(boutput *bufio.Scanner) {
+		defer func() { done <- struct{}{} }()
 		for {
+			select {
+			case <-shutdownCh:
+				log.Printf("readScanner: received shutdown")
+				return
+			default:
+			}
 			boutput.Scan()
 			t := boutput.Text()
 			var typeHolder TypeHolder
@@ -416,12 +431,17 @@ func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 				continue
 			}
 		}
-		done <- struct{}{}
 	}
 
 	attempts := 0
 	maxAttempts := 1800
 	go func() {
+		defer func() {
+			close(newMsgsCh)
+			close(newConvsCh)
+			close(newWalletCh)
+			close(errorCh)
+		}()
 		for {
 			select {
 			case <-shutdownCh:
@@ -462,8 +482,10 @@ func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 				time.Sleep(pause)
 				continue
 			}
+			p.ExtraFiles = []*os.File{stderr.(*os.File), output.(*os.File)}
 			boutput := bufio.NewScanner(output)
 			if err := p.Start(); err != nil {
+
 				log.Printf("Listen: failed to make listen scanner: %s", err)
 				time.Sleep(pause)
 				continue
@@ -510,6 +532,11 @@ func (a *API) Shutdown() error {
 	defer a.Unlock()
 	for _, sub := range a.subscriptions {
 		sub.Shutdown()
+	}
+	if a.apiCmd != nil {
+		if err := a.apiCmd.Wait(); err != nil {
+			return err
+		}
 	}
 
 	if a.runOpts.Oneshot != nil {
