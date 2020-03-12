@@ -46,7 +46,6 @@ func (a *API) ListMembersOfTeam(teamName string) (res keybase1.TeamMembersDetail
 	members := ListTeamMembers{}
 	err = json.Unmarshal(output, &members)
 	if err != nil {
-		fmt.Println(string(output))
 		return res, UnmarshalError{err}
 	}
 	if members.Error.Message != "" {
