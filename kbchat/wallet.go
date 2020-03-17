@@ -11,23 +11,6 @@ import (
 
 type walletMethod string
 
-type sendOptions struct {
-	Recipient     string  `json:"recipient"`
-	Amount        string  `json:"amount"`
-	Currency      *string `json:"currency"`
-	Message       *string `json:"message"`
-	FromAccountID *string `json:"from-account-id"`
-	MemoText      *string `json:"memo-text"`
-}
-
-type SendOutput struct {
-	Result stellar1.SendResultCLILocal `json:"result"`
-}
-
-type CancelOutput struct {
-	Result stellar1.RelayClaimResult `json:"result"`
-}
-
 type walletTxIDAPIReq struct {
 	Method walletMethod     `json:"method"`
 	Params walletTxIDParams `json:"params"`
@@ -50,13 +33,33 @@ type walletSendParams struct {
 	Options sendOptions `json:"options"`
 }
 
+type sendOptions struct {
+	Recipient     string  `json:"recipient"`
+	Amount        string  `json:"amount"`
+	Currency      *string `json:"currency"`
+	Message       *string `json:"message"`
+	FromAccountID *string `json:"from-account-id"`
+	MemoText      *string `json:"memo-text"`
+}
+
+type getRes struct {
+	Result stellar1.PaymentCLILocal `json:"result"`
+	Error  Error                    `json:"error,omitempty"`
+}
+
+type sendRes struct {
+	Result stellar1.SendResultCLILocal `json:"result"`
+	Error  Error                       `json:"error,omitempty"`
+}
+
+type cancelRes struct {
+	Result stellar1.RelayClaimResult `json:"result"`
+	Error  Error                     `json:"error,omitempty"`
+}
+
 func (a *API) GetWalletTxDetails(txID string) (result stellar1.PaymentCLILocal, err error) {
 	a.Lock()
 	defer a.Unlock()
-
-	type res struct {
-		Result stellar1.PaymentCLILocal `json:"result"`
-	}
 
 	opts := txIDOptions{
 		TxID: txID,
@@ -75,21 +78,19 @@ func (a *API) GetWalletTxDetails(txID string) (result stellar1.PaymentCLILocal, 
 		return result, err
 	}
 
-	response := res{}
+	response := getRes{}
 	if err := json.Unmarshal(out.Bytes(), &response); err != nil {
 		return result, fmt.Errorf("unable to decode wallet output: %s", err.Error())
 	}
-
+	if response.Error.Message != "" {
+		return result, response.Error
+	}
 	return response.Result, nil
 }
 
 func (a *API) SendWalletTx(recipient string, amount string, currency *string, message *string, fromAccountID *string, memoText *string) (result stellar1.SendResultCLILocal, err error) {
 	a.Lock()
 	defer a.Unlock()
-
-	type res struct {
-		Result stellar1.SendResultCLILocal `json:"result"`
-	}
 
 	opts := sendOptions{
 		Recipient:     recipient,
@@ -113,21 +114,19 @@ func (a *API) SendWalletTx(recipient string, amount string, currency *string, me
 		return result, err
 	}
 
-	response := res{}
+	response := sendRes{}
 	if err := json.Unmarshal(out.Bytes(), &response); err != nil {
 		return result, fmt.Errorf("unable to decode wallet output: %s", err.Error())
 	}
-
+	if response.Error.Message != "" {
+		return result, response.Error
+	}
 	return response.Result, nil
 }
 
 func (a *API) CancelWalletTx(txID string) (result stellar1.RelayClaimResult, err error) {
 	a.Lock()
 	defer a.Unlock()
-
-	type res struct {
-		Result stellar1.RelayClaimResult `json:"result"`
-	}
 
 	opts := txIDOptions{
 		TxID: txID,
@@ -147,10 +146,12 @@ func (a *API) CancelWalletTx(txID string) (result stellar1.RelayClaimResult, err
 		return result, err
 	}
 
-	response := res{}
+	response := cancelRes{}
 	if err := json.Unmarshal(out.Bytes(), &response); err != nil {
 		return result, fmt.Errorf("unable to decode wallet output: %s", err.Error())
 	}
-
+	if response.Error.Message != "" {
+		return result, response.Error
+	}
 	return response.Result, nil
 }
