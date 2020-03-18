@@ -492,7 +492,12 @@ func (a *API) Listen(opts ListenOptions) (*NewSubscription, error) {
 			}
 			attempts = 0
 			go readScanner(boutput)
-			<-done
+			select {
+			case <-shutdownCh:
+				log.Printf("Listen: received shutdown")
+				return
+			case <-done:
+			}
 			if err := p.Wait(); err != nil {
 				stderrBytes, rerr := ioutil.ReadAll(stderr)
 				if rerr != nil {
