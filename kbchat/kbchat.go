@@ -446,7 +446,7 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 	}
 
 	attempts := 0
-	maxAttempts := 1800
+	maxAttempts := 30
 	go func() {
 		defer func() {
 			close(sub.newMsgsCh)
