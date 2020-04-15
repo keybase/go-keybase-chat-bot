@@ -63,7 +63,7 @@ func NewSubscription() *Subscription {
 
 // Read blocks until a new message arrives
 func (m *Subscription) Read() (msg SubscriptionMessage, err error) {
-	defer m.Trace(func() error { return err }, "Read")()
+	defer m.Trace(&err, "Read")()
 	select {
 	case msg = <-m.newMsgsCh:
 		return msg, nil
@@ -75,7 +75,7 @@ func (m *Subscription) Read() (msg SubscriptionMessage, err error) {
 }
 
 func (m *Subscription) ReadNewConvs() (conv SubscriptionConversation, err error) {
-	defer m.Trace(func() error { return err }, "ReadNewConvs")()
+	defer m.Trace(&err, "ReadNewConvs")()
 	select {
 	case conv = <-m.newConvsCh:
 		return conv, nil
@@ -88,7 +88,7 @@ func (m *Subscription) ReadNewConvs() (conv SubscriptionConversation, err error)
 
 // Read blocks until a new message arrives
 func (m *Subscription) ReadWallet() (msg SubscriptionWalletEvent, err error) {
-	defer m.Trace(func() error { return err }, "ReadWallet")()
+	defer m.Trace(&err, "ReadWallet")()
 	select {
 	case msg = <-m.newWalletCh:
 		return msg, nil
@@ -101,7 +101,7 @@ func (m *Subscription) ReadWallet() (msg SubscriptionWalletEvent, err error) {
 
 // Shutdown terminates the background process
 func (m *Subscription) Shutdown() {
-	defer m.Trace(func() error { return nil }, "Shutdown")()
+	defer m.Trace(nil, "Shutdown")()
 	m.Lock()
 	defer m.Unlock()
 	if m.running {
@@ -545,7 +545,7 @@ func (a *API) LogSend(feedback string) error {
 }
 
 func (a *API) Shutdown() (err error) {
-	defer a.Trace(func() error { return err }, "Shutdown")()
+	defer a.Trace(&err, "Shutdown")()
 	a.Lock()
 	defer a.Unlock()
 	for _, sub := range a.subscriptions {
