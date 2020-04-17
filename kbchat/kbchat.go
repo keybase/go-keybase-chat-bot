@@ -228,7 +228,7 @@ func (a *API) getUsername(runOpts RunOptions) (username string, err error) {
 		if err != nil {
 			return "", err
 		}
-	case <-time.After(5 * time.Second):
+	case <-time.After(15 * time.Second):
 		return "", errors.New("unable to run Keybase command")
 	}
 
