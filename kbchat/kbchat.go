@@ -176,11 +176,13 @@ type API struct {
 	subscriptions []*Subscription
 	Timeout       time.Duration
 }
+
 func CustomTimeout(timeout time.Duration) func(*API) {
 	return func(a *API) {
 		a.Timeout = timeout
 	}
 }
+
 func NewAPI(runOpts RunOptions, opts ...func(*API)) *API {
 	api := &API{
 		DebugOutput: NewDebugOutput("API"),
