@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.8 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/notify_ctl.avdl
 
 package keybase1
@@ -26,6 +26,8 @@ type NotificationChannels struct {
 	Teambot          bool `codec:"teambot" json:"teambot"`
 	Chatkbfsedits    bool `codec:"chatkbfsedits" json:"chatkbfsedits"`
 	Chatdev          bool `codec:"chatdev" json:"chatdev"`
+	Chatemoji        bool `codec:"chatemoji" json:"chatemoji"`
+	Chatemojicross   bool `codec:"chatemojicross" json:"chatemojicross"`
 	Deviceclone      bool `codec:"deviceclone" json:"deviceclone"`
 	Chatattachments  bool `codec:"chatattachments" json:"chatattachments"`
 	Wallet           bool `codec:"wallet" json:"wallet"`
@@ -59,6 +61,8 @@ func (o NotificationChannels) DeepCopy() NotificationChannels {
 		Teambot:          o.Teambot,
 		Chatkbfsedits:    o.Chatkbfsedits,
 		Chatdev:          o.Chatdev,
+		Chatemoji:        o.Chatemoji,
+		Chatemojicross:   o.Chatemojicross,
 		Deviceclone:      o.Deviceclone,
 		Chatattachments:  o.Chatattachments,
 		Wallet:           o.Wallet,
