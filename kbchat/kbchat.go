@@ -174,13 +174,19 @@ type API struct {
 	username      string
 	runOpts       RunOptions
 	subscriptions []*Subscription
+	Timeout       time.Duration
 }
 
-func NewAPI(runOpts RunOptions) *API {
-	return &API{
+func NewAPI(runOpts RunOptions, opts ...func(*API)) *API {
+	api := &API{
 		DebugOutput: NewDebugOutput("API"),
 		runOpts:     runOpts,
+		Timeout:     5 * time.Second,
 	}
+	for _, opt := range opts {
+		opt(api)
+	}
+	return api
 }
 
 func (a *API) Command(args ...string) *exec.Cmd {
@@ -228,7 +234,7 @@ func (a *API) getUsername(runOpts RunOptions) (username string, err error) {
 		if err != nil {
 			return "", err
 		}
-	case <-time.After(5 * time.Second):
+	case <-time.After(a.Timeout):
 		return "", errors.New("unable to run Keybase command")
 	}
 
