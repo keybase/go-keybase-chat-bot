@@ -10,7 +10,7 @@ func ErrToOK(err *error) string {
 	if err == nil || *err == nil {
 		return "ok"
 	}
-	return fmt.Sprintf("ERROR: %v", err)
+	return fmt.Sprintf("ERROR: %v", *err)
 }
 
 type DebugOutput struct {

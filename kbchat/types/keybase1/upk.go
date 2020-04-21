@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.6 (https://github.com/keybase/node-avdl-compiler)
+// Auto-generated to Go types using avdl-compiler v1.4.8 (https://github.com/keybase/node-avdl-compiler)
 //   Input file: ../client/protocol/avdl/keybase1/upk.avdl
 
 package keybase1
@@ -165,7 +165,7 @@ type PublicKeyV2NaCl struct {
 	Parent            *KID            `codec:"parent,omitempty" json:"parent,omitempty"`
 	DeviceID          DeviceID        `codec:"deviceID" json:"deviceID"`
 	DeviceDescription string          `codec:"deviceDescription" json:"deviceDescription"`
-	DeviceType        string          `codec:"deviceType" json:"deviceType"`
+	DeviceType        DeviceTypeV2    `codec:"deviceType" json:"deviceType"`
 }
 
 func (o PublicKeyV2NaCl) DeepCopy() PublicKeyV2NaCl {
@@ -180,7 +180,7 @@ func (o PublicKeyV2NaCl) DeepCopy() PublicKeyV2NaCl {
 		})(o.Parent),
 		DeviceID:          o.DeviceID.DeepCopy(),
 		DeviceDescription: o.DeviceDescription,
-		DeviceType:        o.DeviceType,
+		DeviceType:        o.DeviceType.DeepCopy(),
 	}
 }
 
