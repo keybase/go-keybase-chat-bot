@@ -175,6 +175,7 @@ type API struct {
 	runOpts       RunOptions
 	subscriptions []*Subscription
 	Timeout       time.Duration
+	LogSendBytes  int
 }
 
 func CustomTimeout(timeout time.Duration) func(*API) {
@@ -185,9 +186,10 @@ func CustomTimeout(timeout time.Duration) func(*API) {
 
 func NewAPI(runOpts RunOptions, opts ...func(*API)) *API {
 	api := &API{
-		DebugOutput: NewDebugOutput("API"),
-		runOpts:     runOpts,
-		Timeout:     5 * time.Second,
+		DebugOutput:  NewDebugOutput("API"),
+		runOpts:      runOpts,
+		Timeout:      5 * time.Second,
+		LogSendBytes: 1024 * 1024 * 5, // request 5MB so we don't get killed
 	}
 	for _, opt := range opts {
 		opt(api)
@@ -544,6 +546,7 @@ func (a *API) LogSend(feedback string) error {
 		"log", "send",
 		"--no-confirm",
 		"--feedback", feedback,
+		"-n", fmt.Sprintf("%d", a.LogSendBytes),
 	}
 
 	// We're determining whether the service is already running by running status
