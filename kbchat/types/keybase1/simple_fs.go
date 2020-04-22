@@ -752,9 +752,9 @@ type CopyArgs struct {
 
 func (o CopyArgs) DeepCopy() CopyArgs {
 	return CopyArgs{
-		OpID:                   o.OpID.DeepCopy(),
-		Src:                    o.Src.DeepCopy(),
-		Dest:                   o.Dest.DeepCopy(),
+		OpID: o.OpID.DeepCopy(),
+		Src:  o.Src.DeepCopy(),
+		Dest: o.Dest.DeepCopy(),
 		OverwriteExistingFiles: o.OverwriteExistingFiles,
 	}
 }
@@ -768,9 +768,9 @@ type MoveArgs struct {
 
 func (o MoveArgs) DeepCopy() MoveArgs {
 	return MoveArgs{
-		OpID:                   o.OpID.DeepCopy(),
-		Src:                    o.Src.DeepCopy(),
-		Dest:                   o.Dest.DeepCopy(),
+		OpID: o.OpID.DeepCopy(),
+		Src:  o.Src.DeepCopy(),
+		Dest: o.Dest.DeepCopy(),
 		OverwriteExistingFiles: o.OverwriteExistingFiles,
 	}
 }

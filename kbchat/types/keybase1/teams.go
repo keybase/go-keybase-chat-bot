@@ -4102,8 +4102,8 @@ type AnnotatedTeam struct {
 
 func (o AnnotatedTeam) DeepCopy() AnnotatedTeam {
 	return AnnotatedTeam{
-		TeamID:                       o.TeamID.DeepCopy(),
-		Name:                         o.Name,
+		TeamID: o.TeamID.DeepCopy(),
+		Name:   o.Name,
 		TransitiveSubteamsUnverified: o.TransitiveSubteamsUnverified.DeepCopy(),
 		Members: (func(x []AnnotatedTeamMemberDetails) []AnnotatedTeamMemberDetails {
 			if x == nil {
