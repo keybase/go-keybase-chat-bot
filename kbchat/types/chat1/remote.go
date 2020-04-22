@@ -1172,6 +1172,169 @@ func (o AdvertiseBotCommandsRes) DeepCopy() AdvertiseBotCommandsRes {
 	}
 }
 
+type RemoteClearBotCommandsFilterPublic struct {
+}
+
+func (o RemoteClearBotCommandsFilterPublic) DeepCopy() RemoteClearBotCommandsFilterPublic {
+	return RemoteClearBotCommandsFilterPublic{}
+}
+
+type RemoteClearBotCommandsFilterTLFID struct {
+	TlfID TLFID `codec:"tlfID" json:"tlfID"`
+}
+
+func (o RemoteClearBotCommandsFilterTLFID) DeepCopy() RemoteClearBotCommandsFilterTLFID {
+	return RemoteClearBotCommandsFilterTLFID{
+		TlfID: o.TlfID.DeepCopy(),
+	}
+}
+
+type RemoteClearBotCommandsFilterConv struct {
+	ConvID ConversationID `codec:"convID" json:"convID"`
+}
+
+func (o RemoteClearBotCommandsFilterConv) DeepCopy() RemoteClearBotCommandsFilterConv {
+	return RemoteClearBotCommandsFilterConv{
+		ConvID: o.ConvID.DeepCopy(),
+	}
+}
+
+type RemoteClearBotCommandsFilter struct {
+	Typ__          BotCommandsAdvertisementTyp         `codec:"typ" json:"typ"`
+	Public__       *RemoteClearBotCommandsFilterPublic `codec:"public,omitempty" json:"public,omitempty"`
+	TlfidMembers__ *RemoteClearBotCommandsFilterTLFID  `codec:"tlfidMembers,omitempty" json:"tlfidMembers,omitempty"`
+	TlfidConvs__   *RemoteClearBotCommandsFilterTLFID  `codec:"tlfidConvs,omitempty" json:"tlfidConvs,omitempty"`
+	Conv__         *RemoteClearBotCommandsFilterConv   `codec:"conv,omitempty" json:"conv,omitempty"`
+}
+
+func (o *RemoteClearBotCommandsFilter) Typ() (ret BotCommandsAdvertisementTyp, err error) {
+	switch o.Typ__ {
+	case BotCommandsAdvertisementTyp_PUBLIC:
+		if o.Public__ == nil {
+			err = errors.New("unexpected nil value for Public__")
+			return ret, err
+		}
+	case BotCommandsAdvertisementTyp_TLFID_MEMBERS:
+		if o.TlfidMembers__ == nil {
+			err = errors.New("unexpected nil value for TlfidMembers__")
+			return ret, err
+		}
+	case BotCommandsAdvertisementTyp_TLFID_CONVS:
+		if o.TlfidConvs__ == nil {
+			err = errors.New("unexpected nil value for TlfidConvs__")
+			return ret, err
+		}
+	case BotCommandsAdvertisementTyp_CONV:
+		if o.Conv__ == nil {
+			err = errors.New("unexpected nil value for Conv__")
+			return ret, err
+		}
+	}
+	return o.Typ__, nil
+}
+
+func (o RemoteClearBotCommandsFilter) Public() (res RemoteClearBotCommandsFilterPublic) {
+	if o.Typ__ != BotCommandsAdvertisementTyp_PUBLIC {
+		panic("wrong case accessed")
+	}
+	if o.Public__ == nil {
+		return
+	}
+	return *o.Public__
+}
+
+func (o RemoteClearBotCommandsFilter) TlfidMembers() (res RemoteClearBotCommandsFilterTLFID) {
+	if o.Typ__ != BotCommandsAdvertisementTyp_TLFID_MEMBERS {
+		panic("wrong case accessed")
+	}
+	if o.TlfidMembers__ == nil {
+		return
+	}
+	return *o.TlfidMembers__
+}
+
+func (o RemoteClearBotCommandsFilter) TlfidConvs() (res RemoteClearBotCommandsFilterTLFID) {
+	if o.Typ__ != BotCommandsAdvertisementTyp_TLFID_CONVS {
+		panic("wrong case accessed")
+	}
+	if o.TlfidConvs__ == nil {
+		return
+	}
+	return *o.TlfidConvs__
+}
+
+func (o RemoteClearBotCommandsFilter) Conv() (res RemoteClearBotCommandsFilterConv) {
+	if o.Typ__ != BotCommandsAdvertisementTyp_CONV {
+		panic("wrong case accessed")
+	}
+	if o.Conv__ == nil {
+		return
+	}
+	return *o.Conv__
+}
+
+func NewRemoteClearBotCommandsFilterWithPublic(v RemoteClearBotCommandsFilterPublic) RemoteClearBotCommandsFilter {
+	return RemoteClearBotCommandsFilter{
+		Typ__:    BotCommandsAdvertisementTyp_PUBLIC,
+		Public__: &v,
+	}
+}
+
+func NewRemoteClearBotCommandsFilterWithTlfidMembers(v RemoteClearBotCommandsFilterTLFID) RemoteClearBotCommandsFilter {
+	return RemoteClearBotCommandsFilter{
+		Typ__:          BotCommandsAdvertisementTyp_TLFID_MEMBERS,
+		TlfidMembers__: &v,
+	}
+}
+
+func NewRemoteClearBotCommandsFilterWithTlfidConvs(v RemoteClearBotCommandsFilterTLFID) RemoteClearBotCommandsFilter {
+	return RemoteClearBotCommandsFilter{
+		Typ__:        BotCommandsAdvertisementTyp_TLFID_CONVS,
+		TlfidConvs__: &v,
+	}
+}
+
+func NewRemoteClearBotCommandsFilterWithConv(v RemoteClearBotCommandsFilterConv) RemoteClearBotCommandsFilter {
+	return RemoteClearBotCommandsFilter{
+		Typ__:  BotCommandsAdvertisementTyp_CONV,
+		Conv__: &v,
+	}
+}
+
+func (o RemoteClearBotCommandsFilter) DeepCopy() RemoteClearBotCommandsFilter {
+	return RemoteClearBotCommandsFilter{
+		Typ__: o.Typ__.DeepCopy(),
+		Public__: (func(x *RemoteClearBotCommandsFilterPublic) *RemoteClearBotCommandsFilterPublic {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Public__),
+		TlfidMembers__: (func(x *RemoteClearBotCommandsFilterTLFID) *RemoteClearBotCommandsFilterTLFID {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.TlfidMembers__),
+		TlfidConvs__: (func(x *RemoteClearBotCommandsFilterTLFID) *RemoteClearBotCommandsFilterTLFID {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.TlfidConvs__),
+		Conv__: (func(x *RemoteClearBotCommandsFilterConv) *RemoteClearBotCommandsFilterConv {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.Conv__),
+	}
+}
+
 type ClearBotCommandsRes struct {
 	RateLimit *RateLimit `codec:"rateLimit,omitempty" json:"rateLimit,omitempty"`
 }

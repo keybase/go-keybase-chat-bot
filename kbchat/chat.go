@@ -487,13 +487,29 @@ func (a *API) AdvertiseCommands(ad Advertisement) (SendResponse, error) {
 	return a.doSend(newAdvertiseCmdsMsgArg(ad))
 }
 
+type clearCmdsParams struct {
+	Options chat1.ClearCommandAPIParam `json:"options"`
+}
+
+type clearCmdsArg struct {
+	Method string          `json:"method"`
+	Params clearCmdsParams `json:"params,omitempty"`
+}
+
 func (a *API) ClearCommands() error {
-	arg := struct {
-		Method string
-	}{
+	_, err := a.doSend(clearCmdsArg{
 		Method: "clearcommands",
-	}
-	_, err := a.doSend(arg)
+	})
+	return err
+}
+
+func (a *API) ClearCommandsWithFilter(filter chat1.ClearCommandAPIParam) error {
+	_, err := a.doSend(clearCmdsArg{
+		Method: "clearcommands",
+		Params: clearCmdsParams{
+			Options: filter,
+		},
+	})
 	return err
 }
 

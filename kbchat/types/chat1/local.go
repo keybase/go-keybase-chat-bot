@@ -6034,6 +6034,32 @@ func (o ListBotCommandsLocalRes) DeepCopy() ListBotCommandsLocalRes {
 	}
 }
 
+type ClearBotCommandsFilter struct {
+	Typ      BotCommandsAdvertisementTyp `codec:"typ" json:"typ"`
+	TeamName *string                     `codec:"teamName,omitempty" json:"teamName,omitempty"`
+	ConvID   *ConversationID             `codec:"convID,omitempty" json:"convID,omitempty"`
+}
+
+func (o ClearBotCommandsFilter) DeepCopy() ClearBotCommandsFilter {
+	return ClearBotCommandsFilter{
+		Typ: o.Typ.DeepCopy(),
+		TeamName: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.TeamName),
+		ConvID: (func(x *ConversationID) *ConversationID {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x).DeepCopy()
+			return &tmp
+		})(o.ConvID),
+	}
+}
+
 type ClearBotCommandsLocalRes struct {
 	RateLimits []RateLimit `codec:"rateLimits" json:"rateLimits"`
 }
