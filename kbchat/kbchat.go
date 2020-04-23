@@ -548,14 +548,6 @@ func (a *API) LogSend(feedback string) error {
 		"--feedback", feedback,
 		"-n", fmt.Sprintf("%d", a.LogSendBytes),
 	}
-
-	// We're determining whether the service is already running by running status
-	// with autofork disabled.
-	if err := a.runOpts.Command("--no-auto-fork", "status"); err != nil {
-		// Assume that there's no service running, so log send as standalone
-		args = append([]string{"--standalone"}, args...)
-	}
-
 	return a.runOpts.Command(args...).Run()
 }
 
