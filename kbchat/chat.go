@@ -496,8 +496,8 @@ type clearCmdsParams struct {
 }
 
 type clearCmdsArg struct {
-	Method string          `json:"method"`
-	Params clearCmdsParams `json:"params,omitempty"`
+	Method string           `json:"method"`
+	Params *clearCmdsParams `json:"params,omitempty"`
 }
 
 func (a *API) ClearCommands() error {
@@ -510,7 +510,7 @@ func (a *API) ClearCommands() error {
 func (a *API) ClearCommandsWithFilter(filter chat1.ClearCommandAPIParam) error {
 	_, err := a.doSend(clearCmdsArg{
 		Method: "clearcommands",
-		Params: clearCmdsParams{
+		Params: &clearCmdsParams{
 			Options: clearCmdsOptions{
 				Filter: filter,
 			},
