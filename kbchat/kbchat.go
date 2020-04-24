@@ -156,8 +156,8 @@ func (r RunOptions) Command(args ...string) *exec.Cmd {
 }
 
 // Start fires up the Keybase JSON API in stdin/stdout mode
-func Start(runOpts RunOptions) (*API, error) {
-	api := NewAPI(runOpts)
+func Start(runOpts RunOptions, opts ...func(*API)) (*API, error) {
+	api := NewAPI(runOpts, opts...)
 	if err := api.startPipes(); err != nil {
 		return nil, err
 	}
