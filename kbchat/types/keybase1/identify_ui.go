@@ -357,13 +357,13 @@ func (o UserCard) DeepCopy() UserCard {
 	return UserCard{
 		UnverifiedNumFollowing: o.UnverifiedNumFollowing,
 		UnverifiedNumFollowers: o.UnverifiedNumFollowers,
-		Uid:                    o.Uid.DeepCopy(),
-		FullName:               o.FullName,
-		Location:               o.Location,
-		Bio:                    o.Bio,
-		BioDecorated:           o.BioDecorated,
-		Website:                o.Website,
-		Twitter:                o.Twitter,
+		Uid:          o.Uid.DeepCopy(),
+		FullName:     o.FullName,
+		Location:     o.Location,
+		Bio:          o.Bio,
+		BioDecorated: o.BioDecorated,
+		Website:      o.Website,
+		Twitter:      o.Twitter,
 		TeamShowcase: (func(x []UserTeamShowcase) []UserTeamShowcase {
 			if x == nil {
 				return nil

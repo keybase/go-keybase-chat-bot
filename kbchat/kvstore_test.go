@@ -58,6 +58,11 @@ func TestKVStore(t *testing.T) {
 		require.NoError(t, clearNamespace(alice, selfTeam, namespace))
 	}()
 
+	// get nonexistent
+	get, err := alice.GetEntry(nil, namespace, entryKey)
+	require.NoError(t, err)
+	require.Nil(t, get.EntryValue)
+
 	// put with default revision
 	put, err := alice.PutEntry(nil, namespace, entryKey, "value1")
 	require.NoError(t, err)
@@ -84,7 +89,7 @@ func TestKVStore(t *testing.T) {
 	require.True(t, containsKey(listek.EntryKeys, entryKey))
 
 	// get
-	get, err := alice.GetEntry(nil, namespace, entryKey)
+	get, err = alice.GetEntry(nil, namespace, entryKey)
 	require.NoError(t, err)
 	require.Equal(t, "value1", get.EntryValue)
 
@@ -124,6 +129,6 @@ func TestKVStore(t *testing.T) {
 	// get
 	get, err = alice.GetEntry(nil, namespace, entryKey)
 	require.NoError(t, err)
-	require.Equal(t, "", get.EntryValue)
+	require.Nil(t, get.EntryValue)
 	require.Equal(t, expectedRevision, get.Revision)
 }

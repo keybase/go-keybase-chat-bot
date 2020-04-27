@@ -116,7 +116,11 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 		if err != nil {
 			return nil, err
 		}
-		existingSecret, err := hex.DecodeString(res.EntryValue)
+		var entryValue string
+		if res.EntryValue != nil {
+			entryValue = *res.EntryValue
+		}
+		existingSecret, err := hex.DecodeString(entryValue)
 		if err != nil {
 			return nil, err
 		}
@@ -236,9 +240,12 @@ func (sc *SecretKeyKVStoreAPI) ListEntryKeys(teamName *string, namespace string)
 		if err != nil {
 			return result, err
 		}
-
+		var entryValue string
+		if get.EntryValue != nil {
+			entryValue = *get.EntryValue
+		}
 		var keyedValue map[string]string
-		if err := json.Unmarshal([]byte(get.EntryValue), &keyedValue); err != nil {
+		if err := json.Unmarshal([]byte(entryValue), &keyedValue); err != nil {
 			return result, err
 		}
 		e.EntryKey = keyedValue[sc.config.plaintextEntryKeyName]
@@ -271,7 +278,7 @@ func (r *RentalBotClient) Add(tool string) (ok bool, result keybase1.KVGetResult
 	result, err = r.Lookup(tool)
 	if err != nil {
 		return false, result, err // api call failed
-	} else if result.EntryValue != "" {
+	} else if result.EntryValue != nil {
 		return true, result, nil // tool already exists
 	}
 
@@ -303,7 +310,7 @@ func (r *RentalBotClient) Remove(tool string) (ok bool, result keybase1.KVGetRes
 	result, err = r.Lookup(tool)
 	if err != nil {
 		return false, result, err // api call failed
-	} else if result.EntryValue == "" {
+	} else if result.EntryValue == nil {
 		return true, result, nil // tool already doesn't exist
 	}
 
@@ -335,9 +342,13 @@ func (r *RentalBotClient) Reserve(username string, tool string, day string) (ok 
 	result, err = r.Lookup(tool)
 	if err != nil {
 		return false, result, err // api call failed
-	} else if result.EntryValue == "" {
-		reservations = make(map[string]string)
-	} else if err = json.Unmarshal([]byte(result.EntryValue), &reservations); err != nil {
+	}
+	var entryValue string
+	if result.EntryValue != nil {
+		entryValue = *result.EntryValue
+	}
+	reservations = make(map[string]string)
+	if err = json.Unmarshal([]byte(entryValue), &reservations); err != nil {
 		return false, result, err
 	}
 
@@ -376,9 +387,13 @@ func (r *RentalBotClient) Unreserve(username string, tool string, day string) (o
 	result, err = r.Lookup(tool)
 	if err != nil {
 		return false, result, err // api call failed
-	} else if result.EntryValue == "" {
-		reservations = make(map[string]string)
-	} else if err := json.Unmarshal([]byte(result.EntryValue), &reservations); err != nil {
+	}
+	var entryValue string
+	if result.EntryValue != nil {
+		entryValue = *result.EntryValue
+	}
+	reservations = make(map[string]string)
+	if err = json.Unmarshal([]byte(entryValue), &reservations); err != nil {
 		return false, result, err
 	}
 
@@ -564,10 +579,14 @@ func concurrentRentalUsers(rental *RentalBotClient) error {
 	res, err := rental.Lookup(tool)
 	if err != nil {
 		return err
-	} else if res.EntryValue == "" {
+	} else if res.EntryValue == nil {
 		val = make(map[string]string)
 	} else {
-		if err := json.Unmarshal([]byte(res.EntryValue), &val); err != nil {
+		var entryValue string
+		if res.EntryValue != nil {
+			entryValue = *res.EntryValue
+		}
+		if err := json.Unmarshal([]byte(entryValue), &val); err != nil {
 			return err
 		}
 	}
