@@ -1,11 +1,11 @@
 language: go
 
-before_install:
+install:
   - go get golang.org/x/lint/golint
-  - make dependencies
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.23.6
 
 script:
-  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.23.6
+  - go build ./...
   - golangci-lint run
 
 go:
