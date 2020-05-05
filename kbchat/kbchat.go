@@ -337,7 +337,7 @@ func (a *API) doSend(arg interface{}) (resp SendResponse, err error) {
 
 	bArg, err := json.Marshal(arg)
 	if err != nil {
-		return SendResponse{}, err
+		return SendResponse{}, fmt.Errorf("unable to send arg: %+v: %v", arg, err)
 	}
 	input, output, err := a.getAPIPipesLocked()
 	if err != nil {
@@ -351,7 +351,7 @@ func (a *API) doSend(arg interface{}) (resp SendResponse, err error) {
 		return SendResponse{}, err
 	}
 	if err := json.Unmarshal(responseRaw, &resp); err != nil {
-		return resp, fmt.Errorf("failed to decode API response: %s", err)
+		return resp, fmt.Errorf("failed to decode API response: %v %v", responseRaw, err)
 	} else if resp.Error != nil {
 		return resp, errors.New(resp.Error.Message)
 	}
@@ -409,14 +409,14 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 			t := boutput.Text()
 			var typeHolder TypeHolder
 			if err := json.Unmarshal([]byte(t), &typeHolder); err != nil {
-				sub.errorCh <- err
+				sub.errorCh <- fmt.Errorf("err: %v, data: %v", err, t)
 				break
 			}
 			switch typeHolder.Type {
 			case "chat":
 				var notification chat1.MsgNotification
 				if err := json.Unmarshal([]byte(t), &notification); err != nil {
-					sub.errorCh <- err
+					sub.errorCh <- fmt.Errorf("err: %v, data: %v", err, t)
 					break
 				}
 				if notification.Error != nil {
@@ -434,7 +434,7 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 			case "chat_conv":
 				var notification chat1.ConvNotification
 				if err := json.Unmarshal([]byte(t), &notification); err != nil {
-					sub.errorCh <- err
+					sub.errorCh <- fmt.Errorf("err: %v, data: %v", err, t)
 					break
 				}
 				if notification.Error != nil {
@@ -448,7 +448,7 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 			case "wallet":
 				var holder PaymentHolder
 				if err := json.Unmarshal([]byte(t), &holder); err != nil {
-					sub.errorCh <- err
+					sub.errorCh <- fmt.Errorf("err: %v, data: %v", err, t)
 					break
 				}
 				subscriptionPayment := SubscriptionWalletEvent(holder)
@@ -527,9 +527,12 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 			if err := p.Wait(); err != nil {
 				stderrBytes, rerr := ioutil.ReadAll(stderr)
 				if rerr != nil {
-					stderrBytes = []byte("failed to get stderr")
+					stderrBytes = []byte(fmt.Sprintf("failed to get stderr: %v", rerr))
 				}
-				a.Debug("Listen: failed to Wait for command: %s (```%s```)", err, stderrBytes)
+				a.Debug("Listen: failed to Wait for command, restarting pipes: %s (```%s```)", err, stderrBytes)
+				if err := a.startPipes(); err != nil {
+					a.Debug("Listen: failed to restart pipes: %v", err)
+				}
 			}
 			time.Sleep(pause)
 		}
