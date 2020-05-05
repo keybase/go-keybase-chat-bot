@@ -214,6 +214,11 @@ cd ../../go-keybase-chat-bot
 make
 ```
 
+You can optionally specify a directory to the client protocol when making the types if `client` and `go-keybase-chat-bot` are not in the same directory.
+```shell
+make PROTOCOL_PATH=path/to/client/protocol
+```
+
 Should you need to remove all the types for some reason, you can run `make clean`.
 
 ### Testing
