@@ -8,10 +8,10 @@ types:
 	@mkdir -p kbchat/types/gregor1
 	@mkdir -p kbchat/types/chat1
 	@mkdir -p kbchat/types/stellar1
-	$(AVDLC) -b -l go -t -o kbchat/types/keybase1 $(PROTOCOL_PATH)/avdl/keybase1/*.avdl
-	$(AVDLC) -b -l go -t -o kbchat/types/gregor1 $(PROTOCOL_PATH)/avdl/gregor1/*.avdl
-	$(AVDLC) -b -l go -t -o kbchat/types/chat1 $(PROTOCOL_PATH)/avdl/chat1/*.avdl
-	$(AVDLC) -b -l go -t -o kbchat/types/stellar1 $(PROTOCOL_PATH)/avdl/stellar1/*.avdl
+	$(AVDLC) -b -l go -t -m -o kbchat/types/keybase1 $(PROTOCOL_PATH)/avdl/keybase1/*.avdl
+	$(AVDLC) -b -l go -t -m -o kbchat/types/gregor1 $(PROTOCOL_PATH)/avdl/gregor1/*.avdl
+	$(AVDLC) -b -l go -t -m -o kbchat/types/chat1 $(PROTOCOL_PATH)/avdl/chat1/*.avdl
+	$(AVDLC) -b -l go -t -m -o kbchat/types/stellar1 $(PROTOCOL_PATH)/avdl/stellar1/*.avdl
 	goimports -w ./kbchat/types/
 
 clean:
