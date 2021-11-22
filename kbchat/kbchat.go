@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 	"sync"
 	"time"
 
@@ -207,7 +208,9 @@ func (a *API) getUsername(runOpts RunOptions) (username string, err error) {
 	if err != nil {
 		return "", err
 	}
-	p.ExtraFiles = []*os.File{output.(*os.File)}
+	if runtime.GOOS != "windows" {
+		p.ExtraFiles = []*os.File{output.(*os.File)}
+	}
 	if err = p.Start(); err != nil {
 		return "", err
 	}
@@ -311,7 +314,9 @@ func (a *API) startPipes() (err error) {
 	if err != nil {
 		return err
 	}
-	a.apiCmd.ExtraFiles = []*os.File{output.(*os.File)}
+	if runtime.GOOS != "windows" {
+		a.apiCmd.ExtraFiles = []*os.File{output.(*os.File)}
+	}
 	if err := a.apiCmd.Start(); err != nil {
 		return err
 	}
@@ -508,7 +513,9 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 				time.Sleep(pause)
 				continue
 			}
-			p.ExtraFiles = []*os.File{stderr.(*os.File), output.(*os.File)}
+			if runtime.GOOS != "windows" {
+				p.ExtraFiles = []*os.File{stderr.(*os.File), output.(*os.File)}
+			}
 			boutput := bufio.NewScanner(output)
 			if err := p.Start(); err != nil {
 
