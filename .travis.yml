@@ -2,16 +2,13 @@ language: go
 
 install:
   - go get golang.org/x/lint/golint
-  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.43.0
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.0
 
 script:
   - go build ./...
   - golangci-lint run
 
 go:
-  - 1.15.x
-  - 1.16.x
   - 1.17.x
-
-env:
-  - GO111MODULE=on
+  - 1.18.x
+  - 1.19.x
