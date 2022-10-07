@@ -4,10 +4,13 @@ WHAT IS IN THIS EXAMPLE?
 Keybase has added an encrypted key-value store intended to support
 security-conscious bot development with persistent state. It is a
 place to store small bits of data that are
-  (1) encrypted for a team or user (via the user's implicit self-team: e.g.
+
+	(1) encrypted for a team or user (via the user's implicit self-team: e.g.
+
 alice,alice),
-  (2) persistent across logins
-  (3) fast and durable.
+
+	(2) persistent across logins
+	(3) fast and durable.
 
 It supports putting, getting, listing, and deleting. A team has many
 namespaces, a namespace has many entryKeys, and an entryKey has one current
