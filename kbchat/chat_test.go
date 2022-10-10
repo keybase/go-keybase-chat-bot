@@ -1,7 +1,6 @@
 package kbchat
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -112,7 +111,7 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	fileName := "kb-attachment.txt"
 	location := path.Join(os.TempDir(), fileName)
 	data := []byte("My super cool attachment" + randomString(t))
-	err := ioutil.WriteFile(location, data, 0644)
+	err := os.WriteFile(location, data, 0644)
 	require.NoError(t, err)
 
 	// Send the message
@@ -123,9 +122,9 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	require.True(t, *res.Result.MessageID > 0)
 }
 
-////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////
 // React to chat ///////////////////////////////////////
-////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////
 func TestReactByChannel(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
@@ -254,9 +253,9 @@ func TestInChatSendByTlfName(t *testing.T) {
 	require.Equal(t, readMessage.Id, *res.Result.MessageID)
 }
 
-////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////
 // Misc commands ///////////////////////////////////////
-////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////
 func TestAdvertiseCommands(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)

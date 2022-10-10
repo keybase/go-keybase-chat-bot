@@ -2,7 +2,6 @@ package kbchat
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"testing"
@@ -20,7 +19,7 @@ type keybaseTestConfig struct {
 }
 
 func readAndParseTestConfig(t *testing.T) (config keybaseTestConfig) {
-	data, err := ioutil.ReadFile("test_config.yaml")
+	data, err := os.ReadFile("test_config.yaml")
 	require.NoError(t, err)
 
 	err = yaml.Unmarshal(data, &config)
