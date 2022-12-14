@@ -45,10 +45,10 @@ type Subscription struct {
 }
 
 func NewSubscription() *Subscription {
-	newMsgsCh := make(chan SubscriptionMessage, 100)
-	newConvsCh := make(chan SubscriptionConversation, 100)
-	newWalletCh := make(chan SubscriptionWalletEvent, 100)
-	errorCh := make(chan error, 100)
+	newMsgsCh := make(chan SubscriptionMessage, 250)
+	newConvsCh := make(chan SubscriptionConversation, 250)
+	newWalletCh := make(chan SubscriptionWalletEvent, 250)
+	errorCh := make(chan error, 250)
 	shutdownCh := make(chan struct{})
 	return &Subscription{
 		DebugOutput: NewDebugOutput("Subscription"),
@@ -412,16 +412,22 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 			}
 			boutput.Scan()
 			t := boutput.Text()
+			submitErr := func(err error) {
+				if len(sub.errorCh)*2 > cap(sub.errorCh) {
+					a.Debug("large errorCh queue: len: %d cap: %d ", len(sub.errorCh), cap(sub.errorCh))
+				}
+				sub.errorCh <- err
+			}
 			var typeHolder TypeHolder
 			if err := json.Unmarshal([]byte(t), &typeHolder); err != nil {
-				sub.errorCh <- fmt.Errorf("err: %v, data: %v", err, t)
+				submitErr(fmt.Errorf("err: %v, data: %v", err, t))
 				break
 			}
 			switch typeHolder.Type {
 			case "chat":
 				var notification chat1.MsgNotification
 				if err := json.Unmarshal([]byte(t), &notification); err != nil {
-					sub.errorCh <- fmt.Errorf("err: %v, data: %v", err, t)
+					submitErr(fmt.Errorf("err: %v, data: %v", err, t))
 					break
 				}
 				if notification.Error != nil {
@@ -434,12 +440,15 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 							Channel: notification.Msg.Channel,
 						},
 					}
+					if len(sub.newMsgsCh)*2 > cap(sub.newMsgsCh) {
+						a.Debug("large newMsgsCh queue: len: %d cap: %d ", len(sub.newMsgsCh), cap(sub.newMsgsCh))
+					}
 					sub.newMsgsCh <- subscriptionMessage
 				}
 			case "chat_conv":
 				var notification chat1.ConvNotification
 				if err := json.Unmarshal([]byte(t), &notification); err != nil {
-					sub.errorCh <- fmt.Errorf("err: %v, data: %v", err, t)
+					submitErr(fmt.Errorf("err: %v, data: %v", err, t))
 					break
 				}
 				if notification.Error != nil {
@@ -448,15 +457,21 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 					subscriptionConv := SubscriptionConversation{
 						Conversation: *notification.Conv,
 					}
+					if len(sub.newConvsCh)*2 > cap(sub.newConvsCh) {
+						a.Debug("large newConvsCh queue: len: %d cap: %d ", len(sub.newConvsCh), cap(sub.newConvsCh))
+					}
 					sub.newConvsCh <- subscriptionConv
 				}
 			case "wallet":
 				var holder PaymentHolder
 				if err := json.Unmarshal([]byte(t), &holder); err != nil {
-					sub.errorCh <- fmt.Errorf("err: %v, data: %v", err, t)
+					submitErr(fmt.Errorf("err: %v, data: %v", err, t))
 					break
 				}
 				subscriptionPayment := SubscriptionWalletEvent(holder)
+				if len(sub.newWalletCh)*2 > cap(sub.newWalletCh) {
+					a.Debug("large newWalletCh queue: len: %d cap: %d ", len(sub.newWalletCh), cap(sub.newWalletCh))
+				}
 				sub.newWalletCh <- subscriptionPayment
 			default:
 				continue
@@ -518,7 +533,6 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 			}
 			boutput := bufio.NewScanner(output)
 			if err := p.Start(); err != nil {
-
 				a.Debug("Listen: failed to make listen scanner: %s", err)
 				time.Sleep(pause)
 				continue
