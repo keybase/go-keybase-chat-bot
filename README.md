@@ -1,9 +1,8 @@
 # go-keybase-chat-bot
 
-[![Travis CI](https://travis-ci.org/keybase/go-keybase-chat-bot.svg?branch=master)](https://travis-ci.org/keybase/go-keybase-chat-bot)
+[![Build Status](https://github.com/keybase/go-keybase-chat-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/keybase/go-keybase-chat-bot/actions)
 
 Write rich bots for Keybase chat in Go.
-
 
 ## Installation
 
@@ -215,6 +214,7 @@ make
 ```
 
 You can optionally specify a directory to the client protocol when making the types if `client` and `go-keybase-chat-bot` are not in the same directory.
+
 ```shell
 make PROTOCOL_PATH=path/to/client/protocol
 ```
