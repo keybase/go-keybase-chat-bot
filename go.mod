@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/sync v0.5.0
+	golang.org/x/sync v0.10.0
 	gopkg.in/yaml.v2 v2.2.8
 )
 
