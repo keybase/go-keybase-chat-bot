@@ -92,13 +92,13 @@ func (a *API) GetConversation(convID chat1.ConvIDStr) (res chat1.ConvSummary, er
 }
 
 // GetTextMessages fetches all text messages from a given channel. Optionally can filter
-// ont unread status.
+// on unread status.
 func (a *API) GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]chat1.MsgSummary, error) {
 	channelBytes, err := json.Marshal(channel)
 	if err != nil {
 		return nil, err
 	}
-	apiInput := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s}}}`, channelBytes)
+	apiInput := fmt.Sprintf(`{"method": "read", "params": {"options": {"channel": %s, "unread_only": %v}}}`, channelBytes, unreadOnly)
 	output, err := a.doFetch(apiInput)
 	if err != nil {
 		return nil, err
@@ -137,7 +137,7 @@ func (a *API) Broadcast(body string, args ...interface{}) (SendResponse, error) 
 	return a.SendMessage(chat1.ChatChannel{
 		Name:   a.GetUsername(),
 		Public: true,
-	}, fmt.Sprintf(body, args...))
+	}, body, args...)
 }
 
 func (a *API) SendMessageByConvID(convID chat1.ConvIDStr, body string, args ...interface{}) (resp SendResponse, err error) {

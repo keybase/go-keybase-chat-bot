@@ -370,7 +370,7 @@ func (a *API) doSend(arg interface{}) (resp SendResponse, err error) {
 	pipe.Lock()
 	defer pipe.Unlock()
 
-	if _, err := io.WriteString(pipe.input, string(bArg)); err != nil {
+	if _, err := io.Writer.Write(pipe.input, bArg); err != nil {
 		return SendResponse{}, err
 	}
 	responseRaw, err := pipe.output.ReadBytes('\n')
