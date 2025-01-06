@@ -33,7 +33,7 @@ func TestSendMessage(t *testing.T) {
 	text := "test SendMessage " + randomString(t)
 
 	// Send the message
-	res, err := alice.SendMessage(channel, text)
+	res, err := alice.SendMessage(channel, "%s", text)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
@@ -52,7 +52,7 @@ func TestSendMessageByConvID(t *testing.T) {
 	convID := getConvIDForChannel(t, alice, channel)
 
 	// Send the message
-	res, err := alice.SendMessageByConvID(convID, text)
+	res, err := alice.SendMessageByConvID(convID, "%s", text)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
@@ -71,7 +71,7 @@ func TestSendMessageByTlfName(t *testing.T) {
 	channel := getOneOnOneChatChannel(t, "alice", "bob")
 
 	// Send the message
-	res, err := alice.SendMessageByTlfName(channel.Name, text)
+	res, err := alice.SendMessageByTlfName(channel.Name, "%s", text)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
@@ -90,7 +90,7 @@ func TestSendMessageByTeamName(t *testing.T) {
 	channel := getTeamChatChannel(t, "acme")
 
 	// Send the message
-	res, err := alice.SendMessageByTeamName(channel.Name, &channel.TopicName, text)
+	res, err := alice.SendMessageByTeamName(channel.Name, &channel.TopicName, "%s", text)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
@@ -202,7 +202,7 @@ func TestInChatSend(t *testing.T) {
 	text := "test InChatSend +1xlm " + randomString(t)
 
 	// Send the message
-	res, err := alice.InChatSend(channel, text)
+	res, err := alice.InChatSend(channel, "%s", text)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
@@ -222,7 +222,7 @@ func TestInChatSendByConvID(t *testing.T) {
 	convID := getConvIDForChannel(t, alice, channel)
 
 	// Send the message
-	res, err := alice.InChatSendByConvID(convID, text)
+	res, err := alice.InChatSendByConvID(convID, "%s", text)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)
@@ -241,7 +241,7 @@ func TestInChatSendByTlfName(t *testing.T) {
 	channel := getOneOnOneChatChannel(t, "alice", "bob")
 
 	// Send the message
-	res, err := alice.InChatSendByTlfName(channel.Name, text)
+	res, err := alice.InChatSendByTlfName(channel.Name, "%s", text)
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.True(t, *res.Result.MessageID > 0)

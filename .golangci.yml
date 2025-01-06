@@ -10,7 +10,7 @@ linters:
     - gocritic
     - unconvert
     - govet
-    - golint
-run:
-  skip-dirs:
+    - revive
+issues:
+  exclude-dirs:
     - kbchat/types/
