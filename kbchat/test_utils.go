@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -33,7 +34,7 @@ func whichKeybase(t *testing.T) string {
 }
 
 func copyFile(t *testing.T, source, dest string) {
-	sourceData, err := os.ReadFile(source) //nolint:gosec // G304: test utility reading test fixture
+	sourceData, err := os.ReadFile(filepath.Clean(source))
 	require.NoError(t, err)
 	err = os.WriteFile(dest, sourceData, 0o755) //nolint:gosec // G306: test file, executable needed
 	require.NoError(t, err)
