@@ -44,6 +44,7 @@ func TestSendMessage(t *testing.T) {
 	require.Equal(t, readMessage.Content.Text.Body, text)
 	require.Equal(t, readMessage.Id, *res.Result.MessageID)
 }
+
 func TestSendMessageByConvID(t *testing.T) {
 	alice, dir := testBotSetup(t, "alice")
 	defer testBotTeardown(t, alice, dir)
@@ -111,7 +112,7 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	fileName := "kb-attachment.txt"
 	location := path.Join(os.TempDir(), fileName)
 	data := []byte("My super cool attachment" + randomString(t))
-	err := os.WriteFile(location, data, 0644)
+	err := os.WriteFile(location, data, 0o600)
 	require.NoError(t, err)
 
 	// Send the message

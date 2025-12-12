@@ -66,7 +66,6 @@ func (a *API) PutEntry(teamName *string, namespace string, entryKey string, entr
 }
 
 func (a *API) PutEntryWithRevision(teamName *string, namespace string, entryKey string, entryValue string, revision int) (result keybase1.KVPutResult, err error) {
-
 	opts := kvstoreOptions{
 		Team:       teamName,
 		Namespace:  &namespace,
@@ -105,7 +104,6 @@ func (a *API) DeleteEntry(teamName *string, namespace string, entryKey string) (
 }
 
 func (a *API) DeleteEntryWithRevision(teamName *string, namespace string, entryKey string, revision int) (result keybase1.KVDeleteEntryResult, err error) {
-
 	opts := kvstoreOptions{
 		Team:      teamName,
 		Namespace: &namespace,
@@ -139,7 +137,6 @@ func (a *API) DeleteEntryWithRevision(teamName *string, namespace string, entryK
 }
 
 func (a *API) GetEntry(teamName *string, namespace string, entryKey string) (result keybase1.KVGetResult, err error) {
-
 	opts := kvstoreOptions{
 		Team:      teamName,
 		Namespace: &namespace,
@@ -169,7 +166,6 @@ func (a *API) GetEntry(teamName *string, namespace string, entryKey string) (res
 }
 
 func (a *API) ListNamespaces(teamName *string) (result keybase1.KVListNamespaceResult, err error) {
-
 	opts := kvstoreOptions{
 		Team: teamName,
 	}
@@ -198,7 +194,6 @@ func (a *API) ListNamespaces(teamName *string) (result keybase1.KVListNamespaceR
 }
 
 func (a *API) ListEntryKeys(teamName *string, namespace string) (result keybase1.KVListEntryResult, err error) {
-
 	opts := kvstoreOptions{
 		Team:      teamName,
 		Namespace: &namespace,

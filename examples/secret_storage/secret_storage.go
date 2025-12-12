@@ -225,7 +225,7 @@ func (sc *SecretKeyKVStoreAPI) GetEntryWithTeam(teamName string, namespace strin
 }
 
 func (sc *SecretKeyKVStoreAPI) ListNamespaces(teamName *string) (keybase1.KVListNamespaceResult, error) {
-	return sc.ListNamespaces(teamName)
+	return sc.api.ListNamespaces(teamName)
 }
 
 func (sc *SecretKeyKVStoreAPI) ListEntryKeys(teamName *string, namespace string) (result keybase1.KVListEntryResult, err error) {
@@ -436,7 +436,6 @@ func (r *RentalBotClient) Unreserve(username string, tool string, day string) (o
 func (r *RentalBotClient) ListTools() ([]string, error) {
 	var tools []string
 	res, err := r.api.ListEntryKeys(&r.team, r.namespace)
-
 	if err != nil {
 		return tools, err
 	}
@@ -575,7 +574,9 @@ func concurrentRentalUsers(rental *RentalBotClient) error {
 			}
 		}(i))
 	}
-	g.Wait()
+	if err := g.Wait(); err != nil {
+		return err
+	}
 
 	// post: check that the tool has been reserved for all 5 unique dates
 	var val map[string]string
@@ -600,8 +601,6 @@ func concurrentRentalUsers(rental *RentalBotClient) error {
 }
 
 func main() {
-	const MsgPrefix = "!storage"
-
 	var kbLoc string
 	var kbc *kbchat.API
 	var err error
