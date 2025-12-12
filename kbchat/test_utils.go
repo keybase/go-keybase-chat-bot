@@ -24,7 +24,7 @@ func randomTempDir(t *testing.T) string {
 }
 
 func whichKeybase(t *testing.T) string {
-	cmd := exec.Command("which", "keybase")
+	cmd := exec.Command("which", "keybase") //nolint:noctx // test utility, no context available
 	out, err := cmd.Output()
 	require.NoError(t, err)
 	location := strings.TrimSpace(string(out))
@@ -32,16 +32,16 @@ func whichKeybase(t *testing.T) string {
 }
 
 func copyFile(t *testing.T, source, dest string) {
-	sourceData, err := os.ReadFile(source)
+	sourceData, err := os.ReadFile(source) //nolint:gosec // G304: test utility reading test fixture
 	require.NoError(t, err)
-	err = os.WriteFile(dest, sourceData, 0777)
+	err = os.WriteFile(dest, sourceData, 0o755) //nolint:gosec // G306: test file, executable needed
 	require.NoError(t, err)
 }
 
 // Creates the working directory and copies over the keybase binary in PATH.
 // We do this to avoid any version mismatch issues.
 func prepWorkingDir(t *testing.T, workingDir string, kbLocation string) string {
-	err := os.Mkdir(workingDir, 0777)
+	err := os.Mkdir(workingDir, 0o755) //nolint:gosec // G301: test directory
 	require.NoError(t, err)
 	kbDestination := path.Join(workingDir, "keybase")
 

@@ -30,5 +30,4 @@ func main() {
 	if _, err = kbc.SendMessageByTlfName(tlfName, "hello! a bot sent this message."); err != nil {
 		fail("Error sending message; %s", err.Error())
 	}
-
 }

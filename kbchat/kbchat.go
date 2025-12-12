@@ -155,7 +155,7 @@ func (r RunOptions) Command(args ...string) *exec.Cmd {
 		cmd = append(cmd, "--home", r.HomeDir)
 	}
 	cmd = append(cmd, args...)
-	return exec.Command(r.Location(), cmd...)
+	return exec.Command(r.Location(), cmd...) //nolint:gosec,noctx // G204: command location controlled by RunOptions, no context available at API level
 }
 
 // Start fires up the Keybase JSON API in stdin/stdout mode
