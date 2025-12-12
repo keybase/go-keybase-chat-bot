@@ -65,18 +65,25 @@ linters:
           - gocritic
         text: "ifElseChain"
 
-      # Exclude all linter warnings from generated types directory
+      # Exclude all linters from generated types directory
       - path: "kbchat/types/"
         linters:
           - gocritic
           - gofumpt
           - revive
+          - gosec
+          - staticcheck
+          - errcheck
+          - govet
+          - ineffassign
+          - unused
+          - misspell
+          - unconvert
+          - unparam
+          - bodyclose
+          - noctx
 
       # Exclude unparam from test files - test helpers designed for flexibility
       - path: "_test\\.go"
         linters:
           - unparam
-
-issues:
-  exclude-dirs:
-    - kbchat/types
