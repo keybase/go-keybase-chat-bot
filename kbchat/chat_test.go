@@ -112,7 +112,7 @@ func TestSendAttachmentByTeam(t *testing.T) {
 	fileName := "kb-attachment.txt"
 	location := path.Join(os.TempDir(), fileName)
 	data := []byte("My super cool attachment" + randomString(t))
-	err := os.WriteFile(location, data, 0o600) //nolint:gosec // G306: test file
+	err := os.WriteFile(location, data, 0o600)
 	require.NoError(t, err)
 
 	// Send the message

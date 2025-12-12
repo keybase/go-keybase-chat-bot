@@ -1,6 +1,7 @@
 package kbchat
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"os"
@@ -24,7 +25,7 @@ func randomTempDir(t *testing.T) string {
 }
 
 func whichKeybase(t *testing.T) string {
-	cmd := exec.Command("which", "keybase") //nolint:noctx // test utility, no context available
+	cmd := exec.CommandContext(context.Background(), "which", "keybase")
 	out, err := cmd.Output()
 	require.NoError(t, err)
 	location := strings.TrimSpace(string(out))
@@ -41,7 +42,7 @@ func copyFile(t *testing.T, source, dest string) {
 // Creates the working directory and copies over the keybase binary in PATH.
 // We do this to avoid any version mismatch issues.
 func prepWorkingDir(t *testing.T, workingDir string, kbLocation string) string {
-	err := os.Mkdir(workingDir, 0o755) //nolint:gosec // G301: test directory
+	err := os.Mkdir(workingDir, 0o700)
 	require.NoError(t, err)
 	kbDestination := path.Join(workingDir, "keybase")
 

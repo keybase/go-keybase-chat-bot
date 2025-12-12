@@ -72,6 +72,11 @@ linters:
           - gofumpt
           - revive
 
+      # Exclude unparam from test files - test helpers designed for flexibility
+      - path: "_test\\.go"
+        linters:
+          - unparam
+
 issues:
   exclude-dirs:
     - kbchat/types

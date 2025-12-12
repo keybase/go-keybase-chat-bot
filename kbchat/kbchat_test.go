@@ -41,7 +41,6 @@ func testBotSetup(t *testing.T, botName string) (bot *API, dir string) {
 	return bot, dir
 }
 
-//nolint:unparam // botName parameter intentionally flexible for test reuse
 func getOneOnOneChatChannel(t *testing.T, botName, oneOnOnePartner string) chat1.ChatChannel {
 	config := readAndParseTestConfig(t)
 	oneOnOneChannel := chat1.ChatChannel{
@@ -50,7 +49,6 @@ func getOneOnOneChatChannel(t *testing.T, botName, oneOnOnePartner string) chat1
 	return oneOnOneChannel
 }
 
-//nolint:unparam // teamName parameter intentionally flexible for test reuse
 func getTeamChatChannel(t *testing.T, teamName string) chat1.ChatChannel {
 	config := readAndParseTestConfig(t)
 	teamChannel := chat1.ChatChannel{

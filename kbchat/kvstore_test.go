@@ -2,8 +2,8 @@ package kbchat
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 	"github.com/stretchr/testify/require"
@@ -50,7 +50,7 @@ func TestKVStore(t *testing.T) {
 	selfTeam := fmt.Sprintf("%s,%s", alice.username, alice.username)
 	defer testBotTeardown(t, alice, dir)
 
-	namespace := fmt.Sprintf("_test_namespace%d", rand.Int()) //nolint:gosec // G404: weak random OK for test
+	namespace := fmt.Sprintf("_test_namespace%d", time.Now().UnixNano())
 	entryKey := "_test_key1"
 
 	require.NoError(t, clearNamespace(alice, selfTeam, namespace))
