@@ -140,6 +140,8 @@ type RunOptions struct {
 	DisableBotLiteMode bool
 	// Number of processes to spin up to connect to the keybase service
 	NumPipes int
+	// Optional, used for debugging to identify the bot.
+	DebugTag string
 }
 
 func (r RunOptions) Location() string {
@@ -261,32 +263,39 @@ func (a *API) getUsername(runOpts RunOptions) (username string, err error) {
 	return username, nil
 }
 
-func (a *API) auth() (string, error) {
-	username, err := a.getUsername(a.runOpts)
+func (a *API) auth() (username string, err error) {
+	defer a.Trace(&err, "auth(un:%s)", username)()
+	username, err = a.getUsername(a.runOpts)
 	if err == nil {
-		return username, nil
-	}
-	if a.runOpts.Oneshot == nil {
-		return "", err
-	}
-	username = ""
-	// If a paper key is specified, then login with oneshot mode (logout first)
-	if a.runOpts.Oneshot != nil {
-		if username == a.runOpts.Oneshot.Username {
-			// just get out if we are on the desired user already
+		// Successfully authenticated - check if we need to switch users
+		if a.runOpts.Oneshot != nil && username != a.runOpts.Oneshot.Username {
+			// Logged in as wrong user, need to switch
+			a.Debug("auth: logged in as %s, but need %s, switching", username, a.runOpts.Oneshot.Username)
+			// Continue to logout + oneshot below
+		} else {
+			// Already logged in as correct user (or no Oneshot configured)
+			a.Debug("auth: already logged in %s", username)
 			return username, nil
 		}
-		if err := a.runOpts.Command("logout", "-f").Run(); err != nil {
+	} else {
+		// Authentication failed
+		if a.runOpts.Oneshot == nil {
+			a.Debug("auth: oneshot not configured, aborting")
 			return "", err
 		}
-		if err := a.runOpts.Command("oneshot", "--username", a.runOpts.Oneshot.Username, "--paperkey",
-			a.runOpts.Oneshot.PaperKey).Run(); err != nil {
-			return "", err
-		}
-		username = a.runOpts.Oneshot.Username
-		return username, nil
+		// Continue to logout + oneshot below
 	}
-	return "", errors.New("unable to auth")
+
+	// If we get here, we need to do oneshot login (logout first)
+	if err := a.runOpts.Command("logout", "-f").Run(); err != nil {
+		return "", err
+	}
+	if err := a.runOpts.Command("oneshot", "--username", a.runOpts.Oneshot.Username, "--paperkey",
+		a.runOpts.Oneshot.PaperKey).Run(); err != nil {
+		return "", err
+	}
+	username = a.runOpts.Oneshot.Username
+	return username, nil
 }
 
 func (a *API) startPipes() (err error) {
@@ -316,7 +325,7 @@ func (a *API) startPipes() (err error) {
 	cmd := a.runOpts.Command("chat", "notification-settings", fmt.Sprintf("-disable-typing=%v", !a.runOpts.EnableTyping))
 	if err = cmd.Run(); err != nil {
 		// This is a performance optimization but isn't a fatal error.
-		a.Debug("unable to set notifiation settings %v", err)
+		a.Debug("unable to set notification settings %v", err)
 	}
 
 	// Startup NumPipes processes to the keybase chat api
@@ -418,9 +427,10 @@ func (a *API) registerSubscription(sub *Subscription) {
 
 // Listen fires of a background loop and puts chat messages and wallet
 // events into channels
-func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
+func (a *API) Listen(opts ListenOptions) (sub *Subscription, err error) {
+	defer a.Trace(&err, "Listen(%s)", a.runOpts.DebugTag)()
 	done := make(chan struct{})
-	sub := NewSubscription()
+	sub = NewSubscription()
 	a.registerSubscription(sub)
 	pause := 2 * time.Second
 	readScanner := func(boutput *bufio.Scanner) {
@@ -584,9 +594,13 @@ func (a *API) Listen(opts ListenOptions) (*Subscription, error) {
 }
 
 func (a *API) LogSend(feedback string) error {
-	feedback = "go-keybase-chat-bot log send\n" +
-		"username: " + a.GetUsername() + "\n" +
-		feedback
+	var username string
+	if len(a.GetUsername()) != 0 {
+		username = a.GetUsername() + " (logged in)"
+	} else if a.runOpts.Oneshot != nil {
+		username = a.runOpts.Oneshot.Username + " (config)"
+	}
+	feedback = fmt.Sprintf("go-keybase-chat-bot log send (%s)\n username: %s\n%s", a.runOpts.DebugTag, username, feedback)
 
 	args := []string{
 		"log", "send",
