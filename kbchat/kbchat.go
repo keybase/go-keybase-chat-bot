@@ -354,6 +354,9 @@ func (a *API) startPipes() (err error) {
 func (a *API) getAPIPipes() (*apiPipe, error) {
 	a.Lock()
 	defer a.Unlock()
+	if len(a.pipes) == 0 {
+		return nil, errAPIDisconnected
+	}
 	idx := a.pipeIdx % len(a.pipes)
 	a.pipeIdx++
 	pipe := a.pipes[idx]
