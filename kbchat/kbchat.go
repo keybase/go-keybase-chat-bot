@@ -370,7 +370,7 @@ func (a *API) GetUsername() string {
 	return a.username
 }
 
-func (a *API) doSend(arg interface{}) (resp SendResponse, err error) {
+func (a *API) doSend(arg any) (resp SendResponse, err error) {
 	bArg, err := json.Marshal(arg)
 	if err != nil {
 		return SendResponse{}, fmt.Errorf("unable to send arg: %+v: %v", arg, err)
@@ -583,7 +583,7 @@ func (a *API) Listen(opts ListenOptions) (sub *Subscription, err error) {
 			if err := p.Wait(); err != nil {
 				stderrBytes, rerr := io.ReadAll(stderr)
 				if rerr != nil {
-					stderrBytes = []byte(fmt.Sprintf("failed to get stderr: %v", rerr))
+					stderrBytes = fmt.Appendf(nil, "failed to get stderr: %v", rerr)
 				}
 				a.Debug("Listen: failed to Wait for command, restarting pipes: %s (```%s```)", err, stderrBytes)
 				if err := a.startPipes(); err != nil {

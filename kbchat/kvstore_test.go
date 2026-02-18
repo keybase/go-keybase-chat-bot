@@ -2,6 +2,7 @@ package kbchat
 
 import (
 	"fmt"
+	"slices"
 	"testing"
 	"time"
 
@@ -10,12 +11,7 @@ import (
 )
 
 func contains(a []string, x string) bool {
-	for _, n := range a {
-		if x == n {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(a, x)
 }
 
 func containsKey(a []keybase1.KVListEntryKey, x string) bool {

@@ -23,12 +23,12 @@ func NewDebugOutput(name string) *DebugOutput {
 	}
 }
 
-func (d *DebugOutput) Debug(format string, args ...interface{}) {
+func (d *DebugOutput) Debug(format string, args ...any) {
 	msg := fmt.Sprintf(format, args...)
 	log.Printf("%s: %s\n", d.name, msg)
 }
 
-func (d *DebugOutput) Trace(err *error, format string, args ...interface{}) func() {
+func (d *DebugOutput) Trace(err *error, format string, args ...any) func() {
 	msg := fmt.Sprintf(format, args...)
 	start := time.Now()
 	log.Printf("+ %s: %s\n", d.name, msg)
