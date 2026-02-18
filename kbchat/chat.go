@@ -24,14 +24,14 @@ type sendMessageBody struct {
 }
 
 type sendMessageOptions struct {
-	Channel          chat1.ChatChannel `json:"channel,omitempty"`
+	Channel          chat1.ChatChannel `json:"channel"`
 	ConversationID   chat1.ConvIDStr   `json:"conversation_id,omitempty"`
-	Message          sendMessageBody   `json:",omitempty"`
-	Filename         string            `json:"filename,omitempty"`
-	Title            string            `json:"title,omitempty"`
-	MsgID            chat1.MessageID   `json:"message_id,omitempty"`
-	ConfirmLumenSend bool              `json:"confirm_lumen_send"`
-	ReplyTo          *chat1.MessageID  `json:"reply_to,omitempty"`
+	Message          sendMessageBody
+	Filename         string           `json:"filename,omitempty"`
+	Title            string           `json:"title,omitempty"`
+	MsgID            chat1.MessageID  `json:"message_id,omitempty"`
+	ConfirmLumenSend bool             `json:"confirm_lumen_send"`
+	ReplyTo          *chat1.MessageID `json:"reply_to,omitempty"`
 }
 
 type sendMessageParams struct {
@@ -122,7 +122,7 @@ func (a *API) GetTextMessages(channel chat1.ChatChannel, unreadOnly bool) ([]cha
 	return res, nil
 }
 
-func (a *API) SendMessage(channel chat1.ChatChannel, body string, args ...interface{}) (resp SendResponse, err error) {
+func (a *API) SendMessage(channel chat1.ChatChannel, body string, args ...any) (resp SendResponse, err error) {
 	defer a.Trace(&err, "SendMessage")()
 	arg := newSendArg(sendMessageOptions{
 		Channel: channel,
@@ -133,14 +133,14 @@ func (a *API) SendMessage(channel chat1.ChatChannel, body string, args ...interf
 	return a.doSend(arg)
 }
 
-func (a *API) Broadcast(body string, args ...interface{}) (SendResponse, error) {
+func (a *API) Broadcast(body string, args ...any) (SendResponse, error) {
 	return a.SendMessage(chat1.ChatChannel{
 		Name:   a.GetUsername(),
 		Public: true,
 	}, body, args...)
 }
 
-func (a *API) SendMessageByConvID(convID chat1.ConvIDStr, body string, args ...interface{}) (resp SendResponse, err error) {
+func (a *API) SendMessageByConvID(convID chat1.ConvIDStr, body string, args ...any) (resp SendResponse, err error) {
 	defer a.Trace(&err, "SendMessageByConvID")()
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
@@ -152,7 +152,7 @@ func (a *API) SendMessageByConvID(convID chat1.ConvIDStr, body string, args ...i
 }
 
 // SendMessageByTlfName sends a message on the given TLF name
-func (a *API) SendMessageByTlfName(tlfName string, body string, args ...interface{}) (resp SendResponse, err error) {
+func (a *API) SendMessageByTlfName(tlfName string, body string, args ...any) (resp SendResponse, err error) {
 	defer a.Trace(&err, "SendMessageByTlfName")()
 	arg := newSendArg(sendMessageOptions{
 		Channel: chat1.ChatChannel{
@@ -165,7 +165,7 @@ func (a *API) SendMessageByTlfName(tlfName string, body string, args ...interfac
 	return a.doSend(arg)
 }
 
-func (a *API) SendMessageByTeamName(teamName string, inChannel *string, body string, args ...interface{}) (resp SendResponse, err error) {
+func (a *API) SendMessageByTeamName(teamName string, inChannel *string, body string, args ...any) (resp SendResponse, err error) {
 	defer a.Trace(&err, "SendMessageByTeamName")()
 	channel := "general"
 	if inChannel != nil {
@@ -184,7 +184,7 @@ func (a *API) SendMessageByTeamName(teamName string, inChannel *string, body str
 	return a.doSend(arg)
 }
 
-func (a *API) SendReply(channel chat1.ChatChannel, replyTo *chat1.MessageID, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) SendReply(channel chat1.ChatChannel, replyTo *chat1.MessageID, body string, args ...any) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: channel,
 		Message: sendMessageBody{
@@ -195,7 +195,7 @@ func (a *API) SendReply(channel chat1.ChatChannel, replyTo *chat1.MessageID, bod
 	return a.doSend(arg)
 }
 
-func (a *API) SendReplyByConvID(convID chat1.ConvIDStr, replyTo *chat1.MessageID, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) SendReplyByConvID(convID chat1.ConvIDStr, replyTo *chat1.MessageID, body string, args ...any) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{
@@ -206,7 +206,7 @@ func (a *API) SendReplyByConvID(convID chat1.ConvIDStr, replyTo *chat1.MessageID
 	return a.doSend(arg)
 }
 
-func (a *API) SendReplyByTlfName(tlfName string, replyTo *chat1.MessageID, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) SendReplyByTlfName(tlfName string, replyTo *chat1.MessageID, body string, args ...any) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: chat1.ChatChannel{
 			Name: tlfName,
@@ -418,7 +418,7 @@ func (a *API) LeaveChannel(teamName string, channelName string) (chat1.EmptyRes,
 // Send lumens in chat /////////////////////////////////
 ////////////////////////////////////////////////////////
 
-func (a *API) InChatSend(channel chat1.ChatChannel, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) InChatSend(channel chat1.ChatChannel, body string, args ...any) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: channel,
 		Message: sendMessageBody{
@@ -429,7 +429,7 @@ func (a *API) InChatSend(channel chat1.ChatChannel, body string, args ...interfa
 	return a.doSend(arg)
 }
 
-func (a *API) InChatSendByConvID(convID chat1.ConvIDStr, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) InChatSendByConvID(convID chat1.ConvIDStr, body string, args ...any) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{
@@ -440,7 +440,7 @@ func (a *API) InChatSendByConvID(convID chat1.ConvIDStr, body string, args ...in
 	return a.doSend(arg)
 }
 
-func (a *API) InChatSendByTlfName(tlfName string, body string, args ...interface{}) (SendResponse, error) {
+func (a *API) InChatSendByTlfName(tlfName string, body string, args ...any) (SendResponse, error) {
 	arg := newSendArg(sendMessageOptions{
 		Channel: chat1.ChatChannel{
 			Name: tlfName,
@@ -501,7 +501,7 @@ type clearCmdsParams struct {
 
 type clearCmdsArg struct {
 	Method string          `json:"method"`
-	Params clearCmdsParams `json:"params,omitempty"`
+	Params clearCmdsParams `json:"params"`
 }
 
 func (a *API) ClearCommands(filter *chat1.ClearCommandAPIParam) error {
@@ -517,7 +517,7 @@ func (a *API) ClearCommands(filter *chat1.ClearCommandAPIParam) error {
 }
 
 type listCmdsOptions struct {
-	Channel        chat1.ChatChannel `json:"channel,omitempty"`
+	Channel        chat1.ChatChannel `json:"channel"`
 	ConversationID chat1.ConvIDStr   `json:"conversation_id,omitempty"`
 }
 
@@ -572,7 +572,7 @@ func (a *API) listCommands(arg listCmdsArg) ([]chat1.UserBotCommandOutput, error
 }
 
 type listMembersOptions struct {
-	Channel        chat1.ChatChannel `json:"channel,omitempty"`
+	Channel        chat1.ChatChannel `json:"channel"`
 	ConversationID chat1.ConvIDStr   `json:"conversation_id,omitempty"`
 }
 
@@ -636,7 +636,7 @@ type GetMessagesResult struct {
 }
 
 type getMessagesOptions struct {
-	Channel        chat1.ChatChannel `json:"channel,omitempty"`
+	Channel        chat1.ChatChannel `json:"channel"`
 	ConversationID chat1.ConvIDStr   `json:"conversation_id,omitempty"`
 	MessageIDs     []chat1.MessageID `json:"message_ids,omitempty"`
 }

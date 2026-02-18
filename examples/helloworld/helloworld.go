@@ -8,7 +8,7 @@ import (
 	"github.com/keybase/go-keybase-chat-bot/kbchat"
 )
 
-func fail(msg string, args ...interface{}) {
+func fail(msg string, args ...any) {
 	fmt.Fprintf(os.Stderr, msg+"\n", args...)
 	os.Exit(3)
 }

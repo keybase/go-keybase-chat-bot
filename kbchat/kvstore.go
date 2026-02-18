@@ -28,27 +28,27 @@ type kvstoreAPIReq struct {
 
 type GetEntryRes struct {
 	Result keybase1.KVGetResult `json:"result"`
-	Error  Error                `json:"error,omitempty"`
+	Error  Error                `json:"error"`
 }
 
 type PutEntryRes struct {
 	Result keybase1.KVPutResult `json:"result"`
-	Error  Error                `json:"error,omitempty"`
+	Error  Error                `json:"error"`
 }
 
 type DeleteEntryRes struct {
 	Result keybase1.KVDeleteEntryResult `json:"result"`
-	Error  Error                        `json:"error,omitempty"`
+	Error  Error                        `json:"error"`
 }
 
 type ListNamespacesRes struct {
 	Result keybase1.KVListNamespaceResult `json:"result"`
-	Error  Error                          `json:"error,omitempty"`
+	Error  Error                          `json:"error"`
 }
 
 type ListEntryKeysRes struct {
 	Result keybase1.KVListEntryResult `json:"result"`
-	Error  Error                      `json:"error,omitempty"`
+	Error  Error                      `json:"error"`
 }
 
 type KVStoreAPI interface {

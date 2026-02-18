@@ -3,6 +3,7 @@ package kbchat
 import (
 	"os"
 	"path"
+	"slices"
 	"testing"
 
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
@@ -167,13 +168,7 @@ func TestListChannels(t *testing.T) {
 	channels, err := alice.ListChannels(teamChannel.Name)
 	require.NoError(t, err)
 	require.True(t, len(channels) > 0)
-	channelFound := false
-	for _, channel := range channels {
-		if channel == teamChannel.TopicName {
-			channelFound = true
-			break
-		}
-	}
+	channelFound := slices.Contains(channels, teamChannel.TopicName)
 	require.True(t, channelFound)
 }
 

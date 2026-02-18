@@ -100,7 +100,7 @@ func TestListenForNewTextMessages(t *testing.T) {
 
 	done := make(chan bool)
 	go func() {
-		for i := 0; i < 5; i++ {
+		for i := range 5 {
 			time.Sleep(time.Second)
 			message := strconv.Itoa(i)
 			_, err := bob.SendMessage(channel, "%s", message)
@@ -117,7 +117,7 @@ func TestListenForNewTextMessages(t *testing.T) {
 		"4": false,
 	}
 
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		msg, err := sub.Read()
 		require.NoError(t, err)
 		require.Equal(t, msg.Message.Content.TypeName, "text")

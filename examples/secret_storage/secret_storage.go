@@ -446,7 +446,7 @@ func (r *RentalBotClient) ListTools() ([]string, error) {
 	return tools, nil
 }
 
-func fail(msg string, args ...interface{}) {
+func fail(msg string, args ...any) {
 	fmt.Fprintf(os.Stderr, msg+"\n", args...)
 	os.Exit(3)
 }
