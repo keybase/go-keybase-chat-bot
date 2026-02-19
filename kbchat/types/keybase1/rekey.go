@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/rekey.avdl
 
 package keybase1
@@ -141,11 +141,11 @@ var OutcomeRevMap = map[Outcome]string{
 	2: "IGNORED",
 }
 
-func (e Outcome) String() string {
-	if v, ok := OutcomeRevMap[e]; ok {
+func (o Outcome) String() string {
+	if v, ok := OutcomeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type RevokeWarning struct {

@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/common.avdl
 
 package keybase1
@@ -215,11 +215,11 @@ var TeamTypeRevMap = map[TeamType]string{
 	2: "MODERN",
 }
 
-func (e TeamType) String() string {
-	if v, ok := TeamTypeRevMap[e]; ok {
+func (o TeamType) String() string {
+	if v, ok := TeamTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type CompatibilityTeamID struct {
@@ -285,14 +285,14 @@ func (o CompatibilityTeamID) DeepCopy() CompatibilityTeamID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Legacy__),
 		Modern__: (func(x *TeamID) *TeamID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Modern__),
 	}
@@ -320,11 +320,11 @@ var TLFVisibilityRevMap = map[TLFVisibility]string{
 	2: "PRIVATE",
 }
 
-func (e TLFVisibility) String() string {
-	if v, ok := TLFVisibilityRevMap[e]; ok {
+func (o TLFVisibility) String() string {
+	if v, ok := TLFVisibilityRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamIDWithVisibility struct {
@@ -388,11 +388,11 @@ var SeqTypeRevMap = map[SeqType]string{
 	17: "TEAM_PRIVATE_HIDDEN",
 }
 
-func (e SeqType) String() string {
-	if v, ok := SeqTypeRevMap[e]; ok {
+func (o SeqType) String() string {
+	if v, ok := SeqTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type Bytes32 [32]byte
@@ -556,11 +556,11 @@ var DeviceTypeRevMap = map[DeviceType]string{
 	1: "MOBILE",
 }
 
-func (e DeviceType) String() string {
-	if v, ok := DeviceTypeRevMap[e]; ok {
+func (o DeviceType) String() string {
+	if v, ok := DeviceTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type DeviceTypeV2 string
@@ -616,11 +616,11 @@ var LogLevelRevMap = map[LogLevel]string{
 	7: "FATAL",
 }
 
-func (e LogLevel) String() string {
-	if v, ok := LogLevelRevMap[e]; ok {
+func (o LogLevel) String() string {
+	if v, ok := LogLevelRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ClientType int
@@ -816,11 +816,11 @@ var UserOrTeamResultRevMap = map[UserOrTeamResult]string{
 	2: "TEAM",
 }
 
-func (e UserOrTeamResult) String() string {
-	if v, ok := UserOrTeamResultRevMap[e]; ok {
+func (o UserOrTeamResult) String() string {
+	if v, ok := UserOrTeamResultRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type RemoteTrack struct {
@@ -954,11 +954,11 @@ var FullNamePackageVersionRevMap = map[FullNamePackageVersion]string{
 	2: "V2",
 }
 
-func (e FullNamePackageVersion) String() string {
-	if v, ok := FullNamePackageVersionRevMap[e]; ok {
+func (o FullNamePackageVersion) String() string {
+	if v, ok := FullNamePackageVersionRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type FullNamePackage struct {
@@ -1028,11 +1028,11 @@ var IdentityVisibilityRevMap = map[IdentityVisibility]string{
 	1: "PUBLIC",
 }
 
-func (e IdentityVisibility) String() string {
-	if v, ok := IdentityVisibilityRevMap[e]; ok {
+func (o IdentityVisibility) String() string {
+	if v, ok := IdentityVisibilityRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type SizedImage struct {
@@ -1066,11 +1066,11 @@ var OfflineAvailabilityRevMap = map[OfflineAvailability]string{
 	1: "BEST_EFFORT",
 }
 
-func (e OfflineAvailability) String() string {
-	if v, ok := OfflineAvailabilityRevMap[e]; ok {
+func (o OfflineAvailability) String() string {
+	if v, ok := OfflineAvailabilityRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UserReacji struct {
@@ -1130,11 +1130,11 @@ var ReacjiSkinToneRevMap = map[ReacjiSkinTone]string{
 	5: "SKINTONE5",
 }
 
-func (e ReacjiSkinTone) String() string {
-	if v, ok := ReacjiSkinToneRevMap[e]; ok {
+func (o ReacjiSkinTone) String() string {
+	if v, ok := ReacjiSkinToneRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UserReacjis struct {
@@ -1187,9 +1187,9 @@ var WotStatusTypeRevMap = map[WotStatusType]string{
 	4: "REVOKED",
 }
 
-func (e WotStatusType) String() string {
-	if v, ok := WotStatusTypeRevMap[e]; ok {
+func (o WotStatusType) String() string {
+	if v, ok := WotStatusTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }

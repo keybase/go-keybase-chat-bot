@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/chat1/common.avdl
 
 package chat1
@@ -130,6 +130,12 @@ func (o FlipGameID) DeepCopy() FlipGameID {
 	})(o)
 }
 
+type ArchiveJobID string
+
+func (o ArchiveJobID) DeepCopy() ArchiveJobID {
+	return o
+}
+
 type InboxVersInfo struct {
 	Uid  gregor1.UID `codec:"uid" json:"uid"`
 	Vers InboxVers   `codec:"vers" json:"vers"`
@@ -167,11 +173,11 @@ var ConversationExistenceRevMap = map[ConversationExistence]string{
 	3: "ABANDONED",
 }
 
-func (e ConversationExistence) String() string {
-	if v, ok := ConversationExistenceRevMap[e]; ok {
+func (o ConversationExistence) String() string {
+	if v, ok := ConversationExistenceRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ConversationMembersType int
@@ -199,11 +205,11 @@ var ConversationMembersTypeRevMap = map[ConversationMembersType]string{
 	3: "IMPTEAMUPGRADE",
 }
 
-func (e ConversationMembersType) String() string {
-	if v, ok := ConversationMembersTypeRevMap[e]; ok {
+func (o ConversationMembersType) String() string {
+	if v, ok := ConversationMembersTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type SyncInboxResType int
@@ -228,11 +234,11 @@ var SyncInboxResTypeRevMap = map[SyncInboxResType]string{
 	2: "CLEAR",
 }
 
-func (e SyncInboxResType) String() string {
-	if v, ok := SyncInboxResTypeRevMap[e]; ok {
+func (o SyncInboxResType) String() string {
+	if v, ok := SyncInboxResTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type MessageType int
@@ -358,11 +364,11 @@ var TeamTypeRevMap = map[TeamType]string{
 	2: "COMPLEX",
 }
 
-func (e TeamType) String() string {
-	if v, ok := TeamTypeRevMap[e]; ok {
+func (o TeamType) String() string {
+	if v, ok := TeamTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type NotificationKind int
@@ -392,6 +398,7 @@ const (
 	GlobalAppNotificationSetting_PLAINTEXTDESKTOP   GlobalAppNotificationSetting = 2
 	GlobalAppNotificationSetting_DEFAULTSOUNDMOBILE GlobalAppNotificationSetting = 3
 	GlobalAppNotificationSetting_DISABLETYPING      GlobalAppNotificationSetting = 4
+	GlobalAppNotificationSetting_CONVERTHEIC        GlobalAppNotificationSetting = 5
 )
 
 func (o GlobalAppNotificationSetting) DeepCopy() GlobalAppNotificationSetting { return o }
@@ -402,6 +409,7 @@ var GlobalAppNotificationSettingMap = map[string]GlobalAppNotificationSetting{
 	"PLAINTEXTDESKTOP":   2,
 	"DEFAULTSOUNDMOBILE": 3,
 	"DISABLETYPING":      4,
+	"CONVERTHEIC":        5,
 }
 
 var GlobalAppNotificationSettingRevMap = map[GlobalAppNotificationSetting]string{
@@ -410,13 +418,14 @@ var GlobalAppNotificationSettingRevMap = map[GlobalAppNotificationSetting]string
 	2: "PLAINTEXTDESKTOP",
 	3: "DEFAULTSOUNDMOBILE",
 	4: "DISABLETYPING",
+	5: "CONVERTHEIC",
 }
 
-func (e GlobalAppNotificationSetting) String() string {
-	if v, ok := GlobalAppNotificationSettingRevMap[e]; ok {
+func (o GlobalAppNotificationSetting) String() string {
+	if v, ok := GlobalAppNotificationSettingRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type GlobalAppNotificationSettings struct {
@@ -471,11 +480,11 @@ var ConversationStatusRevMap = map[ConversationStatus]string{
 	5: "REPORTED",
 }
 
-func (e ConversationStatus) String() string {
-	if v, ok := ConversationStatusRevMap[e]; ok {
+func (o ConversationStatus) String() string {
+	if v, ok := ConversationStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ConversationMember struct {
@@ -583,11 +592,11 @@ var ConversationMemberStatusRevMap = map[ConversationMemberStatus]string{
 	5: "NEVER_JOINED",
 }
 
-func (e ConversationMemberStatus) String() string {
-	if v, ok := ConversationMemberStatusRevMap[e]; ok {
+func (o ConversationMemberStatus) String() string {
+	if v, ok := ConversationMemberStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type Pagination struct {
@@ -653,11 +662,11 @@ var InboxParticipantsModeRevMap = map[InboxParticipantsMode]string{
 	1: "SKIP_TEAMS",
 }
 
-func (e InboxParticipantsMode) String() string {
-	if v, ok := InboxParticipantsModeRevMap[e]; ok {
+func (o InboxParticipantsMode) String() string {
+	if v, ok := InboxParticipantsModeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type GetInboxQuery struct {
@@ -689,42 +698,42 @@ func (o GetInboxQuery) DeepCopy() GetInboxQuery {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConvID),
 		TopicType: (func(x *TopicType) *TopicType {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TopicType),
 		TlfID: (func(x *TLFID) *TLFID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TlfID),
 		TlfVisibility: (func(x *keybase1.TLFVisibility) *keybase1.TLFVisibility {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TlfVisibility),
 		Before: (func(x *gregor1.Time) *gregor1.Time {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Before),
 		After: (func(x *gregor1.Time) *gregor1.Time {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.After),
 		OneChatTypePerTLF: (func(x *bool) *bool {
@@ -892,7 +901,7 @@ func (o ConversationMetadata) DeepCopy() ConversationMetadata {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.FinalizeInfo),
 		Supersedes: (func(x []ConversationMetadata) []ConversationMetadata {
@@ -1010,7 +1019,7 @@ func (o ConversationReaderInfo) DeepCopy() ConversationReaderInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Journeycard),
 	}
@@ -1072,7 +1081,7 @@ func (o ConversationSettings) DeepCopy() ConversationSettings {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MinWriterRoleInfo),
 	}
@@ -1099,14 +1108,14 @@ func (o Conversation) DeepCopy() Conversation {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ReaderInfo),
 		Notifications: (func(x *ConversationNotificationInfo) *ConversationNotificationInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Notifications),
 		MaxMsgs: (func(x []MessageBoxed) []MessageBoxed {
@@ -1135,14 +1144,14 @@ func (o Conversation) DeepCopy() Conversation {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.CreatorInfo),
 		PinnedMsg: (func(x *MessageID) *MessageID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.PinnedMsg),
 		Expunge: o.Expunge.DeepCopy(),
@@ -1150,21 +1159,21 @@ func (o Conversation) DeepCopy() Conversation {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConvRetention),
 		TeamRetention: (func(x *RetentionPolicy) *RetentionPolicy {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TeamRetention),
 		ConvSettings: (func(x *ConversationSettings) *ConversationSettings {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConvSettings),
 	}
@@ -1286,7 +1295,7 @@ func (o MessageServerHeader) DeepCopy() MessageServerHeader {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Rtime),
 	}
@@ -1413,7 +1422,7 @@ func (o MessageClientHeader) DeepCopy() MessageClientHeader {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.DeleteHistory),
 		Sender:       o.Sender.DeepCopy(),
@@ -1422,28 +1431,28 @@ func (o MessageClientHeader) DeepCopy() MessageClientHeader {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MerkleRoot),
 		OutboxID: (func(x *OutboxID) *OutboxID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.OutboxID),
 		OutboxInfo: (func(x *OutboxInfo) *OutboxInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.OutboxInfo),
 		EphemeralMetadata: (func(x *MsgEphemeralMetadata) *MsgEphemeralMetadata {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.EphemeralMetadata),
 		PairwiseMacs: (func(x map[keybase1.KID][]byte) map[keybase1.KID][]byte {
@@ -1467,14 +1476,14 @@ func (o MessageClientHeader) DeepCopy() MessageClientHeader {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.BotUID),
 		TxID: (func(x *stellar1.TransactionID) *stellar1.TransactionID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TxID),
 	}
@@ -1528,28 +1537,28 @@ func (o MessageClientHeaderVerified) DeepCopy() MessageClientHeaderVerified {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MerkleRoot),
 		OutboxID: (func(x *OutboxID) *OutboxID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.OutboxID),
 		OutboxInfo: (func(x *OutboxInfo) *OutboxInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.OutboxInfo),
 		EphemeralMetadata: (func(x *MsgEphemeralMetadata) *MsgEphemeralMetadata {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.EphemeralMetadata),
 		Rtime:           o.Rtime.DeepCopy(),
@@ -1558,7 +1567,7 @@ func (o MessageClientHeaderVerified) DeepCopy() MessageClientHeaderVerified {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.BotUID),
 	}
@@ -1696,11 +1705,11 @@ var InboxResTypeRevMap = map[InboxResType]string{
 	1: "FULL",
 }
 
-func (e InboxResType) String() string {
-	if v, ok := InboxResTypeRevMap[e]; ok {
+func (o InboxResType) String() string {
+	if v, ok := InboxResTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type InboxViewFull struct {
@@ -1727,7 +1736,7 @@ func (o InboxViewFull) DeepCopy() InboxViewFull {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Pagination),
 	}
@@ -1779,7 +1788,7 @@ func (o InboxView) DeepCopy() InboxView {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Full__),
 	}
@@ -1813,11 +1822,11 @@ var RetentionPolicyTypeRevMap = map[RetentionPolicyType]string{
 	4: "EPHEMERAL",
 }
 
-func (e RetentionPolicyType) String() string {
-	if v, ok := RetentionPolicyTypeRevMap[e]; ok {
+func (o RetentionPolicyType) String() string {
+	if v, ok := RetentionPolicyTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type RetentionPolicy struct {
@@ -1929,28 +1938,28 @@ func (o RetentionPolicy) DeepCopy() RetentionPolicy {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Retain__),
 		Expire__: (func(x *RpExpire) *RpExpire {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Expire__),
 		Inherit__: (func(x *RpInherit) *RpInherit {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Inherit__),
 		Ephemeral__: (func(x *RpEphemeral) *RpEphemeral {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Ephemeral__),
 	}
@@ -2007,6 +2016,7 @@ const (
 	GetThreadReason_EMOJISOURCE        GetThreadReason = 11
 	GetThreadReason_FORWARDMSG         GetThreadReason = 12
 	GetThreadReason_LOCALIZE           GetThreadReason = 13
+	GetThreadReason_ARCHIVE            GetThreadReason = 14
 )
 
 func (o GetThreadReason) DeepCopy() GetThreadReason { return o }
@@ -2026,6 +2036,7 @@ var GetThreadReasonMap = map[string]GetThreadReason{
 	"EMOJISOURCE":        11,
 	"FORWARDMSG":         12,
 	"LOCALIZE":           13,
+	"ARCHIVE":            14,
 }
 
 var GetThreadReasonRevMap = map[GetThreadReason]string{
@@ -2043,13 +2054,14 @@ var GetThreadReasonRevMap = map[GetThreadReason]string{
 	11: "EMOJISOURCE",
 	12: "FORWARDMSG",
 	13: "LOCALIZE",
+	14: "ARCHIVE",
 }
 
-func (e GetThreadReason) String() string {
-	if v, ok := GetThreadReasonRevMap[e]; ok {
+func (o GetThreadReason) String() string {
+	if v, ok := GetThreadReasonRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ReIndexingMode int
@@ -2074,11 +2086,11 @@ var ReIndexingModeRevMap = map[ReIndexingMode]string{
 	2: "POSTSEARCH_SYNC",
 }
 
-func (e ReIndexingMode) String() string {
-	if v, ok := ReIndexingModeRevMap[e]; ok {
+func (o ReIndexingMode) String() string {
+	if v, ok := ReIndexingModeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type SearchOpts struct {
@@ -2119,7 +2131,7 @@ func (o SearchOpts) DeepCopy() SearchOpts {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.InitialPagination),
 		ReindexMode:      o.ReindexMode.DeepCopy(),
@@ -2129,7 +2141,7 @@ func (o SearchOpts) DeepCopy() SearchOpts {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConvID),
 		MaxNameConvs: o.MaxNameConvs,
@@ -2409,14 +2421,14 @@ func (o AssetMetadata) DeepCopy() AssetMetadata {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Image__),
 		Video__: (func(x *AssetMetadataVideo) *AssetMetadataVideo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Video__),
 	}
@@ -2516,11 +2528,11 @@ var BotCommandsAdvertisementTypRevMap = map[BotCommandsAdvertisementTyp]string{
 	3: "CONV",
 }
 
-func (e BotCommandsAdvertisementTyp) String() string {
-	if v, ok := BotCommandsAdvertisementTypRevMap[e]; ok {
+func (o BotCommandsAdvertisementTyp) String() string {
+	if v, ok := BotCommandsAdvertisementTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamMember struct {
@@ -2559,11 +2571,11 @@ var LastActiveStatusRevMap = map[LastActiveStatus]string{
 	2: "RECENTLY_ACTIVE",
 }
 
-func (e LastActiveStatus) String() string {
-	if v, ok := LastActiveStatusRevMap[e]; ok {
+func (o LastActiveStatus) String() string {
+	if v, ok := LastActiveStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ChatMemberDetails struct {

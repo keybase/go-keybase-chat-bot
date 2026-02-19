@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/reset.avdl
 
 package keybase1
@@ -40,11 +40,11 @@ var ResetTypeRevMap = map[ResetType]string{
 	2: "DELETE",
 }
 
-func (e ResetType) String() string {
-	if v, ok := ResetTypeRevMap[e]; ok {
+func (o ResetType) String() string {
+	if v, ok := ResetTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ResetMerkleRoot struct {
@@ -71,7 +71,7 @@ func (o ResetPrev) DeepCopy() ResetPrev {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.EldestKID),
 		LastSeqno: o.LastSeqno.DeepCopy(),

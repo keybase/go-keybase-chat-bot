@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/chat1/notify.avdl
 
 package chat1
@@ -29,11 +29,11 @@ var ChatActivitySourceRevMap = map[ChatActivitySource]string{
 	1: "REMOTE",
 }
 
-func (e ChatActivitySource) String() string {
-	if v, ok := ChatActivitySourceRevMap[e]; ok {
+func (o ChatActivitySource) String() string {
+	if v, ok := ChatActivitySourceRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ChatActivityType int
@@ -88,11 +88,11 @@ var ChatActivityTypeRevMap = map[ChatActivityType]string{
 	12: "MESSAGES_UPDATED",
 }
 
-func (e ChatActivityType) String() string {
-	if v, ok := ChatActivityTypeRevMap[e]; ok {
+func (o ChatActivityType) String() string {
+	if v, ok := ChatActivityTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type IncomingMessage struct {
@@ -112,7 +112,7 @@ func (o IncomingMessage) DeepCopy() IncomingMessage {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ModifiedMessage),
 		ConvID:                     o.ConvID.DeepCopy(),
@@ -122,14 +122,14 @@ func (o IncomingMessage) DeepCopy() IncomingMessage {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Conv),
 		Pagination: (func(x *UIPagination) *UIPagination {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Pagination),
 	}
@@ -149,7 +149,7 @@ func (o ReadMessageInfo) DeepCopy() ReadMessageInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Conv),
 	}
@@ -167,7 +167,7 @@ func (o NewConversationInfo) DeepCopy() NewConversationInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Conv),
 	}
@@ -187,7 +187,7 @@ func (o SetStatusInfo) DeepCopy() SetStatusInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Conv),
 	}
@@ -229,7 +229,7 @@ func (o FailedMessageInfo) DeepCopy() FailedMessageInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Conv),
 	}
@@ -283,7 +283,7 @@ func (o TeamTypeInfo) DeepCopy() TeamTypeInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Conv),
 	}
@@ -674,84 +674,84 @@ func (o ChatActivity) DeepCopy() ChatActivity {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.IncomingMessage__),
 		ReadMessage__: (func(x *ReadMessageInfo) *ReadMessageInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ReadMessage__),
 		NewConversation__: (func(x *NewConversationInfo) *NewConversationInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.NewConversation__),
 		SetStatus__: (func(x *SetStatusInfo) *SetStatusInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.SetStatus__),
 		FailedMessage__: (func(x *FailedMessageInfo) *FailedMessageInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.FailedMessage__),
 		MembersUpdate__: (func(x *MembersUpdateInfo) *MembersUpdateInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MembersUpdate__),
 		SetAppNotificationSettings__: (func(x *SetAppNotificationSettingsInfo) *SetAppNotificationSettingsInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.SetAppNotificationSettings__),
 		Teamtype__: (func(x *TeamTypeInfo) *TeamTypeInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Teamtype__),
 		Expunge__: (func(x *ExpungeInfo) *ExpungeInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Expunge__),
 		EphemeralPurge__: (func(x *EphemeralPurgeNotifInfo) *EphemeralPurgeNotifInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.EphemeralPurge__),
 		ReactionUpdate__: (func(x *ReactionUpdateNotif) *ReactionUpdateNotif {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ReactionUpdate__),
 		MessagesUpdated__: (func(x *MessagesUpdated) *MessagesUpdated {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MessagesUpdated__),
 	}
@@ -812,11 +812,11 @@ var StaleUpdateTypeRevMap = map[StaleUpdateType]string{
 	1: "NEWACTIVITY",
 }
 
-func (e StaleUpdateType) String() string {
-	if v, ok := StaleUpdateTypeRevMap[e]; ok {
+func (o StaleUpdateType) String() string {
+	if v, ok := StaleUpdateTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ConversationStaleUpdate struct {
@@ -927,7 +927,7 @@ func (o ChatSyncResult) DeepCopy() ChatSyncResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Incremental__),
 	}

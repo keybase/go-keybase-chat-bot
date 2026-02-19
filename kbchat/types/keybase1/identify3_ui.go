@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/identify3_ui.avdl
 
 package keybase1
@@ -35,11 +35,11 @@ var Identify3RowStateRevMap = map[Identify3RowState]string{
 	5: "REVOKED",
 }
 
-func (e Identify3RowState) String() string {
-	if v, ok := Identify3RowStateRevMap[e]; ok {
+func (o Identify3RowState) String() string {
+	if v, ok := Identify3RowStateRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type Identify3RowColor int
@@ -76,11 +76,11 @@ var Identify3RowColorRevMap = map[Identify3RowColor]string{
 	7: "ORANGE",
 }
 
-func (e Identify3RowColor) String() string {
-	if v, ok := Identify3RowColorRevMap[e]; ok {
+func (o Identify3RowColor) String() string {
+	if v, ok := Identify3RowColorRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type Identify3ResultType int
@@ -108,11 +108,11 @@ var Identify3ResultTypeRevMap = map[Identify3ResultType]string{
 	3: "CANCELED",
 }
 
-func (e Identify3ResultType) String() string {
-	if v, ok := Identify3ResultTypeRevMap[e]; ok {
+func (o Identify3ResultType) String() string {
+	if v, ok := Identify3ResultTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type Identify3RowMeta struct {
@@ -218,14 +218,14 @@ func (o Identify3Row) DeepCopy() Identify3Row {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Kid),
 		WotProof: (func(x *WotProof) *WotProof {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.WotProof),
 	}

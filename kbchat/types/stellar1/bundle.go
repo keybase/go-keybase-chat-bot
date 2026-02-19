@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/stellar1/bundle.avdl
 
 package stellar1
@@ -80,11 +80,11 @@ var BundleVersionRevMap = map[BundleVersion]string{
 	10: "V10",
 }
 
-func (e BundleVersion) String() string {
-	if v, ok := BundleVersionRevMap[e]; ok {
+func (o BundleVersion) String() string {
+	if v, ok := BundleVersionRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type BundleSecretVersioned struct {
@@ -334,70 +334,70 @@ func (o BundleSecretVersioned) DeepCopy() BundleSecretVersioned {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V1__),
 		V2__: (func(x *BundleSecretV2) *BundleSecretV2 {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V2__),
 		V3__: (func(x *BundleSecretUnsupported) *BundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V3__),
 		V4__: (func(x *BundleSecretUnsupported) *BundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V4__),
 		V5__: (func(x *BundleSecretUnsupported) *BundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V5__),
 		V6__: (func(x *BundleSecretUnsupported) *BundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V6__),
 		V7__: (func(x *BundleSecretUnsupported) *BundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V7__),
 		V8__: (func(x *BundleSecretUnsupported) *BundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V8__),
 		V9__: (func(x *BundleSecretUnsupported) *BundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V9__),
 		V10__: (func(x *BundleSecretUnsupported) *BundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V10__),
 	}
@@ -550,11 +550,11 @@ var AccountBundleVersionRevMap = map[AccountBundleVersion]string{
 	10: "V10",
 }
 
-func (e AccountBundleVersion) String() string {
-	if v, ok := AccountBundleVersionRevMap[e]; ok {
+func (o AccountBundleVersion) String() string {
+	if v, ok := AccountBundleVersionRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type AccountBundleSecretVersioned struct {
@@ -804,70 +804,70 @@ func (o AccountBundleSecretVersioned) DeepCopy() AccountBundleSecretVersioned {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V1__),
 		V2__: (func(x *AccountBundleSecretUnsupported) *AccountBundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V2__),
 		V3__: (func(x *AccountBundleSecretUnsupported) *AccountBundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V3__),
 		V4__: (func(x *AccountBundleSecretUnsupported) *AccountBundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V4__),
 		V5__: (func(x *AccountBundleSecretUnsupported) *AccountBundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V5__),
 		V6__: (func(x *AccountBundleSecretUnsupported) *AccountBundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V6__),
 		V7__: (func(x *AccountBundleSecretUnsupported) *AccountBundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V7__),
 		V8__: (func(x *AccountBundleSecretUnsupported) *AccountBundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V8__),
 		V9__: (func(x *AccountBundleSecretUnsupported) *AccountBundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V9__),
 		V10__: (func(x *AccountBundleSecretUnsupported) *AccountBundleSecretUnsupported {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V10__),
 	}

@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/appstate.avdl
 
 package keybase1
@@ -32,11 +32,11 @@ var MobileAppStateRevMap = map[MobileAppState]string{
 	3: "BACKGROUNDACTIVE",
 }
 
-func (e MobileAppState) String() string {
-	if v, ok := MobileAppStateRevMap[e]; ok {
+func (o MobileAppState) String() string {
+	if v, ok := MobileAppStateRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type MobileNetworkState int
@@ -67,9 +67,9 @@ var MobileNetworkStateRevMap = map[MobileNetworkState]string{
 	4: "NOTAVAILABLE",
 }
 
-func (e MobileNetworkState) String() string {
-	if v, ok := MobileNetworkStateRevMap[e]; ok {
+func (o MobileNetworkState) String() string {
+	if v, ok := MobileNetworkStateRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }

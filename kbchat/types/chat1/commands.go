@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/chat1/commands.avdl
 
 package chat1
@@ -54,11 +54,11 @@ var ConversationCommandGroupsTypRevMap = map[ConversationCommandGroupsTyp]string
 	2: "NONE",
 }
 
-func (e ConversationCommandGroupsTyp) String() string {
-	if v, ok := ConversationCommandGroupsTypRevMap[e]; ok {
+func (o ConversationCommandGroupsTyp) String() string {
+	if v, ok := ConversationCommandGroupsTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ConversationBuiltinCommandTyp int
@@ -89,11 +89,11 @@ var ConversationBuiltinCommandTypRevMap = map[ConversationBuiltinCommandTyp]stri
 	4: "BIGTEAMGENERAL",
 }
 
-func (e ConversationBuiltinCommandTyp) String() string {
-	if v, ok := ConversationBuiltinCommandTypRevMap[e]; ok {
+func (o ConversationBuiltinCommandTyp) String() string {
+	if v, ok := ConversationBuiltinCommandTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ConversationCommandGroupsCustom struct {
@@ -185,14 +185,14 @@ func (o ConversationCommandGroups) DeepCopy() ConversationCommandGroups {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Builtin__),
 		Custom__: (func(x *ConversationCommandGroupsCustom) *ConversationCommandGroupsCustom {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Custom__),
 	}

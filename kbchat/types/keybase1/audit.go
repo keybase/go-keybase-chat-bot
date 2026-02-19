@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/audit.avdl
 
 package keybase1
@@ -38,11 +38,11 @@ var BoxAuditAttemptResultRevMap = map[BoxAuditAttemptResult]string{
 	5: "OK_NOT_ATTEMPTED_SUBTEAM",
 }
 
-func (e BoxAuditAttemptResult) String() string {
-	if v, ok := BoxAuditAttemptResultRevMap[e]; ok {
+func (o BoxAuditAttemptResult) String() string {
+	if v, ok := BoxAuditAttemptResultRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type BoxAuditAttempt struct {
@@ -68,7 +68,7 @@ func (o BoxAuditAttempt) DeepCopy() BoxAuditAttempt {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Generation),
 		Rotated: o.Rotated,

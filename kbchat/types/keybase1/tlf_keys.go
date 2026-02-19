@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/tlf_keys.avdl
 
 package keybase1
@@ -68,11 +68,11 @@ var TLFIdentifyBehaviorRevMap = map[TLFIdentifyBehavior]string{
 	15: "FS_GUI",
 }
 
-func (e TLFIdentifyBehavior) String() string {
-	if v, ok := TLFIdentifyBehaviorRevMap[e]; ok {
+func (o TLFIdentifyBehavior) String() string {
+	if v, ok := TLFIdentifyBehaviorRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type CanonicalTlfName string
@@ -125,7 +125,7 @@ func (o TLFIdentifyFailure) DeepCopy() TLFIdentifyFailure {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Breaks),
 	}

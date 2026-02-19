@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/identify_ui.avdl
 
 package keybase1
@@ -35,7 +35,7 @@ func (o IdentifyRow) DeepCopy() IdentifyRow {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TrackDiff),
 	}
@@ -62,7 +62,7 @@ func (o IdentifyKey) DeepCopy() IdentifyKey {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TrackDiff),
 		BreaksTracking: o.BreaksTracking,
@@ -141,7 +141,7 @@ func (o Identity) DeepCopy() Identity {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Status),
 		WhenLastTracked: o.WhenLastTracked.DeepCopy(),
@@ -231,11 +231,11 @@ var CheckResultFreshnessRevMap = map[CheckResultFreshness]string{
 	2: "RANCID",
 }
 
-func (e CheckResultFreshness) String() string {
-	if v, ok := CheckResultFreshnessRevMap[e]; ok {
+func (o CheckResultFreshness) String() string {
+	if v, ok := CheckResultFreshnessRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type CheckResult struct {
@@ -276,28 +276,28 @@ func (o LinkCheckResult) DeepCopy() LinkCheckResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Cached),
 		Diff: (func(x *TrackDiff) *TrackDiff {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Diff),
 		RemoteDiff: (func(x *TrackDiff) *TrackDiff {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RemoteDiff),
 		Hint: (func(x *SigHint) *SigHint {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Hint),
 		BreaksTracking: o.BreaksTracking,
@@ -417,11 +417,11 @@ var DismissReasonTypeRevMap = map[DismissReasonType]string{
 	1: "HANDLED_ELSEWHERE",
 }
 
-func (e DismissReasonType) String() string {
-	if v, ok := DismissReasonTypeRevMap[e]; ok {
+func (o DismissReasonType) String() string {
+	if v, ok := DismissReasonTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type DismissReason struct {

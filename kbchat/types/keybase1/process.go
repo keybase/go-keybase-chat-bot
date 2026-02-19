@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/process.avdl
 
 package keybase1
@@ -29,11 +29,11 @@ var FileTypeRevMap = map[FileType]string{
 	2: "FILE",
 }
 
-func (e FileType) String() string {
-	if v, ok := FileTypeRevMap[e]; ok {
+func (o FileType) String() string {
+	if v, ok := FileTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type FileDescriptor struct {

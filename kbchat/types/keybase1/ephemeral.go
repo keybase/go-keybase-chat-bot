@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/ephemeral.avdl
 
 package keybase1
@@ -263,11 +263,11 @@ var TeamEphemeralKeyTypeRevMap = map[TeamEphemeralKeyType]string{
 	1: "TEAMBOT",
 }
 
-func (e TeamEphemeralKeyType) String() string {
-	if v, ok := TeamEphemeralKeyTypeRevMap[e]; ok {
+func (o TeamEphemeralKeyType) String() string {
+	if v, ok := TeamEphemeralKeyTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamEphemeralKey struct {
@@ -333,14 +333,14 @@ func (o TeamEphemeralKey) DeepCopy() TeamEphemeralKey {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Team__),
 		Teambot__: (func(x *TeambotEk) *TeambotEk {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Teambot__),
 	}
@@ -409,14 +409,14 @@ func (o TeamEphemeralKeyBoxed) DeepCopy() TeamEphemeralKeyBoxed {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Team__),
 		Teambot__: (func(x *TeambotEkBoxed) *TeambotEkBoxed {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Teambot__),
 	}

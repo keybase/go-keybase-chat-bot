@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/simple_fs.avdl
 
 package keybase1
@@ -47,11 +47,11 @@ var KBFSArchivedTypeRevMap = map[KBFSArchivedType]string{
 	3: "REL_TIME_STRING",
 }
 
-func (e KBFSArchivedType) String() string {
-	if v, ok := KBFSArchivedTypeRevMap[e]; ok {
+func (o KBFSArchivedType) String() string {
+	if v, ok := KBFSArchivedTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type KBFSArchivedParam struct {
@@ -163,14 +163,14 @@ func (o KBFSArchivedParam) DeepCopy() KBFSArchivedParam {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Revision__),
 		Time__: (func(x *Time) *Time {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Time__),
 		TimeString__: (func(x *string) *string {
@@ -204,7 +204,7 @@ func (o KBFSArchivedPath) DeepCopy() KBFSArchivedPath {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.IdentifyBehavior),
 	}
@@ -222,7 +222,7 @@ func (o KBFSPath) DeepCopy() KBFSPath {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.IdentifyBehavior),
 	}
@@ -250,11 +250,11 @@ var PathTypeRevMap = map[PathType]string{
 	2: "KBFS_ARCHIVED",
 }
 
-func (e PathType) String() string {
-	if v, ok := PathTypeRevMap[e]; ok {
+func (o PathType) String() string {
+	if v, ok := PathTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type Path struct {
@@ -350,14 +350,14 @@ func (o Path) DeepCopy() Path {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Kbfs__),
 		KbfsArchived__: (func(x *KBFSArchivedPath) *KBFSArchivedPath {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.KbfsArchived__),
 	}
@@ -388,11 +388,11 @@ var DirentTypeRevMap = map[DirentType]string{
 	3: "EXEC",
 }
 
-func (e DirentType) String() string {
-	if v, ok := DirentTypeRevMap[e]; ok {
+func (o DirentType) String() string {
+	if v, ok := DirentTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type PrefetchStatus int
@@ -417,11 +417,11 @@ var PrefetchStatusRevMap = map[PrefetchStatus]string{
 	2: "COMPLETE",
 }
 
-func (e PrefetchStatus) String() string {
-	if v, ok := PrefetchStatusRevMap[e]; ok {
+func (o PrefetchStatus) String() string {
+	if v, ok := PrefetchStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type PrefetchProgress struct {
@@ -497,11 +497,11 @@ var RevisionSpanTypeRevMap = map[RevisionSpanType]string{
 	1: "LAST_FIVE",
 }
 
-func (e RevisionSpanType) String() string {
-	if v, ok := RevisionSpanTypeRevMap[e]; ok {
+func (o RevisionSpanType) String() string {
+	if v, ok := RevisionSpanTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ErrorNum int
@@ -541,11 +541,11 @@ var OpenFlagsRevMap = map[OpenFlags]string{
 	16: "DIRECTORY",
 }
 
-func (e OpenFlags) String() string {
-	if v, ok := OpenFlagsRevMap[e]; ok {
+func (o OpenFlags) String() string {
+	if v, ok := OpenFlagsRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type Progress int
@@ -633,11 +633,11 @@ var AsyncOpsRevMap = map[AsyncOps]string{
 	8: "GET_REVISIONS",
 }
 
-func (e AsyncOps) String() string {
-	if v, ok := AsyncOpsRevMap[e]; ok {
+func (o AsyncOps) String() string {
+	if v, ok := AsyncOpsRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ListFilter int
@@ -662,11 +662,11 @@ var ListFilterRevMap = map[ListFilter]string{
 	2: "FILTER_SYSTEM_HIDDEN",
 }
 
-func (e ListFilter) String() string {
-	if v, ok := ListFilterRevMap[e]; ok {
+func (o ListFilter) String() string {
+	if v, ok := ListFilterRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ListArgs struct {
@@ -1013,63 +1013,63 @@ func (o OpDescription) DeepCopy() OpDescription {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.List__),
 		ListRecursive__: (func(x *ListArgs) *ListArgs {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ListRecursive__),
 		ListRecursiveToDepth__: (func(x *ListToDepthArgs) *ListToDepthArgs {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ListRecursiveToDepth__),
 		Read__: (func(x *ReadArgs) *ReadArgs {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Read__),
 		Write__: (func(x *WriteArgs) *WriteArgs {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Write__),
 		Copy__: (func(x *CopyArgs) *CopyArgs {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Copy__),
 		Move__: (func(x *MoveArgs) *MoveArgs {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Move__),
 		Remove__: (func(x *RemoveArgs) *RemoveArgs {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Remove__),
 		GetRevisions__: (func(x *GetRevisionsArgs) *GetRevisionsArgs {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.GetRevisions__),
 	}
@@ -1165,11 +1165,11 @@ var FolderSyncModeRevMap = map[FolderSyncMode]string{
 	2: "PARTIAL",
 }
 
-func (e FolderSyncMode) String() string {
-	if v, ok := FolderSyncModeRevMap[e]; ok {
+func (o FolderSyncMode) String() string {
+	if v, ok := FolderSyncModeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type FolderSyncConfig struct {
@@ -1280,11 +1280,11 @@ var KbfsOnlineStatusRevMap = map[KbfsOnlineStatus]string{
 	2: "ONLINE",
 }
 
-func (e KbfsOnlineStatus) String() string {
-	if v, ok := KbfsOnlineStatusRevMap[e]; ok {
+func (o KbfsOnlineStatus) String() string {
+	if v, ok := KbfsOnlineStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type FSSettings struct {
@@ -1384,11 +1384,11 @@ var SubscriptionTopicRevMap = map[SubscriptionTopic]string{
 	7: "UPLOAD_STATUS",
 }
 
-func (e SubscriptionTopic) String() string {
-	if v, ok := SubscriptionTopicRevMap[e]; ok {
+func (o SubscriptionTopic) String() string {
+	if v, ok := SubscriptionTopicRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type PathSubscriptionTopic int
@@ -1410,11 +1410,11 @@ var PathSubscriptionTopicRevMap = map[PathSubscriptionTopic]string{
 	1: "STAT",
 }
 
-func (e PathSubscriptionTopic) String() string {
-	if v, ok := PathSubscriptionTopicRevMap[e]; ok {
+func (o PathSubscriptionTopic) String() string {
+	if v, ok := PathSubscriptionTopicRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type DownloadInfo struct {
@@ -1536,11 +1536,11 @@ var FilesTabBadgeRevMap = map[FilesTabBadge]string{
 	3: "UPLOADING",
 }
 
-func (e FilesTabBadge) String() string {
-	if v, ok := FilesTabBadgeRevMap[e]; ok {
+func (o FilesTabBadge) String() string {
+	if v, ok := FilesTabBadgeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type GUIViewType int
@@ -1574,11 +1574,11 @@ var GUIViewTypeRevMap = map[GUIViewType]string{
 	5: "PDF",
 }
 
-func (e GUIViewType) String() string {
-	if v, ok := GUIViewTypeRevMap[e]; ok {
+func (o GUIViewType) String() string {
+	if v, ok := GUIViewTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type GUIFileContext struct {
@@ -1664,5 +1664,463 @@ func (o SimpleFSIndexProgress) DeepCopy() SimpleFSIndexProgress {
 			}
 			return ret
 		})(o.FoldersLeft),
+	}
+}
+
+type ArchiveJobStartPathType int
+
+const (
+	ArchiveJobStartPathType_KBFS ArchiveJobStartPathType = 0
+	ArchiveJobStartPathType_GIT  ArchiveJobStartPathType = 1
+)
+
+func (o ArchiveJobStartPathType) DeepCopy() ArchiveJobStartPathType { return o }
+
+var ArchiveJobStartPathTypeMap = map[string]ArchiveJobStartPathType{
+	"KBFS": 0,
+	"GIT":  1,
+}
+
+var ArchiveJobStartPathTypeRevMap = map[ArchiveJobStartPathType]string{
+	0: "KBFS",
+	1: "GIT",
+}
+
+func (o ArchiveJobStartPathType) String() string {
+	if v, ok := ArchiveJobStartPathTypeRevMap[o]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(o))
+}
+
+type ArchiveJobStartPath struct {
+	ArchiveJobStartPathType__ ArchiveJobStartPathType `codec:"archiveJobStartPathType" json:"archiveJobStartPathType"`
+	Kbfs__                    *KBFSPath               `codec:"kbfs,omitempty" json:"kbfs,omitempty"`
+	Git__                     *string                 `codec:"git,omitempty" json:"git,omitempty"`
+}
+
+func (o *ArchiveJobStartPath) ArchiveJobStartPathType() (ret ArchiveJobStartPathType, err error) {
+	switch o.ArchiveJobStartPathType__ {
+	case ArchiveJobStartPathType_KBFS:
+		if o.Kbfs__ == nil {
+			err = errors.New("unexpected nil value for Kbfs__")
+			return ret, err
+		}
+	case ArchiveJobStartPathType_GIT:
+		if o.Git__ == nil {
+			err = errors.New("unexpected nil value for Git__")
+			return ret, err
+		}
+	}
+	return o.ArchiveJobStartPathType__, nil
+}
+
+func (o ArchiveJobStartPath) Kbfs() (res KBFSPath) {
+	if o.ArchiveJobStartPathType__ != ArchiveJobStartPathType_KBFS {
+		panic("wrong case accessed")
+	}
+	if o.Kbfs__ == nil {
+		return
+	}
+	return *o.Kbfs__
+}
+
+func (o ArchiveJobStartPath) Git() (res string) {
+	if o.ArchiveJobStartPathType__ != ArchiveJobStartPathType_GIT {
+		panic("wrong case accessed")
+	}
+	if o.Git__ == nil {
+		return
+	}
+	return *o.Git__
+}
+
+func NewArchiveJobStartPathWithKbfs(v KBFSPath) ArchiveJobStartPath {
+	return ArchiveJobStartPath{
+		ArchiveJobStartPathType__: ArchiveJobStartPathType_KBFS,
+		Kbfs__:                    &v,
+	}
+}
+
+func NewArchiveJobStartPathWithGit(v string) ArchiveJobStartPath {
+	return ArchiveJobStartPath{
+		ArchiveJobStartPathType__: ArchiveJobStartPathType_GIT,
+		Git__:                     &v,
+	}
+}
+
+func (o ArchiveJobStartPath) DeepCopy() ArchiveJobStartPath {
+	return ArchiveJobStartPath{
+		ArchiveJobStartPathType__: o.ArchiveJobStartPathType__.DeepCopy(),
+		Kbfs__: (func(x *KBFSPath) *KBFSPath {
+			if x == nil {
+				return nil
+			}
+			tmp := x.DeepCopy()
+			return &tmp
+		})(o.Kbfs__),
+		Git__: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.Git__),
+	}
+}
+
+type SimpleFSArchiveJobDesc struct {
+	JobID                string           `codec:"jobID" json:"jobID"`
+	KbfsPathWithRevision KBFSArchivedPath `codec:"kbfsPathWithRevision" json:"kbfsPathWithRevision"`
+	GitRepo              *string          `codec:"gitRepo,omitempty" json:"gitRepo,omitempty"`
+	OverwriteZip         bool             `codec:"overwriteZip" json:"overwriteZip"`
+	StartTime            Time             `codec:"startTime" json:"startTime"`
+	StagingPath          string           `codec:"stagingPath" json:"stagingPath"`
+	TargetName           string           `codec:"targetName" json:"targetName"`
+	ZipFilePath          string           `codec:"zipFilePath" json:"zipFilePath"`
+}
+
+func (o SimpleFSArchiveJobDesc) DeepCopy() SimpleFSArchiveJobDesc {
+	return SimpleFSArchiveJobDesc{
+		JobID:                o.JobID,
+		KbfsPathWithRevision: o.KbfsPathWithRevision.DeepCopy(),
+		GitRepo: (func(x *string) *string {
+			if x == nil {
+				return nil
+			}
+			tmp := (*x)
+			return &tmp
+		})(o.GitRepo),
+		OverwriteZip: o.OverwriteZip,
+		StartTime:    o.StartTime.DeepCopy(),
+		StagingPath:  o.StagingPath,
+		TargetName:   o.TargetName,
+		ZipFilePath:  o.ZipFilePath,
+	}
+}
+
+type SimpleFSFileArchiveState int
+
+const (
+	SimpleFSFileArchiveState_ToDo       SimpleFSFileArchiveState = 0
+	SimpleFSFileArchiveState_InProgress SimpleFSFileArchiveState = 1
+	SimpleFSFileArchiveState_Complete   SimpleFSFileArchiveState = 2
+	SimpleFSFileArchiveState_Skipped    SimpleFSFileArchiveState = 3
+)
+
+func (o SimpleFSFileArchiveState) DeepCopy() SimpleFSFileArchiveState { return o }
+
+var SimpleFSFileArchiveStateMap = map[string]SimpleFSFileArchiveState{
+	"ToDo":       0,
+	"InProgress": 1,
+	"Complete":   2,
+	"Skipped":    3,
+}
+
+var SimpleFSFileArchiveStateRevMap = map[SimpleFSFileArchiveState]string{
+	0: "ToDo",
+	1: "InProgress",
+	2: "Complete",
+	3: "Skipped",
+}
+
+func (o SimpleFSFileArchiveState) String() string {
+	if v, ok := SimpleFSFileArchiveStateRevMap[o]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(o))
+}
+
+type SimpleFSArchiveFile struct {
+	State        SimpleFSFileArchiveState `codec:"state" json:"state"`
+	DirentType   DirentType               `codec:"direntType" json:"direntType"`
+	Sha256SumHex string                   `codec:"sha256SumHex" json:"sha256SumHex"`
+}
+
+func (o SimpleFSArchiveFile) DeepCopy() SimpleFSArchiveFile {
+	return SimpleFSArchiveFile{
+		State:        o.State.DeepCopy(),
+		DirentType:   o.DirentType.DeepCopy(),
+		Sha256SumHex: o.Sha256SumHex,
+	}
+}
+
+type SimpleFSArchiveJobState struct {
+	Desc        SimpleFSArchiveJobDesc         `codec:"desc" json:"desc"`
+	Manifest    map[string]SimpleFSArchiveFile `codec:"manifest" json:"manifest"`
+	Phase       SimpleFSArchiveJobPhase        `codec:"phase" json:"phase"`
+	BytesTotal  int64                          `codec:"bytesTotal" json:"bytesTotal"`
+	BytesCopied int64                          `codec:"bytesCopied" json:"bytesCopied"`
+	BytesZipped int64                          `codec:"bytesZipped" json:"bytesZipped"`
+}
+
+func (o SimpleFSArchiveJobState) DeepCopy() SimpleFSArchiveJobState {
+	return SimpleFSArchiveJobState{
+		Desc: o.Desc.DeepCopy(),
+		Manifest: (func(x map[string]SimpleFSArchiveFile) map[string]SimpleFSArchiveFile {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string]SimpleFSArchiveFile, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := v.DeepCopy()
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.Manifest),
+		Phase:       o.Phase.DeepCopy(),
+		BytesTotal:  o.BytesTotal,
+		BytesCopied: o.BytesCopied,
+		BytesZipped: o.BytesZipped,
+	}
+}
+
+type SimpleFSArchiveJobPhase int
+
+const (
+	SimpleFSArchiveJobPhase_Queued   SimpleFSArchiveJobPhase = 0
+	SimpleFSArchiveJobPhase_Indexing SimpleFSArchiveJobPhase = 1
+	SimpleFSArchiveJobPhase_Indexed  SimpleFSArchiveJobPhase = 2
+	SimpleFSArchiveJobPhase_Copying  SimpleFSArchiveJobPhase = 3
+	SimpleFSArchiveJobPhase_Copied   SimpleFSArchiveJobPhase = 4
+	SimpleFSArchiveJobPhase_Zipping  SimpleFSArchiveJobPhase = 5
+	SimpleFSArchiveJobPhase_Done     SimpleFSArchiveJobPhase = 6
+)
+
+func (o SimpleFSArchiveJobPhase) DeepCopy() SimpleFSArchiveJobPhase { return o }
+
+var SimpleFSArchiveJobPhaseMap = map[string]SimpleFSArchiveJobPhase{
+	"Queued":   0,
+	"Indexing": 1,
+	"Indexed":  2,
+	"Copying":  3,
+	"Copied":   4,
+	"Zipping":  5,
+	"Done":     6,
+}
+
+var SimpleFSArchiveJobPhaseRevMap = map[SimpleFSArchiveJobPhase]string{
+	0: "Queued",
+	1: "Indexing",
+	2: "Indexed",
+	3: "Copying",
+	4: "Copied",
+	5: "Zipping",
+	6: "Done",
+}
+
+func (o SimpleFSArchiveJobPhase) String() string {
+	if v, ok := SimpleFSArchiveJobPhaseRevMap[o]; ok {
+		return v
+	}
+	return fmt.Sprintf("%v", int(o))
+}
+
+type SimpleFSArchiveState struct {
+	Jobs        map[string]SimpleFSArchiveJobState `codec:"jobs" json:"jobs"`
+	LastUpdated Time                               `codec:"lastUpdated" json:"lastUpdated"`
+}
+
+func (o SimpleFSArchiveState) DeepCopy() SimpleFSArchiveState {
+	return SimpleFSArchiveState{
+		Jobs: (func(x map[string]SimpleFSArchiveJobState) map[string]SimpleFSArchiveJobState {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string]SimpleFSArchiveJobState, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := v.DeepCopy()
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.Jobs),
+		LastUpdated: o.LastUpdated.DeepCopy(),
+	}
+}
+
+type SimpleFSArchiveJobErrorState struct {
+	Error     string `codec:"error" json:"error"`
+	NextRetry Time   `codec:"nextRetry" json:"nextRetry"`
+}
+
+func (o SimpleFSArchiveJobErrorState) DeepCopy() SimpleFSArchiveJobErrorState {
+	return SimpleFSArchiveJobErrorState{
+		Error:     o.Error,
+		NextRetry: o.NextRetry.DeepCopy(),
+	}
+}
+
+type SimpleFSArchiveJobStatus struct {
+	Desc            SimpleFSArchiveJobDesc        `codec:"desc" json:"desc"`
+	Phase           SimpleFSArchiveJobPhase       `codec:"phase" json:"phase"`
+	TodoCount       int                           `codec:"todoCount" json:"todoCount"`
+	InProgressCount int                           `codec:"inProgressCount" json:"inProgressCount"`
+	CompleteCount   int                           `codec:"completeCount" json:"completeCount"`
+	SkippedCount    int                           `codec:"skippedCount" json:"skippedCount"`
+	TotalCount      int                           `codec:"totalCount" json:"totalCount"`
+	BytesTotal      int64                         `codec:"bytesTotal" json:"bytesTotal"`
+	BytesCopied     int64                         `codec:"bytesCopied" json:"bytesCopied"`
+	BytesZipped     int64                         `codec:"bytesZipped" json:"bytesZipped"`
+	Error           *SimpleFSArchiveJobErrorState `codec:"error,omitempty" json:"error,omitempty"`
+}
+
+func (o SimpleFSArchiveJobStatus) DeepCopy() SimpleFSArchiveJobStatus {
+	return SimpleFSArchiveJobStatus{
+		Desc:            o.Desc.DeepCopy(),
+		Phase:           o.Phase.DeepCopy(),
+		TodoCount:       o.TodoCount,
+		InProgressCount: o.InProgressCount,
+		CompleteCount:   o.CompleteCount,
+		SkippedCount:    o.SkippedCount,
+		TotalCount:      o.TotalCount,
+		BytesTotal:      o.BytesTotal,
+		BytesCopied:     o.BytesCopied,
+		BytesZipped:     o.BytesZipped,
+		Error: (func(x *SimpleFSArchiveJobErrorState) *SimpleFSArchiveJobErrorState {
+			if x == nil {
+				return nil
+			}
+			tmp := x.DeepCopy()
+			return &tmp
+		})(o.Error),
+	}
+}
+
+type SimpleFSArchiveStatus struct {
+	Jobs        []SimpleFSArchiveJobStatus `codec:"jobs" json:"jobs"`
+	LastUpdated Time                       `codec:"lastUpdated" json:"lastUpdated"`
+}
+
+func (o SimpleFSArchiveStatus) DeepCopy() SimpleFSArchiveStatus {
+	return SimpleFSArchiveStatus{
+		Jobs: (func(x []SimpleFSArchiveJobStatus) []SimpleFSArchiveJobStatus {
+			if x == nil {
+				return nil
+			}
+			ret := make([]SimpleFSArchiveJobStatus, len(x))
+			for i, v := range x {
+				vCopy := v.DeepCopy()
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.Jobs),
+		LastUpdated: o.LastUpdated.DeepCopy(),
+	}
+}
+
+type SimpleFSArchiveJobFreshness struct {
+	CurrentTLFRevision KBFSRevision `codec:"currentTLFRevision" json:"currentTLFRevision"`
+}
+
+func (o SimpleFSArchiveJobFreshness) DeepCopy() SimpleFSArchiveJobFreshness {
+	return SimpleFSArchiveJobFreshness{
+		CurrentTLFRevision: o.CurrentTLFRevision.DeepCopy(),
+	}
+}
+
+type SimpleFSArchiveCheckArchiveResult struct {
+	Desc               SimpleFSArchiveJobDesc `codec:"desc" json:"desc"`
+	CurrentTLFRevision KBFSRevision           `codec:"currentTLFRevision" json:"currentTLFRevision"`
+	PathsWithIssues    map[string]string      `codec:"pathsWithIssues" json:"pathsWithIssues"`
+}
+
+func (o SimpleFSArchiveCheckArchiveResult) DeepCopy() SimpleFSArchiveCheckArchiveResult {
+	return SimpleFSArchiveCheckArchiveResult{
+		Desc:               o.Desc.DeepCopy(),
+		CurrentTLFRevision: o.CurrentTLFRevision.DeepCopy(),
+		PathsWithIssues: (func(x map[string]string) map[string]string {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string]string, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := v
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.PathsWithIssues),
+	}
+}
+
+type SimpleFSArchiveAllFilesResult struct {
+	TlfPathToJobDesc map[string]SimpleFSArchiveJobDesc `codec:"tlfPathToJobDesc" json:"tlfPathToJobDesc"`
+	TlfPathToError   map[string]string                 `codec:"tlfPathToError" json:"tlfPathToError"`
+	SkippedTLFPaths  []string                          `codec:"skippedTLFPaths" json:"skippedTLFPaths"`
+}
+
+func (o SimpleFSArchiveAllFilesResult) DeepCopy() SimpleFSArchiveAllFilesResult {
+	return SimpleFSArchiveAllFilesResult{
+		TlfPathToJobDesc: (func(x map[string]SimpleFSArchiveJobDesc) map[string]SimpleFSArchiveJobDesc {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string]SimpleFSArchiveJobDesc, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := v.DeepCopy()
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.TlfPathToJobDesc),
+		TlfPathToError: (func(x map[string]string) map[string]string {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string]string, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := v
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.TlfPathToError),
+		SkippedTLFPaths: (func(x []string) []string {
+			if x == nil {
+				return nil
+			}
+			ret := make([]string, len(x))
+			for i, v := range x {
+				vCopy := v
+				ret[i] = vCopy
+			}
+			return ret
+		})(o.SkippedTLFPaths),
+	}
+}
+
+type SimpleFSArchiveAllGitReposResult struct {
+	GitRepoToJobDesc map[string]SimpleFSArchiveJobDesc `codec:"gitRepoToJobDesc" json:"gitRepoToJobDesc"`
+	GitRepoToError   map[string]string                 `codec:"gitRepoToError" json:"gitRepoToError"`
+}
+
+func (o SimpleFSArchiveAllGitReposResult) DeepCopy() SimpleFSArchiveAllGitReposResult {
+	return SimpleFSArchiveAllGitReposResult{
+		GitRepoToJobDesc: (func(x map[string]SimpleFSArchiveJobDesc) map[string]SimpleFSArchiveJobDesc {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string]SimpleFSArchiveJobDesc, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := v.DeepCopy()
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.GitRepoToJobDesc),
+		GitRepoToError: (func(x map[string]string) map[string]string {
+			if x == nil {
+				return nil
+			}
+			ret := make(map[string]string, len(x))
+			for k, v := range x {
+				kCopy := k
+				vCopy := v
+				ret[kCopy] = vCopy
+			}
+			return ret
+		})(o.GitRepoToError),
 	}
 }

@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/usersearch.avdl
 
 package keybase1
@@ -126,28 +126,28 @@ func (o APIUserSearchResult) DeepCopy() APIUserSearchResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Keybase),
 		Service: (func(x *APIUserServiceResult) *APIUserServiceResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Service),
 		Contact: (func(x *ProcessedContact) *ProcessedContact {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Contact),
 		Imptofu: (func(x *ImpTofuSearchResult) *ImpTofuSearchResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Imptofu),
 		ServicesSummary: (func(x map[APIUserServiceID]APIUserServiceSummary) map[APIUserServiceID]APIUserServiceSummary {
@@ -189,14 +189,14 @@ func (o NonUserDetails) DeepCopy() NonUserDetails {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Contact),
 		Service: (func(x *APIUserServiceResult) *APIUserServiceResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Service),
 		SiteIcon: (func(x []SizedImage) []SizedImage {

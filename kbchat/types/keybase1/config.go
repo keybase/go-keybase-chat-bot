@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/config.avdl
 
 package keybase1
@@ -27,7 +27,7 @@ func (o CurrentStatus) DeepCopy() CurrentStatus {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.User),
 		DeviceName: o.DeviceName,
@@ -182,14 +182,14 @@ func (o ExtendedStatus) DeepCopy() ExtendedStatus {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Device),
 		DeviceErr: (func(x *LoadDeviceErr) *LoadDeviceErr {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.DeviceErr),
 		LogDir: o.LogDir,
@@ -197,7 +197,7 @@ func (o ExtendedStatus) DeepCopy() ExtendedStatus {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Session),
 		DefaultUsername: o.DefaultUsername,
@@ -503,11 +503,11 @@ var ForkTypeRevMap = map[ForkType]string{
 	4: "SYSTEMD",
 }
 
-func (e ForkType) String() string {
-	if v, ok := ForkTypeRevMap[e]; ok {
+func (o ForkType) String() string {
+	if v, ok := ForkTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type Config struct {
@@ -634,11 +634,11 @@ var UpdateInfoStatusRevMap = map[UpdateInfoStatus]string{
 	2: "CRITICALLY_OUT_OF_DATE",
 }
 
-func (e UpdateInfoStatus) String() string {
-	if v, ok := UpdateInfoStatusRevMap[e]; ok {
+func (o UpdateInfoStatus) String() string {
+	if v, ok := UpdateInfoStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UpdateInfo struct {
@@ -679,7 +679,7 @@ func (o BootstrapStatus) DeepCopy() BootstrapStatus {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.HttpSrvInfo),
 	}
@@ -707,11 +707,11 @@ var UpdateInfoStatus2RevMap = map[UpdateInfoStatus2]string{
 	2: "CRITICAL",
 }
 
-func (e UpdateInfoStatus2) String() string {
-	if v, ok := UpdateInfoStatus2RevMap[e]; ok {
+func (o UpdateInfoStatus2) String() string {
+	if v, ok := UpdateInfoStatus2RevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UpdateDetails struct {
@@ -793,14 +793,14 @@ func (o UpdateInfo2) DeepCopy() UpdateInfo2 {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Suggested__),
 		Critical__: (func(x *UpdateDetails) *UpdateDetails {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Critical__),
 	}
@@ -828,11 +828,11 @@ var ProxyTypeRevMap = map[ProxyType]string{
 	2: "Socks",
 }
 
-func (e ProxyType) String() string {
-	if v, ok := ProxyTypeRevMap[e]; ok {
+func (o ProxyType) String() string {
+	if v, ok := ProxyTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ProxyData struct {

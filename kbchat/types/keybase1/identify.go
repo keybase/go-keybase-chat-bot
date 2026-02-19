@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/identify.avdl
 
 package keybase1
@@ -61,7 +61,7 @@ func (o Identify2Res) DeepCopy() Identify2Res {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TrackBreaks),
 	}
@@ -81,7 +81,7 @@ func (o Identify2ResUPK2) DeepCopy() Identify2ResUPK2 {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TrackBreaks),
 	}
@@ -99,7 +99,7 @@ func (o IdentifyLiteRes) DeepCopy() IdentifyLiteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TrackBreaks),
 	}

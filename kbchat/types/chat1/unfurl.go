@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/chat1/unfurl.avdl
 
 package chat1
@@ -35,11 +35,11 @@ var UnfurlTypeRevMap = map[UnfurlType]string{
 	3: "MAPS",
 }
 
-func (e UnfurlType) String() string {
-	if v, ok := UnfurlTypeRevMap[e]; ok {
+func (o UnfurlType) String() string {
+	if v, ok := UnfurlTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UnfurlVideo struct {
@@ -92,7 +92,7 @@ func (o UnfurlGenericRaw) DeepCopy() UnfurlGenericRaw {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Video),
 		PublishTime: (func(x *int) *int {
@@ -138,7 +138,7 @@ func (o UnfurlGiphyRaw) DeepCopy() UnfurlGiphyRaw {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Video),
 		FaviconUrl: (func(x *string) *string {
@@ -184,7 +184,7 @@ func (o UnfurlMapsRaw) DeepCopy() UnfurlMapsRaw {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.LiveLocationEndTime),
 		LiveLocationDone: o.LiveLocationDone,
@@ -300,28 +300,28 @@ func (o UnfurlRaw) DeepCopy() UnfurlRaw {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Generic__),
 		Youtube__: (func(x *UnfurlYoutubeRaw) *UnfurlYoutubeRaw {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Youtube__),
 		Giphy__: (func(x *UnfurlGiphyRaw) *UnfurlGiphyRaw {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Giphy__),
 		Maps__: (func(x *UnfurlMapsRaw) *UnfurlMapsRaw {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Maps__),
 	}
@@ -342,7 +342,7 @@ func (o UnfurlGenericMapInfo) DeepCopy() UnfurlGenericMapInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.LiveLocationEndTime),
 		IsLiveLocationDone: o.IsLiveLocationDone,
@@ -369,14 +369,14 @@ func (o UnfurlGeneric) DeepCopy() UnfurlGeneric {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Favicon),
 		Image: (func(x *Asset) *Asset {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Image),
 		PublishTime: (func(x *int) *int {
@@ -397,7 +397,7 @@ func (o UnfurlGeneric) DeepCopy() UnfurlGeneric {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MapInfo),
 	}
@@ -422,21 +422,21 @@ func (o UnfurlGiphy) DeepCopy() UnfurlGiphy {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Favicon),
 		Image: (func(x *Asset) *Asset {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Image),
 		Video: (func(x *Asset) *Asset {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Video),
 	}
@@ -528,21 +528,21 @@ func (o Unfurl) DeepCopy() Unfurl {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Generic__),
 		Youtube__: (func(x *UnfurlYoutube) *UnfurlYoutube {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Youtube__),
 		Giphy__: (func(x *UnfurlGiphy) *UnfurlGiphy {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Giphy__),
 	}
@@ -596,14 +596,14 @@ func (o UnfurlGenericDisplay) DeepCopy() UnfurlGenericDisplay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Favicon),
 		Media: (func(x *UnfurlImageDisplay) *UnfurlImageDisplay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Media),
 		PublishTime: (func(x *int) *int {
@@ -624,7 +624,7 @@ func (o UnfurlGenericDisplay) DeepCopy() UnfurlGenericDisplay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MapInfo),
 	}
@@ -649,21 +649,21 @@ func (o UnfurlGiphyDisplay) DeepCopy() UnfurlGiphyDisplay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Favicon),
 		Image: (func(x *UnfurlImageDisplay) *UnfurlImageDisplay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Image),
 		Video: (func(x *UnfurlImageDisplay) *UnfurlImageDisplay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Video),
 	}
@@ -755,21 +755,21 @@ func (o UnfurlDisplay) DeepCopy() UnfurlDisplay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Generic__),
 		Youtube__: (func(x *UnfurlYoutubeDisplay) *UnfurlYoutubeDisplay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Youtube__),
 		Giphy__: (func(x *UnfurlGiphyDisplay) *UnfurlGiphyDisplay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Giphy__),
 	}
@@ -797,11 +797,11 @@ var UnfurlModeRevMap = map[UnfurlMode]string{
 	2: "WHITELISTED",
 }
 
-func (e UnfurlMode) String() string {
-	if v, ok := UnfurlModeRevMap[e]; ok {
+func (o UnfurlMode) String() string {
+	if v, ok := UnfurlModeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UnfurlSettings struct {

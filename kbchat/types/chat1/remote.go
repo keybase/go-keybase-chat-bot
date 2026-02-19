@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/chat1/remote.avdl
 
 package chat1
@@ -28,7 +28,7 @@ func (o MessageBoxed) DeepCopy() MessageBoxed {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ServerHeader),
 		ClientHeader:     o.ClientHeader.DeepCopy(),
@@ -72,11 +72,11 @@ var MessageBoxedVersionRevMap = map[MessageBoxedVersion]string{
 	4: "V4",
 }
 
-func (e MessageBoxedVersion) String() string {
-	if v, ok := MessageBoxedVersionRevMap[e]; ok {
+func (o MessageBoxedVersion) String() string {
+	if v, ok := MessageBoxedVersionRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ThreadViewBoxed struct {
@@ -101,7 +101,7 @@ func (o ThreadViewBoxed) DeepCopy() ThreadViewBoxed {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Pagination),
 	}
@@ -119,7 +119,7 @@ func (o GetInboxRemoteRes) DeepCopy() GetInboxRemoteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -147,7 +147,7 @@ func (o GetInboxByTLFIDRemoteRes) DeepCopy() GetInboxByTLFIDRemoteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -169,7 +169,7 @@ func (o GetThreadRemoteRes) DeepCopy() GetThreadRemoteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -187,7 +187,7 @@ func (o GetConversationMetadataRemoteRes) DeepCopy() GetConversationMetadataRemo
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -205,7 +205,7 @@ func (o PostRemoteRes) DeepCopy() PostRemoteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -225,7 +225,7 @@ func (o NewConversationRemoteRes) DeepCopy() NewConversationRemoteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -257,7 +257,7 @@ func (o GetMessagesRemoteRes) DeepCopy() GetMessagesRemoteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -273,7 +273,7 @@ func (o MarkAsReadRes) DeepCopy() MarkAsReadRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -289,7 +289,7 @@ func (o SetConversationStatusRes) DeepCopy() SetConversationStatusRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -317,7 +317,7 @@ func (o GetPublicConversationsRes) DeepCopy() GetPublicConversationsRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -334,14 +334,14 @@ func (o GetUnreadlineRemoteRes) DeepCopy() GetUnreadlineRemoteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.UnreadlineID),
 		RateLimit: (func(x *RateLimit) *RateLimit {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -369,11 +369,11 @@ var ChannelMentionRevMap = map[ChannelMention]string{
 	2: "HERE",
 }
 
-func (e ChannelMention) String() string {
-	if v, ok := ChannelMentionRevMap[e]; ok {
+func (o ChannelMention) String() string {
+	if v, ok := ChannelMentionRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UnreadUpdateFull struct {
@@ -410,6 +410,7 @@ type S3Params struct {
 	RegionName           string `codec:"regionName" json:"regionName"`
 	RegionEndpoint       string `codec:"regionEndpoint" json:"regionEndpoint"`
 	RegionBucketEndpoint string `codec:"regionBucketEndpoint" json:"regionBucketEndpoint"`
+	Token                string `codec:"token" json:"token"`
 }
 
 func (o S3Params) DeepCopy() S3Params {
@@ -421,6 +422,7 @@ func (o S3Params) DeepCopy() S3Params {
 		RegionName:           o.RegionName,
 		RegionEndpoint:       o.RegionEndpoint,
 		RegionBucketEndpoint: o.RegionBucketEndpoint,
+		Token:                o.Token,
 	}
 }
 
@@ -510,7 +512,7 @@ func (o SyncInboxRes) DeepCopy() SyncInboxRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Incremental__),
 	}
@@ -547,11 +549,11 @@ var SyncAllProtVersRevMap = map[SyncAllProtVers]string{
 	1: "V1",
 }
 
-func (e SyncAllProtVers) String() string {
-	if v, ok := SyncAllProtVersRevMap[e]; ok {
+func (o SyncAllProtVers) String() string {
+	if v, ok := SyncAllProtVersRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type SyncAllNotificationType int
@@ -573,11 +575,11 @@ var SyncAllNotificationTypeRevMap = map[SyncAllNotificationType]string{
 	1: "INCREMENTAL",
 }
 
-func (e SyncAllNotificationType) String() string {
-	if v, ok := SyncAllNotificationTypeRevMap[e]; ok {
+func (o SyncAllNotificationType) String() string {
+	if v, ok := SyncAllNotificationTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type SyncAllNotificationRes struct {
@@ -643,14 +645,14 @@ func (o SyncAllNotificationRes) DeepCopy() SyncAllNotificationRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.State__),
 		Incremental__: (func(x *gregor1.SyncResult) *gregor1.SyncResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Incremental__),
 	}
@@ -682,7 +684,7 @@ func (o JoinLeaveConversationRemoteRes) DeepCopy() JoinLeaveConversationRemoteRe
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -698,7 +700,7 @@ func (o DeleteConversationRemoteRes) DeepCopy() DeleteConversationRemoteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -714,7 +716,7 @@ func (o RemoveFromConversationRemoteRes) DeepCopy() RemoveFromConversationRemote
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -732,7 +734,7 @@ func (o GetMessageBeforeRes) DeepCopy() GetMessageBeforeRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -760,7 +762,7 @@ func (o GetTLFConversationsRes) DeepCopy() GetTLFConversationsRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -776,7 +778,7 @@ func (o SetAppNotificationSettingsRes) DeepCopy() SetAppNotificationSettingsRes 
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -792,7 +794,7 @@ func (o SetRetentionRes) DeepCopy() SetRetentionRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -808,7 +810,7 @@ func (o SetConvMinWriterRoleRes) DeepCopy() SetConvMinWriterRoleRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -839,7 +841,7 @@ func (o ServerNowRes) DeepCopy() ServerNowRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 		Now: o.Now.DeepCopy(),
@@ -865,11 +867,11 @@ var ExternalAPIKeyTypRevMap = map[ExternalAPIKeyTyp]string{
 	1: "GIPHY",
 }
 
-func (e ExternalAPIKeyTyp) String() string {
-	if v, ok := ExternalAPIKeyTypRevMap[e]; ok {
+func (o ExternalAPIKeyTyp) String() string {
+	if v, ok := ExternalAPIKeyTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ExternalAPIKey struct {
@@ -1103,28 +1105,28 @@ func (o RemoteBotCommandsAdvertisement) DeepCopy() RemoteBotCommandsAdvertisemen
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Public__),
 		TlfidMembers__: (func(x *RemoteBotCommandsAdvertisementTLFID) *RemoteBotCommandsAdvertisementTLFID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TlfidMembers__),
 		TlfidConvs__: (func(x *RemoteBotCommandsAdvertisementTLFID) *RemoteBotCommandsAdvertisementTLFID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TlfidConvs__),
 		Conv__: (func(x *RemoteBotCommandsAdvertisementConv) *RemoteBotCommandsAdvertisementConv {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Conv__),
 	}
@@ -1184,7 +1186,7 @@ func (o AdvertiseBotCommandsRes) DeepCopy() AdvertiseBotCommandsRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -1326,28 +1328,28 @@ func (o RemoteClearBotCommandsFilter) DeepCopy() RemoteClearBotCommandsFilter {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Public__),
 		TlfidMembers__: (func(x *RemoteClearBotCommandsFilterTLFID) *RemoteClearBotCommandsFilterTLFID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TlfidMembers__),
 		TlfidConvs__: (func(x *RemoteClearBotCommandsFilterTLFID) *RemoteClearBotCommandsFilterTLFID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TlfidConvs__),
 		Conv__: (func(x *RemoteClearBotCommandsFilterConv) *RemoteClearBotCommandsFilterConv {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Conv__),
 	}
@@ -1363,7 +1365,7 @@ func (o ClearBotCommandsRes) DeepCopy() ClearBotCommandsRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -1388,11 +1390,11 @@ var BotInfoResponseTypRevMap = map[BotInfoResponseTyp]string{
 	1: "INFO",
 }
 
-func (e BotInfoResponseTyp) String() string {
-	if v, ok := BotInfoResponseTypRevMap[e]; ok {
+func (o BotInfoResponseTyp) String() string {
+	if v, ok := BotInfoResponseTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type BotInfoResponse struct {
@@ -1441,7 +1443,7 @@ func (o BotInfoResponse) DeepCopy() BotInfoResponse {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Info__),
 	}
@@ -1459,7 +1461,7 @@ func (o GetBotInfoRes) DeepCopy() GetBotInfoRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -1498,7 +1500,7 @@ func (o GetDefaultTeamChannelsRes) DeepCopy() GetDefaultTeamChannelsRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -1514,7 +1516,7 @@ func (o SetDefaultTeamChannelsRes) DeepCopy() SetDefaultTeamChannelsRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -1532,7 +1534,7 @@ func (o GetRecentJoinsRes) DeepCopy() GetRecentJoinsRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -1564,7 +1566,7 @@ func (o RefreshParticipantsRemoteRes) DeepCopy() RefreshParticipantsRemoteRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -1582,7 +1584,7 @@ func (o GetLastActiveAtRes) DeepCopy() GetLastActiveAtRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}
@@ -1622,7 +1624,7 @@ func (o GetResetConversationsRes) DeepCopy() GetResetConversationsRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RateLimit),
 	}

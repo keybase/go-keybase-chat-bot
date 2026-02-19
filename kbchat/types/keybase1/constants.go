@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/constants.avdl
 
 package keybase1
@@ -758,9 +758,9 @@ var StatusCodeRevMap = map[StatusCode]string{
 	5104: "SCSimpleFSNoAccess",
 }
 
-func (e StatusCode) String() string {
-	if v, ok := StatusCodeRevMap[e]; ok {
+func (o StatusCode) String() string {
+	if v, ok := StatusCodeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }

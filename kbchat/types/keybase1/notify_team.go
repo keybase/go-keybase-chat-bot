@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/notify_team.avdl
 
 package keybase1
@@ -45,11 +45,11 @@ var TeamChangedSourceRevMap = map[TeamChangedSource]string{
 	2: "LOCAL_RENAME",
 }
 
-func (e TeamChangedSource) String() string {
-	if v, ok := TeamChangedSourceRevMap[e]; ok {
+func (o TeamChangedSource) String() string {
+	if v, ok := TeamChangedSourceRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type AvatarUpdateType int
@@ -74,9 +74,9 @@ var AvatarUpdateTypeRevMap = map[AvatarUpdateType]string{
 	2: "TEAM",
 }
 
-func (e AvatarUpdateType) String() string {
-	if v, ok := AvatarUpdateTypeRevMap[e]; ok {
+func (o AvatarUpdateType) String() string {
+	if v, ok := AvatarUpdateTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }

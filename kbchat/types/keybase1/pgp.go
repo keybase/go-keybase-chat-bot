@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/pgp.avdl
 
 package keybase1
@@ -29,11 +29,11 @@ var SignModeRevMap = map[SignMode]string{
 	2: "CLEAR",
 }
 
-func (e SignMode) String() string {
-	if v, ok := SignModeRevMap[e]; ok {
+func (o SignMode) String() string {
+	if v, ok := SignModeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type PGPSignOptions struct {

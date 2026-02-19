@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/stellar1/remote.avdl
 
 package stellar1
@@ -35,7 +35,7 @@ func (o PaymentDirectPost) DeepCopy() PaymentDirectPost {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.To),
 		DisplayAmount:     o.DisplayAmount,
@@ -47,7 +47,7 @@ func (o PaymentDirectPost) DeepCopy() PaymentDirectPost {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ChatConversationID),
 		BatchID: o.BatchID,
@@ -76,7 +76,7 @@ func (o PaymentRelayPost) DeepCopy() PaymentRelayPost {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.To),
 		ToAssertion:       o.ToAssertion,
@@ -91,7 +91,7 @@ func (o PaymentRelayPost) DeepCopy() PaymentRelayPost {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ChatConversationID),
 		BatchID: o.BatchID,
@@ -136,7 +136,7 @@ func (o PathPaymentPost) DeepCopy() PathPaymentPost {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.To),
 		NoteB64:           o.NoteB64,
@@ -146,7 +146,7 @@ func (o PathPaymentPost) DeepCopy() PathPaymentPost {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ChatConversationID),
 	}
@@ -190,21 +190,21 @@ func (o PaymentOp) DeepCopy() PaymentOp {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.To),
 		Direct: (func(x *DirectOp) *DirectOp {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Direct),
 		Relay: (func(x *RelayOp) *RelayOp {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Relay),
 	}
@@ -261,11 +261,11 @@ var PaymentSummaryTypeRevMap = map[PaymentSummaryType]string{
 	3: "RELAY",
 }
 
-func (e PaymentSummaryType) String() string {
-	if v, ok := PaymentSummaryTypeRevMap[e]; ok {
+func (o PaymentSummaryType) String() string {
+	if v, ok := PaymentSummaryTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type PaymentSummary struct {
@@ -354,21 +354,21 @@ func (o PaymentSummary) DeepCopy() PaymentSummary {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Stellar__),
 		Direct__: (func(x *PaymentSummaryDirect) *PaymentSummaryDirect {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Direct__),
 		Relay__: (func(x *PaymentSummaryRelay) *PaymentSummaryRelay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Relay__),
 	}
@@ -432,7 +432,7 @@ func (o PaymentSummaryStellar) DeepCopy() PaymentSummaryStellar {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Trustline),
 	}
@@ -483,7 +483,7 @@ func (o PaymentSummaryDirect) DeepCopy() PaymentSummaryDirect {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.To),
 		Amount: o.Amount,
@@ -557,7 +557,7 @@ func (o PaymentSummaryRelay) DeepCopy() PaymentSummaryRelay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.To),
 		ToAssertion:  o.ToAssertion,
@@ -585,7 +585,7 @@ func (o PaymentSummaryRelay) DeepCopy() PaymentSummaryRelay {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Claim),
 		CursorToken: o.CursorToken,
@@ -689,7 +689,7 @@ func (o AccountDetails) DeepCopy() AccountDetails {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ReadTransactionID),
 		UnreadPayments:  o.UnreadPayments,
@@ -698,7 +698,7 @@ func (o AccountDetails) DeepCopy() AccountDetails {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.InflationDestination),
 	}
@@ -727,14 +727,14 @@ func (o PaymentsPage) DeepCopy() PaymentsPage {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Cursor),
 		OldestUnread: (func(x *TransactionID) *TransactionID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.OldestUnread),
 	}
@@ -774,7 +774,7 @@ func (o RequestPost) DeepCopy() RequestPost {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ToUser),
 		ToAssertion: o.ToAssertion,
@@ -783,14 +783,14 @@ func (o RequestPost) DeepCopy() RequestPost {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Asset),
 		Currency: (func(x *OutsideCurrencyCode) *OutsideCurrencyCode {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Currency),
 	}
@@ -820,7 +820,7 @@ func (o RequestDetails) DeepCopy() RequestDetails {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ToUser),
 		ToAssertion: o.ToAssertion,
@@ -829,14 +829,14 @@ func (o RequestDetails) DeepCopy() RequestDetails {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Asset),
 		Currency: (func(x *OutsideCurrencyCode) *OutsideCurrencyCode {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Currency),
 		FromDisplayAmount:   o.FromDisplayAmount,

@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/notify_saltpack.avdl
 
 package keybase1
@@ -32,9 +32,9 @@ var SaltpackOperationTypeRevMap = map[SaltpackOperationType]string{
 	3: "VERIFY",
 }
 
-func (e SaltpackOperationType) String() string {
-	if v, ok := SaltpackOperationTypeRevMap[e]; ok {
+func (o SaltpackOperationType) String() string {
+	if v, ok := SaltpackOperationTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }

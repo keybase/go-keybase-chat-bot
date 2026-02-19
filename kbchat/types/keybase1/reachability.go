@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/reachability.avdl
 
 package keybase1
@@ -29,11 +29,11 @@ var ReachableRevMap = map[Reachable]string{
 	2: "NO",
 }
 
-func (e Reachable) String() string {
-	if v, ok := ReachableRevMap[e]; ok {
+func (o Reachable) String() string {
+	if v, ok := ReachableRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type Reachability struct {

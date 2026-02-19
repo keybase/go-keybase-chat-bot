@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/gregor_ui.avdl
 
 package keybase1
@@ -29,9 +29,9 @@ var PushReasonRevMap = map[PushReason]string{
 	2: "NEW_DATA",
 }
 
-func (e PushReason) String() string {
-	if v, ok := PushReasonRevMap[e]; ok {
+func (o PushReason) String() string {
+	if v, ok := PushReasonRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
