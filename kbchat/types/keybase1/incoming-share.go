@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/incoming-share.avdl
 
 package keybase1
@@ -32,11 +32,11 @@ var IncomingShareTypeRevMap = map[IncomingShareType]string{
 	3: "VIDEO",
 }
 
-func (e IncomingShareType) String() string {
-	if v, ok := IncomingShareTypeRevMap[e]; ok {
+func (o IncomingShareType) String() string {
+	if v, ok := IncomingShareTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type IncomingShareItem struct {
@@ -116,11 +116,11 @@ var IncomingShareCompressPreferenceRevMap = map[IncomingShareCompressPreference]
 	1: "COMPRESSED",
 }
 
-func (e IncomingShareCompressPreference) String() string {
-	if v, ok := IncomingShareCompressPreferenceRevMap[e]; ok {
+func (o IncomingShareCompressPreference) String() string {
+	if v, ok := IncomingShareCompressPreferenceRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type IncomingSharePreference struct {

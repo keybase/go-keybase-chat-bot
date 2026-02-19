@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/saltpack_ui.avdl
 
 package keybase1
@@ -44,11 +44,11 @@ var SaltpackSenderTypeRevMap = map[SaltpackSenderType]string{
 	7: "EXPIRED",
 }
 
-func (e SaltpackSenderType) String() string {
-	if v, ok := SaltpackSenderTypeRevMap[e]; ok {
+func (o SaltpackSenderType) String() string {
+	if v, ok := SaltpackSenderTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type SaltpackSender struct {

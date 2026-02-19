@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/teams.avdl
 
 package keybase1
@@ -42,11 +42,11 @@ var TeamRoleRevMap = map[TeamRole]string{
 	6: "RESTRICTEDBOT",
 }
 
-func (e TeamRole) String() string {
-	if v, ok := TeamRoleRevMap[e]; ok {
+func (o TeamRole) String() string {
+	if v, ok := TeamRoleRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamApplication int
@@ -83,11 +83,11 @@ var TeamApplicationRevMap = map[TeamApplication]string{
 	7: "KVSTORE",
 }
 
-func (e TeamApplication) String() string {
-	if v, ok := TeamApplicationRevMap[e]; ok {
+func (o TeamApplication) String() string {
+	if v, ok := TeamApplicationRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamStatus int
@@ -115,11 +115,11 @@ var TeamStatusRevMap = map[TeamStatus]string{
 	3: "ABANDONED",
 }
 
-func (e TeamStatus) String() string {
-	if v, ok := TeamStatusRevMap[e]; ok {
+func (o TeamStatus) String() string {
+	if v, ok := TeamStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type AuditMode int
@@ -147,11 +147,11 @@ var AuditModeRevMap = map[AuditMode]string{
 	3: "STANDARD_NO_HIDDEN",
 }
 
-func (e AuditMode) String() string {
-	if v, ok := AuditModeRevMap[e]; ok {
+func (o AuditMode) String() string {
+	if v, ok := AuditModeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type PerTeamKeyGeneration int
@@ -176,11 +176,11 @@ var PTKTypeRevMap = map[PTKType]string{
 	0: "READER",
 }
 
-func (e PTKType) String() string {
-	if v, ok := PTKTypeRevMap[e]; ok {
+func (o PTKType) String() string {
+	if v, ok := PTKTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type PerTeamSeedCheckVersion int
@@ -199,11 +199,11 @@ var PerTeamSeedCheckVersionRevMap = map[PerTeamSeedCheckVersion]string{
 	1: "V1",
 }
 
-func (e PerTeamSeedCheckVersion) String() string {
-	if v, ok := PerTeamSeedCheckVersionRevMap[e]; ok {
+func (o PerTeamSeedCheckVersion) String() string {
+	if v, ok := PerTeamSeedCheckVersionRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type PerTeamSeedCheck struct {
@@ -355,7 +355,7 @@ func (o PerTeamKeySeedItem) DeepCopy() PerTeamKeySeedItem {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Check),
 	}
@@ -379,7 +379,7 @@ func (o TeamMember) DeepCopy() TeamMember {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.BotSettings),
 	}
@@ -487,11 +487,11 @@ var TeamMemberStatusRevMap = map[TeamMemberStatus]string{
 	2: "DELETED",
 }
 
-func (e TeamMemberStatus) String() string {
-	if v, ok := TeamMemberStatusRevMap[e]; ok {
+func (o TeamMemberStatus) String() string {
+	if v, ok := TeamMemberStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamMemberDetails struct {
@@ -515,7 +515,7 @@ func (o TeamMemberDetails) DeepCopy() TeamMemberDetails {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.JoinTime),
 		Role: o.Role.DeepCopy(),
@@ -1080,11 +1080,11 @@ var RatchetTypeRevMap = map[RatchetType]string{
 	3: "UNCOMMITTED",
 }
 
-func (e RatchetType) String() string {
-	if v, ok := RatchetTypeRevMap[e]; ok {
+func (o RatchetType) String() string {
+	if v, ok := RatchetTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type HiddenTeamChainRatchetSet struct {
@@ -1340,7 +1340,7 @@ func (o FastTeamSigChainState) DeepCopy() FastTeamSigChainState {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Last),
 		PerTeamKeys: (func(x map[PerTeamKeyGeneration]PerTeamKey) map[PerTeamKeyGeneration]PerTeamKey {
@@ -1383,7 +1383,7 @@ func (o FastTeamSigChainState) DeepCopy() FastTeamSigChainState {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.LastUpPointer),
 		PerTeamKeyCTime: o.PerTeamKeyCTime.DeepCopy(),
@@ -1474,11 +1474,11 @@ var AuditVersionRevMap = map[AuditVersion]string{
 	4: "V4",
 }
 
-func (e AuditVersion) String() string {
-	if v, ok := AuditVersionRevMap[e]; ok {
+func (o AuditVersion) String() string {
+	if v, ok := AuditVersionRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type AuditHistory struct {
@@ -1624,11 +1624,11 @@ var TeamInviteCategoryRevMap = map[TeamInviteCategory]string{
 	7: "INVITELINK",
 }
 
-func (e TeamInviteCategory) String() string {
-	if v, ok := TeamInviteCategoryRevMap[e]; ok {
+func (o TeamInviteCategory) String() string {
+	if v, ok := TeamInviteCategoryRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamInviteType struct {
@@ -1707,7 +1707,7 @@ func (o TeamInviteType) DeepCopy() TeamInviteType {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Sbs__),
 	}
@@ -1752,14 +1752,14 @@ func (o TeamInvite) DeepCopy() TeamInvite {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MaxUses),
 		Etime: (func(x *UnixTime) *UnixTime {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Etime),
 	}
@@ -1892,14 +1892,14 @@ func (o AnnotatedTeamInviteExt) DeepCopy() AnnotatedTeamInviteExt {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Keybase__),
 		Invitelink__: (func(x *InvitelinkInviteExt) *InvitelinkInviteExt {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Invitelink__),
 	}
@@ -2024,11 +2024,11 @@ var TeamInviteMetadataStatusCodeRevMap = map[TeamInviteMetadataStatusCode]string
 	3: "COMPLETED",
 }
 
-func (e TeamInviteMetadataStatusCode) String() string {
-	if v, ok := TeamInviteMetadataStatusCodeRevMap[e]; ok {
+func (o TeamInviteMetadataStatusCode) String() string {
+	if v, ok := TeamInviteMetadataStatusCodeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamInviteMetadataStatus struct {
@@ -2106,14 +2106,14 @@ func (o TeamInviteMetadataStatus) DeepCopy() TeamInviteMetadataStatus {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Cancelled__),
 		Completed__: (func(x *TeamInviteMetadataCompleted) *TeamInviteMetadataCompleted {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Completed__),
 	}
@@ -2202,7 +2202,7 @@ func (o TeamSigChainState) DeepCopy() TeamSigChainState {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ParentID),
 		UserLog: (func(x map[UserVersion][]UserLogPoint) map[UserVersion][]UserLogPoint {
@@ -2340,7 +2340,7 @@ func (o TeamSigChainState) DeepCopy() TeamSigChainState {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.HeadMerkle),
 		MerkleRoots: (func(x map[Seqno]MerkleRootV2) map[Seqno]MerkleRootV2 {
@@ -2696,11 +2696,11 @@ var SeitanKeyAndLabelVersionRevMap = map[SeitanKeyAndLabelVersion]string{
 	3: "Invitelink",
 }
 
-func (e SeitanKeyAndLabelVersion) String() string {
-	if v, ok := SeitanKeyAndLabelVersionRevMap[e]; ok {
+func (o SeitanKeyAndLabelVersion) String() string {
+	if v, ok := SeitanKeyAndLabelVersionRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type SeitanKeyAndLabel struct {
@@ -2795,21 +2795,21 @@ func (o SeitanKeyAndLabel) DeepCopy() SeitanKeyAndLabel {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V1__),
 		V2__: (func(x *SeitanKeyAndLabelVersion2) *SeitanKeyAndLabelVersion2 {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V2__),
 		Invitelink__: (func(x *SeitanKeyAndLabelInvitelink) *SeitanKeyAndLabelInvitelink {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Invitelink__),
 	}
@@ -2870,11 +2870,11 @@ var SeitanKeyLabelTypeRevMap = map[SeitanKeyLabelType]string{
 	2: "GENERIC",
 }
 
-func (e SeitanKeyLabelType) String() string {
-	if v, ok := SeitanKeyLabelTypeRevMap[e]; ok {
+func (o SeitanKeyLabelType) String() string {
+	if v, ok := SeitanKeyLabelTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type SeitanKeyLabel struct {
@@ -2946,14 +2946,14 @@ func (o SeitanKeyLabel) DeepCopy() SeitanKeyLabel {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Sms__),
 		Generic__: (func(x *SeitanKeyLabelGeneric) *SeitanKeyLabelGeneric {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Generic__),
 	}
@@ -3182,7 +3182,7 @@ func (o FastTeamLoadArg) DeepCopy() FastTeamLoadArg {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.AssertTeamName),
 		Applications: (func(x []TeamApplication) []TeamApplication {
@@ -3272,7 +3272,7 @@ func (o MemberInfo) DeepCopy() MemberInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Implicit),
 		MemberCount:         o.MemberCount,
@@ -3335,7 +3335,7 @@ func (o AnnotatedMemberInfo) DeepCopy() AnnotatedMemberInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Implicit),
 		NeedsPUK:            o.NeedsPUK,
@@ -3380,7 +3380,7 @@ func (o TeamAddMemberResult) DeepCopy() TeamAddMemberResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.User),
 		ChatSending: o.ChatSending,
@@ -3598,7 +3598,7 @@ func (o TeamShowcase) DeepCopy() TeamShowcase {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.SetByUID),
 		AnyMemberShowcase: o.AnyMemberShowcase,
@@ -3629,7 +3629,7 @@ func (o TeamAvatar) DeepCopy() TeamAvatar {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Crop),
 	}
@@ -3659,7 +3659,7 @@ func (o TeamCreateFancyInfo) DeepCopy() TeamCreateFancyInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Avatar),
 		ChatChannels: (func(x []string) []string {
@@ -3719,7 +3719,7 @@ func (o UserRolePair) DeepCopy() UserRolePair {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.BotSettings),
 	}
@@ -3766,11 +3766,11 @@ var TeamMemberToRemoveTypeRevMap = map[TeamMemberToRemoveType]string{
 	1: "INVITEID",
 }
 
-func (e TeamMemberToRemoveType) String() string {
-	if v, ok := TeamMemberToRemoveTypeRevMap[e]; ok {
+func (o TeamMemberToRemoveType) String() string {
+	if v, ok := TeamMemberToRemoveTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamMemberToRemove struct {
@@ -3836,14 +3836,14 @@ func (o TeamMemberToRemove) DeepCopy() TeamMemberToRemove {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Assertion__),
 		Inviteid__: (func(x *InviteTeamMemberToRemove) *InviteTeamMemberToRemove {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Inviteid__),
 	}
@@ -4049,7 +4049,7 @@ func (o ImplicitTeamDisplayName) DeepCopy() ImplicitTeamDisplayName {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConflictInfo),
 	}
@@ -4181,11 +4181,11 @@ var RotationTypeRevMap = map[RotationType]string{
 	2: "CLKR",
 }
 
-func (e RotationType) String() string {
-	if v, ok := RotationTypeRevMap[e]; ok {
+func (o RotationType) String() string {
+	if v, ok := RotationTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamDebugRes struct {
@@ -4372,7 +4372,7 @@ func (o TeamTreeMembershipValue) DeepCopy() TeamTreeMembershipValue {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.JoinTime),
 		TeamID: o.TeamID.DeepCopy(),
@@ -4401,11 +4401,11 @@ var TeamTreeMembershipStatusRevMap = map[TeamTreeMembershipStatus]string{
 	2: "HIDDEN",
 }
 
-func (e TeamTreeMembershipStatus) String() string {
-	if v, ok := TeamTreeMembershipStatusRevMap[e]; ok {
+func (o TeamTreeMembershipStatus) String() string {
+	if v, ok := TeamTreeMembershipStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type TeamTreeError struct {
@@ -4491,14 +4491,14 @@ func (o TeamTreeMembershipResult) DeepCopy() TeamTreeMembershipResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Ok__),
 		Error__: (func(x *TeamTreeError) *TeamTreeError {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Error__),
 	}

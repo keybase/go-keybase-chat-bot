@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/favorite.avdl
 
 package keybase1
@@ -33,11 +33,11 @@ var FolderTypeRevMap = map[FolderType]string{
 	3: "TEAM",
 }
 
-func (e FolderType) String() string {
-	if v, ok := FolderTypeRevMap[e]; ok {
+func (o FolderType) String() string {
+	if v, ok := FolderTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type FolderConflictType int
@@ -65,11 +65,11 @@ var FolderConflictTypeRevMap = map[FolderConflictType]string{
 	3: "CLEARED_CONFLICT",
 }
 
-func (e FolderConflictType) String() string {
-	if v, ok := FolderConflictTypeRevMap[e]; ok {
+func (o FolderConflictType) String() string {
+	if v, ok := FolderConflictTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ConflictStateType int
@@ -91,11 +91,11 @@ var ConflictStateTypeRevMap = map[ConflictStateType]string{
 	2: "ManualResolvingLocalView",
 }
 
-func (e ConflictStateType) String() string {
-	if v, ok := ConflictStateTypeRevMap[e]; ok {
+func (o ConflictStateType) String() string {
+	if v, ok := ConflictStateTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type FolderNormalView struct {
@@ -195,14 +195,14 @@ func (o ConflictState) DeepCopy() ConflictState {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Normalview__),
 		Manualresolvinglocalview__: (func(x *FolderConflictManualResolvingLocalView) *FolderConflictManualResolvingLocalView {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Manualresolvinglocalview__),
 	}
@@ -233,7 +233,7 @@ func (o Folder) DeepCopy() Folder {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TeamID),
 		ResetMembers: (func(x []User) []User {
@@ -251,21 +251,21 @@ func (o Folder) DeepCopy() Folder {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Mtime),
 		ConflictState: (func(x *ConflictState) *ConflictState {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConflictState),
 		SyncConfig: (func(x *FolderSyncConfig) *FolderSyncConfig {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.SyncConfig),
 	}

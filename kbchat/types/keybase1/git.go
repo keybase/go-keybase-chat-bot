@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/git.avdl
 
 package keybase1
@@ -51,11 +51,11 @@ var GitLocalMetadataVersionRevMap = map[GitLocalMetadataVersion]string{
 	1: "V1",
 }
 
-func (e GitLocalMetadataVersion) String() string {
-	if v, ok := GitLocalMetadataVersionRevMap[e]; ok {
+func (o GitLocalMetadataVersion) String() string {
+	if v, ok := GitLocalMetadataVersionRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type GitLocalMetadataV1 struct {
@@ -108,7 +108,7 @@ func (o GitLocalMetadataVersioned) DeepCopy() GitLocalMetadataVersioned {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.V1__),
 	}
@@ -154,11 +154,11 @@ var GitPushTypeRevMap = map[GitPushType]string{
 	3: "RENAMEREPO",
 }
 
-func (e GitPushType) String() string {
-	if v, ok := GitPushTypeRevMap[e]; ok {
+func (o GitPushType) String() string {
+	if v, ok := GitPushTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type GitRefMetadata struct {
@@ -250,11 +250,11 @@ var GitRepoResultStateRevMap = map[GitRepoResultState]string{
 	1: "OK",
 }
 
-func (e GitRepoResultState) String() string {
-	if v, ok := GitRepoResultStateRevMap[e]; ok {
+func (o GitRepoResultState) String() string {
+	if v, ok := GitRepoResultStateRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type GitRepoResult struct {
@@ -327,7 +327,7 @@ func (o GitRepoResult) DeepCopy() GitRepoResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Ok__),
 	}
@@ -357,7 +357,7 @@ func (o GitRepoInfo) DeepCopy() GitRepoInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TeamRepoSettings),
 	}

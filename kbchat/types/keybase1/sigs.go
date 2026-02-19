@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/sigs.avdl
 
 package keybase1
@@ -64,7 +64,7 @@ func (o SigListArgs) DeepCopy() SigListArgs {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Types),
 		Filterx: o.Filterx,

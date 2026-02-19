@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/ui.avdl
 
 package keybase1
@@ -29,9 +29,9 @@ var PromptDefaultRevMap = map[PromptDefault]string{
 	2: "NO",
 }
 
-func (e PromptDefault) String() string {
-	if v, ok := PromptDefaultRevMap[e]; ok {
+func (o PromptDefault) String() string {
+	if v, ok := PromptDefaultRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }

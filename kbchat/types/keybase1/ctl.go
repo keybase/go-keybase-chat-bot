@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/ctl.avdl
 
 package keybase1
@@ -29,11 +29,11 @@ var ExitCodeRevMap = map[ExitCode]string{
 	4: "RESTART",
 }
 
-func (e ExitCode) String() string {
-	if v, ok := ExitCodeRevMap[e]; ok {
+func (o ExitCode) String() string {
+	if v, ok := ExitCodeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type DbType int
@@ -67,11 +67,11 @@ var DbTypeRevMap = map[DbType]string{
 	5: "FS_SYNC_BLOCK_CACHE_META",
 }
 
-func (e DbType) String() string {
-	if v, ok := DbTypeRevMap[e]; ok {
+func (o DbType) String() string {
+	if v, ok := DbTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type DbKey struct {
@@ -121,9 +121,9 @@ var OnLoginStartupStatusRevMap = map[OnLoginStartupStatus]string{
 	2: "ENABLED",
 }
 
-func (e OnLoginStartupStatus) String() string {
-	if v, ok := OnLoginStartupStatusRevMap[e]; ok {
+func (o OnLoginStartupStatus) String() string {
+	if v, ok := OnLoginStartupStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }

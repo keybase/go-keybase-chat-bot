@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/chat1/api.avdl
 
 package chat1
@@ -154,14 +154,14 @@ func (o EmojiContent) DeepCopy() EmojiContent {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConvID),
 		MessageID: (func(x *MessageID) *MessageID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MessageID),
 	}
@@ -196,7 +196,7 @@ func (o MsgTextContent) DeepCopy() MsgTextContent {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ReplyTo),
 		ReplyToUID: (func(x *string) *string {
@@ -232,7 +232,7 @@ func (o MsgTextContent) DeepCopy() MsgTextContent {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.LiveLocation),
 		Emojis: (func(x []EmojiContent) []EmojiContent {
@@ -273,91 +273,91 @@ func (o MsgContent) DeepCopy() MsgContent {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Text),
 		Attachment: (func(x *MessageAttachment) *MessageAttachment {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Attachment),
 		Edit: (func(x *MessageEdit) *MessageEdit {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Edit),
 		Reaction: (func(x *MessageReaction) *MessageReaction {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Reaction),
 		Delete: (func(x *MessageDelete) *MessageDelete {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Delete),
 		Metadata: (func(x *MessageConversationMetadata) *MessageConversationMetadata {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Metadata),
 		Headline: (func(x *MessageHeadline) *MessageHeadline {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Headline),
 		AttachmentUploaded: (func(x *MessageAttachmentUploaded) *MessageAttachmentUploaded {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.AttachmentUploaded),
 		System: (func(x *MessageSystem) *MessageSystem {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.System),
 		SendPayment: (func(x *MessageSendPayment) *MessageSendPayment {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.SendPayment),
 		RequestPayment: (func(x *MessageRequestPayment) *MessageRequestPayment {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RequestPayment),
 		Unfurl: (func(x *MessageUnfurl) *MessageUnfurl {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Unfurl),
 		Flip: (func(x *MsgFlipContent) *MsgFlipContent {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Flip),
 	}
@@ -418,7 +418,7 @@ func (o MsgSummary) DeepCopy() MsgSummary {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Reactions),
 		HasPairwiseMacs: o.HasPairwiseMacs,
@@ -449,7 +449,7 @@ func (o MsgSummary) DeepCopy() MsgSummary {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.BotInfo),
 	}
@@ -466,7 +466,7 @@ func (o Message) DeepCopy() Message {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Msg),
 		Error: (func(x *string) *string {
@@ -504,7 +504,7 @@ func (o Thread) DeepCopy() Thread {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Pagination),
 		Offline: o.Offline,
@@ -574,7 +574,7 @@ func (o ConvSummary) DeepCopy() ConvSummary {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.FinalizeInfo),
 		Supersedes: (func(x []string) []string {
@@ -604,7 +604,7 @@ func (o ConvSummary) DeepCopy() ConvSummary {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.CreatorInfo),
 	}
@@ -671,14 +671,14 @@ func (o SendRes) DeepCopy() SendRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.MessageID),
 		OutboxID: (func(x *OutboxID) *OutboxID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.OutboxID),
 		IdentifyFailures: (func(x []keybase1.TLFIdentifyFailure) []keybase1.TLFIdentifyFailure {
@@ -718,7 +718,7 @@ func (o SearchInboxResOutput) DeepCopy() SearchInboxResOutput {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Results),
 		IdentifyFailures: (func(x []keybase1.TLFIdentifyFailure) []keybase1.TLFIdentifyFailure {
@@ -892,7 +892,7 @@ func (o MsgNotification) DeepCopy() MsgNotification {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Msg),
 		Error: (func(x *string) *string {
@@ -906,7 +906,7 @@ func (o MsgNotification) DeepCopy() MsgNotification {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Pagination),
 	}
@@ -925,7 +925,7 @@ func (o ConvNotification) DeepCopy() ConvNotification {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Conv),
 		Error: (func(x *string) *string {

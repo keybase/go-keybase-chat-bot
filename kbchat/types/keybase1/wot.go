@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/wot.avdl
 
 package keybase1
@@ -112,11 +112,11 @@ var WotReactionTypeRevMap = map[WotReactionType]string{
 	1: "ACCEPT",
 }
 
-func (e WotReactionType) String() string {
-	if v, ok := WotReactionTypeRevMap[e]; ok {
+func (o WotReactionType) String() string {
+	if v, ok := WotReactionTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type WotVouch struct {

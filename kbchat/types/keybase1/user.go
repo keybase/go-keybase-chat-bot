@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/user.avdl
 
 package keybase1
@@ -103,7 +103,7 @@ func (o UserSummary) DeepCopy() UserSummary {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.LinkID),
 	}
@@ -326,7 +326,7 @@ func (o NextMerkleRootRes) DeepCopy() NextMerkleRootRes {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Res),
 	}
@@ -352,11 +352,11 @@ var PassphraseStateRevMap = map[PassphraseState]string{
 	1: "RANDOM",
 }
 
-func (e PassphraseState) String() string {
-	if v, ok := PassphraseStateRevMap[e]; ok {
+func (o PassphraseState) String() string {
+	if v, ok := PassphraseStateRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type CanLogoutRes struct {
@@ -430,11 +430,11 @@ var UserBlockTypeRevMap = map[UserBlockType]string{
 	1: "FOLLOW",
 }
 
-func (e UserBlockType) String() string {
-	if v, ok := UserBlockTypeRevMap[e]; ok {
+func (o UserBlockType) String() string {
+	if v, ok := UserBlockTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UserBlockedBody struct {
@@ -523,14 +523,14 @@ func (o UserBlock) DeepCopy() UserBlock {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.CreateTime),
 		ModifyTime: (func(x *Time) *Time {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ModifyTime),
 	}

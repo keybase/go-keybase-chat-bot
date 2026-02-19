@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/passphrase_common.avdl
 
 package keybase1
@@ -58,11 +58,11 @@ var PassphraseTypeRevMap = map[PassphraseType]string{
 	3: "VERIFY_PASS_PHRASE",
 }
 
-func (e PassphraseType) String() string {
-	if v, ok := PassphraseTypeRevMap[e]; ok {
+func (o PassphraseType) String() string {
+	if v, ok := PassphraseTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type GUIEntryArg struct {

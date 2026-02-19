@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/os.avdl
 
 package keybase1
@@ -32,9 +32,9 @@ var RuntimeGroupRevMap = map[RuntimeGroup]string{
 	3: "WINDOWSLIKE",
 }
 
-func (e RuntimeGroup) String() string {
-	if v, ok := RuntimeGroupRevMap[e]; ok {
+func (o RuntimeGroup) String() string {
+	if v, ok := RuntimeGroupRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }

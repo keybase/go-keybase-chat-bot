@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/prove_ui.avdl
 
 package keybase1
@@ -26,11 +26,11 @@ var PromptOverwriteTypeRevMap = map[PromptOverwriteType]string{
 	1: "SITE",
 }
 
-func (e PromptOverwriteType) String() string {
-	if v, ok := PromptOverwriteTypeRevMap[e]; ok {
+func (o PromptOverwriteType) String() string {
+	if v, ok := PromptOverwriteTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type ProveParameters struct {

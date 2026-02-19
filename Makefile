@@ -13,6 +13,7 @@ types:
 	$(AVDLC) -b -l go -t -m -o kbchat/types/chat1 $(PROTOCOL_PATH)/avdl/chat1/*.avdl
 	$(AVDLC) -b -l go -t -m -o kbchat/types/stellar1 $(PROTOCOL_PATH)/avdl/stellar1/*.avdl
 	goimports -w ./kbchat/types/
+	gofumpt -w ./kbchat/types/
 
 clean:
 	rm -rf kbchat/types/

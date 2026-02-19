@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/chat1/chat_ui.avdl
 
 package chat1
@@ -32,6 +32,7 @@ type UIInboxSmallTeamRow struct {
 	ConvID            ConvIDStr         `codec:"convID" json:"convID"`
 	Name              string            `codec:"name" json:"name"`
 	Time              gregor1.Time      `codec:"time" json:"time"`
+	LastSendTime      gregor1.Time      `codec:"lastSendTime" json:"lastSendTime"`
 	Snippet           *string           `codec:"snippet,omitempty" json:"snippet,omitempty"`
 	SnippetDecoration SnippetDecoration `codec:"snippetDecoration" json:"snippetDecoration"`
 	Draft             *string           `codec:"draft,omitempty" json:"draft,omitempty"`
@@ -41,9 +42,10 @@ type UIInboxSmallTeamRow struct {
 
 func (o UIInboxSmallTeamRow) DeepCopy() UIInboxSmallTeamRow {
 	return UIInboxSmallTeamRow{
-		ConvID: o.ConvID.DeepCopy(),
-		Name:   o.Name,
-		Time:   o.Time.DeepCopy(),
+		ConvID:       o.ConvID.DeepCopy(),
+		Name:         o.Name,
+		Time:         o.Time.DeepCopy(),
+		LastSendTime: o.LastSendTime.DeepCopy(),
 		Snippet: (func(x *string) *string {
 			if x == nil {
 				return nil
@@ -83,11 +85,11 @@ var UIInboxBigTeamRowTypRevMap = map[UIInboxBigTeamRowTyp]string{
 	2: "CHANNEL",
 }
 
-func (e UIInboxBigTeamRowTyp) String() string {
-	if v, ok := UIInboxBigTeamRowTypRevMap[e]; ok {
+func (o UIInboxBigTeamRowTyp) String() string {
+	if v, ok := UIInboxBigTeamRowTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UIInboxBigTeamChannelRow struct {
@@ -189,14 +191,14 @@ func (o UIInboxBigTeamRow) DeepCopy() UIInboxBigTeamRow {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Label__),
 		Channel__: (func(x *UIInboxBigTeamChannelRow) *UIInboxBigTeamChannelRow {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Channel__),
 	}
@@ -214,7 +216,7 @@ func (o UIInboxReselectInfo) DeepCopy() UIInboxReselectInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.NewConvID),
 	}
@@ -257,7 +259,7 @@ func (o UIInboxLayout) DeepCopy() UIInboxLayout {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ReselectInfo),
 		WidgetList: (func(x []UIInboxSmallTeamRow) []UIInboxSmallTeamRow {
@@ -362,7 +364,7 @@ func (o UnverifiedInboxUIItem) DeepCopy() UnverifiedInboxUIItem {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Notifications),
 		Time:         o.Time.DeepCopy(),
@@ -372,14 +374,14 @@ func (o UnverifiedInboxUIItem) DeepCopy() UnverifiedInboxUIItem {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConvRetention),
 		TeamRetention: (func(x *RetentionPolicy) *RetentionPolicy {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TeamRetention),
 		MaxMsgID:        o.MaxMsgID.DeepCopy(),
@@ -389,7 +391,7 @@ func (o UnverifiedInboxUIItem) DeepCopy() UnverifiedInboxUIItem {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.LocalMetadata),
 		Draft: (func(x *string) *string {
@@ -403,7 +405,7 @@ func (o UnverifiedInboxUIItem) DeepCopy() UnverifiedInboxUIItem {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.FinalizeInfo),
 		Supersedes: (func(x []ConversationMetadata) []ConversationMetadata {
@@ -479,11 +481,11 @@ var UIParticipantTypeRevMap = map[UIParticipantType]string{
 	3: "EMAIL",
 }
 
-func (e UIParticipantType) String() string {
-	if v, ok := UIParticipantTypeRevMap[e]; ok {
+func (o UIParticipantType) String() string {
+	if v, ok := UIParticipantTypeRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UIParticipant struct {
@@ -624,14 +626,14 @@ func (o InboxUIItem) DeepCopy() InboxUIItem {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Notifications),
 		CreatorInfo: (func(x *ConversationCreatorInfoLocal) *ConversationCreatorInfoLocal {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.CreatorInfo),
 		Version:         o.Version.DeepCopy(),
@@ -643,28 +645,28 @@ func (o InboxUIItem) DeepCopy() InboxUIItem {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConvRetention),
 		TeamRetention: (func(x *RetentionPolicy) *RetentionPolicy {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.TeamRetention),
 		ConvSettings: (func(x *ConversationSettingsLocal) *ConversationSettingsLocal {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConvSettings),
 		FinalizeInfo: (func(x *ConversationFinalizeInfo) *ConversationFinalizeInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.FinalizeInfo),
 		Supersedes: (func(x []ConversationMetadata) []ConversationMetadata {
@@ -707,7 +709,7 @@ func (o InboxUIItem) DeepCopy() InboxUIItem {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.PinnedMsg),
 	}
@@ -730,7 +732,7 @@ func (o InboxUIItemError) DeepCopy() InboxUIItemError {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RekeyInfo),
 		RemoteConv: o.RemoteConv.DeepCopy(),
@@ -822,7 +824,7 @@ func (o UIPaymentInfo) DeepCopy() UIPaymentInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.AccountID),
 		AmountDescription: o.AmountDescription,
@@ -860,14 +862,14 @@ func (o UIRequestInfo) DeepCopy() UIRequestInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Asset),
 		Currency: (func(x *stellar1.OutsideCurrencyCode) *stellar1.OutsideCurrencyCode {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Currency),
 		WorthAtRequestTime: o.WorthAtRequestTime,
@@ -1001,14 +1003,14 @@ func (o UIMessageValid) DeepCopy() UIMessageValid {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.AssetUrlInfo),
 		SenderDeviceRevokedAt: (func(x *gregor1.Time) *gregor1.Time {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.SenderDeviceRevokedAt),
 		AtMentions: (func(x []string) []string {
@@ -1061,7 +1063,7 @@ func (o UIMessageValid) DeepCopy() UIMessageValid {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RequestInfo),
 		Unfurls: (func(x []UIMessageUnfurlInfo) []UIMessageUnfurlInfo {
@@ -1080,7 +1082,7 @@ func (o UIMessageValid) DeepCopy() UIMessageValid {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.FlipGameID),
 		IsDeleteable: o.IsDeleteable,
@@ -1089,14 +1091,14 @@ func (o UIMessageValid) DeepCopy() UIMessageValid {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ReplyTo),
 		PinnedMessageID: (func(x *MessageID) *MessageID {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.PinnedMessageID),
 		BotUsername: o.BotUsername,
@@ -1140,14 +1142,14 @@ func (o UIMessageOutbox) DeepCopy() UIMessageOutbox {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.FlipGameID),
 		ReplyTo: (func(x *UIMessage) *UIMessage {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ReplyTo),
 		Supersedes: o.Supersedes.DeepCopy(),
@@ -1157,7 +1159,7 @@ func (o UIMessageOutbox) DeepCopy() UIMessageOutbox {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Preview),
 	}
@@ -1207,11 +1209,11 @@ var MessageUnboxedStateRevMap = map[MessageUnboxedState]string{
 	5: "JOURNEYCARD",
 }
 
-func (e MessageUnboxedState) String() string {
-	if v, ok := MessageUnboxedStateRevMap[e]; ok {
+func (o MessageUnboxedState) String() string {
+	if v, ok := MessageUnboxedStateRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UIMessage struct {
@@ -1346,35 +1348,35 @@ func (o UIMessage) DeepCopy() UIMessage {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Valid__),
 		Error__: (func(x *MessageUnboxedError) *MessageUnboxedError {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Error__),
 		Outbox__: (func(x *UIMessageOutbox) *UIMessageOutbox {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Outbox__),
 		Placeholder__: (func(x *MessageUnboxedPlaceholder) *MessageUnboxedPlaceholder {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Placeholder__),
 		Journeycard__: (func(x *UIMessageJourneycard) *UIMessageJourneycard {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Journeycard__),
 	}
@@ -1402,7 +1404,7 @@ func (o UIMessages) DeepCopy() UIMessages {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Pagination),
 	}
@@ -1450,7 +1452,7 @@ func (o UITeamMention) DeepCopy() UITeamMention {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ConvID),
 	}
@@ -1493,11 +1495,11 @@ var UITextDecorationTypRevMap = map[UITextDecorationTyp]string{
 	7: "EMOJI",
 }
 
-func (e UITextDecorationTyp) String() string {
-	if v, ok := UITextDecorationTypRevMap[e]; ok {
+func (o UITextDecorationTyp) String() string {
+	if v, ok := UITextDecorationTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UIMaybeMentionStatus int
@@ -1525,11 +1527,11 @@ var UIMaybeMentionStatusRevMap = map[UIMaybeMentionStatus]string{
 	3: "NOTHING",
 }
 
-func (e UIMaybeMentionStatus) String() string {
-	if v, ok := UIMaybeMentionStatusRevMap[e]; ok {
+func (o UIMaybeMentionStatus) String() string {
+	if v, ok := UIMaybeMentionStatusRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UILinkDecoration struct {
@@ -1602,7 +1604,7 @@ func (o UIMaybeMentionInfo) DeepCopy() UIMaybeMentionInfo {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Team__),
 	}
@@ -1809,7 +1811,7 @@ func (o UITextDecoration) DeepCopy() UITextDecoration {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Payment__),
 		Atmention__: (func(x *string) *string {
@@ -1823,42 +1825,42 @@ func (o UITextDecoration) DeepCopy() UITextDecoration {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Channelnamemention__),
 		Maybemention__: (func(x *MaybeMention) *MaybeMention {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Maybemention__),
 		Link__: (func(x *UILinkDecoration) *UILinkDecoration {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Link__),
 		Mailto__: (func(x *UILinkDecoration) *UILinkDecoration {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Mailto__),
 		Kbfspath__: (func(x *KBFSPath) *KBFSPath {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Kbfspath__),
 		Emoji__: (func(x *Emoji) *Emoji {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Emoji__),
 	}
@@ -1889,11 +1891,11 @@ var UIChatThreadStatusTypRevMap = map[UIChatThreadStatusTyp]string{
 	3: "VALIDATED",
 }
 
-func (e UIChatThreadStatusTyp) String() string {
-	if v, ok := UIChatThreadStatusTypRevMap[e]; ok {
+func (o UIChatThreadStatusTyp) String() string {
+	if v, ok := UIChatThreadStatusTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UIChatThreadStatus struct {
@@ -2097,20 +2099,22 @@ func (o UIChatPaymentSummary) DeepCopy() UIChatPaymentSummary {
 }
 
 type GiphySearchResult struct {
-	TargetUrl      string `codec:"targetUrl" json:"targetUrl"`
-	PreviewUrl     string `codec:"previewUrl" json:"previewUrl"`
-	PreviewWidth   int    `codec:"previewWidth" json:"previewWidth"`
-	PreviewHeight  int    `codec:"previewHeight" json:"previewHeight"`
-	PreviewIsVideo bool   `codec:"previewIsVideo" json:"previewIsVideo"`
+	TargetUrl           string `codec:"targetUrl" json:"targetUrl"`
+	PreferredPreviewUrl string `codec:"preferredPreviewUrl" json:"preferredPreviewUrl"`
+	PreviewUrl          string `codec:"previewUrl" json:"previewUrl"`
+	PreviewWidth        int    `codec:"previewWidth" json:"previewWidth"`
+	PreviewHeight       int    `codec:"previewHeight" json:"previewHeight"`
+	PreviewIsVideo      bool   `codec:"previewIsVideo" json:"previewIsVideo"`
 }
 
 func (o GiphySearchResult) DeepCopy() GiphySearchResult {
 	return GiphySearchResult{
-		TargetUrl:      o.TargetUrl,
-		PreviewUrl:     o.PreviewUrl,
-		PreviewWidth:   o.PreviewWidth,
-		PreviewHeight:  o.PreviewHeight,
-		PreviewIsVideo: o.PreviewIsVideo,
+		TargetUrl:           o.TargetUrl,
+		PreferredPreviewUrl: o.PreferredPreviewUrl,
+		PreviewUrl:          o.PreviewUrl,
+		PreviewWidth:        o.PreviewWidth,
+		PreviewHeight:       o.PreviewHeight,
+		PreviewIsVideo:      o.PreviewIsVideo,
 	}
 }
 
@@ -2161,11 +2165,11 @@ var UICoinFlipPhaseRevMap = map[UICoinFlipPhase]string{
 	3: "ERROR",
 }
 
-func (e UICoinFlipPhase) String() string {
-	if v, ok := UICoinFlipPhaseRevMap[e]; ok {
+func (o UICoinFlipPhase) String() string {
+	if v, ok := UICoinFlipPhaseRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UICoinFlipErrorParticipant struct {
@@ -2237,11 +2241,11 @@ var UICoinFlipErrorTypRevMap = map[UICoinFlipErrorTyp]string{
 	7: "COMMITMISMATCH",
 }
 
-func (e UICoinFlipErrorTyp) String() string {
-	if v, ok := UICoinFlipErrorTypRevMap[e]; ok {
+func (o UICoinFlipErrorTyp) String() string {
+	if v, ok := UICoinFlipErrorTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UICoinFlipError struct {
@@ -2418,35 +2422,35 @@ func (o UICoinFlipError) DeepCopy() UICoinFlipError {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Absentee__),
 		Dupreg__: (func(x *UICoinFlipErrorParticipant) *UICoinFlipErrorParticipant {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Dupreg__),
 		Dupcommitcomplete__: (func(x *UICoinFlipErrorParticipant) *UICoinFlipErrorParticipant {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Dupcommitcomplete__),
 		Dupreveal__: (func(x *UICoinFlipErrorParticipant) *UICoinFlipErrorParticipant {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Dupreveal__),
 		Commitmismatch__: (func(x *UICoinFlipErrorParticipant) *UICoinFlipErrorParticipant {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Commitmismatch__),
 	}
@@ -2480,11 +2484,11 @@ var UICoinFlipResultTypRevMap = map[UICoinFlipResultTyp]string{
 	4: "COIN",
 }
 
-func (e UICoinFlipResultTyp) String() string {
-	if v, ok := UICoinFlipResultTypRevMap[e]; ok {
+func (o UICoinFlipResultTyp) String() string {
+	if v, ok := UICoinFlipResultTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UICoinFlipHand struct {
@@ -2766,14 +2770,14 @@ func (o UICoinFlipStatus) DeepCopy() UICoinFlipStatus {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ErrorInfo),
 		ResultInfo: (func(x *UICoinFlipResult) *UICoinFlipResult {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ResultInfo),
 	}
@@ -2822,11 +2826,11 @@ var UIWatchPositionPermRevMap = map[UIWatchPositionPerm]string{
 	1: "ALWAYS",
 }
 
-func (e UIWatchPositionPerm) String() string {
-	if v, ok := UIWatchPositionPermRevMap[e]; ok {
+func (o UIWatchPositionPerm) String() string {
+	if v, ok := UIWatchPositionPermRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UICommandStatusDisplayTyp int
@@ -2851,11 +2855,11 @@ var UICommandStatusDisplayTypRevMap = map[UICommandStatusDisplayTyp]string{
 	2: "ERROR",
 }
 
-func (e UICommandStatusDisplayTyp) String() string {
-	if v, ok := UICommandStatusDisplayTypRevMap[e]; ok {
+func (o UICommandStatusDisplayTyp) String() string {
+	if v, ok := UICommandStatusDisplayTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UICommandStatusActionTyp int
@@ -2874,11 +2878,11 @@ var UICommandStatusActionTypRevMap = map[UICommandStatusActionTyp]string{
 	0: "APPSETTINGS",
 }
 
-func (e UICommandStatusActionTyp) String() string {
-	if v, ok := UICommandStatusActionTypRevMap[e]; ok {
+func (o UICommandStatusActionTyp) String() string {
+	if v, ok := UICommandStatusActionTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UIBotCommandsUpdateStatusTyp int
@@ -2906,11 +2910,11 @@ var UIBotCommandsUpdateStatusTypRevMap = map[UIBotCommandsUpdateStatusTyp]string
 	3: "BLANK",
 }
 
-func (e UIBotCommandsUpdateStatusTyp) String() string {
-	if v, ok := UIBotCommandsUpdateStatusTypRevMap[e]; ok {
+func (o UIBotCommandsUpdateStatusTyp) String() string {
+	if v, ok := UIBotCommandsUpdateStatusTypRevMap[o]; ok {
 		return v
 	}
-	return fmt.Sprintf("%v", int(e))
+	return fmt.Sprintf("%v", int(o))
 }
 
 type UIBotCommandsUpdateSettings struct {
@@ -2992,7 +2996,7 @@ func (o UIBotCommandsUpdateStatus) DeepCopy() UIBotCommandsUpdateStatus {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Uptodate__),
 	}

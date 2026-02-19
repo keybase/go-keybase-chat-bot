@@ -1,4 +1,4 @@
-// Auto-generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler)
+// Code generated to Go types using avdl-compiler v1.4.10 (https://github.com/keybase/node-avdl-compiler). DO NOT EDIT.
 //   Input file: ../client/protocol/avdl/keybase1/device.avdl
 
 package keybase1
@@ -22,21 +22,21 @@ func (o DeviceDetail) DeepCopy() DeviceDetail {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.Provisioner),
 		ProvisionedAt: (func(x *Time) *Time {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.ProvisionedAt),
 		RevokedAt: (func(x *Time) *Time {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RevokedAt),
 		RevokedBy: o.RevokedBy.DeepCopy(),
@@ -44,7 +44,7 @@ func (o DeviceDetail) DeepCopy() DeviceDetail {
 			if x == nil {
 				return nil
 			}
-			tmp := (*x).DeepCopy()
+			tmp := x.DeepCopy()
 			return &tmp
 		})(o.RevokedByDevice),
 		CurrentDevice: o.CurrentDevice,
