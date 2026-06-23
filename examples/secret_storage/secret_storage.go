@@ -42,6 +42,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -109,7 +110,8 @@ func (sc *SecretKeyKVStoreAPI) loadSecret(teamName string, namespace string) ([]
 	// we don't expect SecretKey's revision > 0
 	_, err := sc.api.PutEntryWithRevision(&teamName, namespace, sc.config.secretName, hex.EncodeToString(newSecret), 1)
 	if err != nil {
-		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
+		var e kbchat.Error
+		if !errors.As(err, &e) || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
 			return nil, err
 		}
@@ -293,7 +295,8 @@ func (r *RentalBotClient) Add(tool string) (ok bool, result keybase1.KVGetResult
 	}
 	_, err = r.api.PutEntryWithRevision(&r.team, r.namespace, tool, string(bytes), expectedRevision)
 	if err != nil {
-		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
+		var e kbchat.Error
+		if !errors.As(err, &e) || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
 			return false, result, err
 		}
@@ -320,11 +323,12 @@ func (r *RentalBotClient) Remove(tool string) (ok bool, result keybase1.KVGetRes
 	expectedRevision := result.Revision + 1
 
 	_, err = r.api.DeleteEntryWithRevision(&r.team, r.namespace, tool, expectedRevision)
-	switch err.(type) {
-	case nil:
+	var e kbchat.Error
+	switch {
+	case err == nil:
 		// successul delete
 		return true, result, nil
-	case kbchat.Error:
+	case errors.As(err, &e):
 		// failed delete. try get
 		result, err := r.Lookup(tool)
 		if err != nil {
@@ -367,7 +371,8 @@ func (r *RentalBotClient) Reserve(username string, tool string, day string) (ok 
 	}
 	_, err = r.api.PutEntryWithRevision(&r.team, r.namespace, tool, string(bytes), expectedRevision)
 	if err != nil {
-		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
+		var e kbchat.Error
+		if !errors.As(err, &e) || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
 			return false, result, err
 		}
@@ -418,7 +423,8 @@ func (r *RentalBotClient) Unreserve(username string, tool string, day string) (o
 
 	_, err = r.api.PutEntryWithRevision(&r.team, r.namespace, tool, string(bytes), expectedRevision)
 	if err != nil {
-		if e, ok := err.(kbchat.Error); !ok || e.Code != kbchat.RevisionErrorCode {
+		var e kbchat.Error
+		if !errors.As(err, &e) || e.Code != kbchat.RevisionErrorCode {
 			// unexpected error
 			return false, result, err
 		}

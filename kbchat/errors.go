@@ -32,10 +32,18 @@ func (e APIError) Error() string {
 	return fmt.Sprintf("failed to call keybase api: %v", e.err)
 }
 
+func (e APIError) Unwrap() error {
+	return e.err
+}
+
 type UnmarshalError struct {
 	err error
 }
 
 func (e UnmarshalError) Error() string {
 	return fmt.Sprintf("failed to parse output from keybase api: %v", e.err)
+}
+
+func (e UnmarshalError) Unwrap() error {
+	return e.err
 }
