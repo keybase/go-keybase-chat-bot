@@ -52,6 +52,16 @@ func newSendArg(options sendMessageOptions) sendMessageArg {
 	}
 }
 
+// fmtBody skips Sprintf when no args are provided, so callers that pass untrusted
+// text as body without any args are safe. Callers that do pass args must still ensure
+// body is a trusted format string.
+func fmtBody(body string, args ...any) string {
+	if len(args) > 0 {
+		return fmt.Sprintf(body, args...)
+	}
+	return body
+}
+
 // GetConversations reads all conversations from the current user's inbox.
 func (a *API) GetConversations(unreadOnly bool) ([]chat1.ConvSummary, error) {
 	apiInput := fmt.Sprintf(`{"method":"list", "params": { "options": { "unread_only": %v}}}`, unreadOnly)
@@ -127,7 +137,7 @@ func (a *API) SendMessage(channel chat1.ChatChannel, body string, args ...any) (
 	arg := newSendArg(sendMessageOptions{
 		Channel: channel,
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 	})
 	return a.doSend(arg)
@@ -145,7 +155,7 @@ func (a *API) SendMessageByConvID(convID chat1.ConvIDStr, body string, args ...a
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 	})
 	return a.doSend(arg)
@@ -159,7 +169,7 @@ func (a *API) SendMessageByTlfName(tlfName string, body string, args ...any) (re
 			Name: tlfName,
 		},
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 	})
 	return a.doSend(arg)
@@ -178,7 +188,7 @@ func (a *API) SendMessageByTeamName(teamName string, inChannel *string, body str
 			TopicName:   channel,
 		},
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 	})
 	return a.doSend(arg)
@@ -188,7 +198,7 @@ func (a *API) SendReply(channel chat1.ChatChannel, replyTo *chat1.MessageID, bod
 	arg := newSendArg(sendMessageOptions{
 		Channel: channel,
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 		ReplyTo: replyTo,
 	})
@@ -199,7 +209,7 @@ func (a *API) SendReplyByConvID(convID chat1.ConvIDStr, replyTo *chat1.MessageID
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 		ReplyTo: replyTo,
 	})
@@ -212,7 +222,7 @@ func (a *API) SendReplyByTlfName(tlfName string, replyTo *chat1.MessageID, body 
 			Name: tlfName,
 		},
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 		ReplyTo: replyTo,
 	})
@@ -422,7 +432,7 @@ func (a *API) InChatSend(channel chat1.ChatChannel, body string, args ...any) (S
 	arg := newSendArg(sendMessageOptions{
 		Channel: channel,
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 		ConfirmLumenSend: true,
 	})
@@ -433,7 +443,7 @@ func (a *API) InChatSendByConvID(convID chat1.ConvIDStr, body string, args ...an
 	arg := newSendArg(sendMessageOptions{
 		ConversationID: convID,
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 		ConfirmLumenSend: true,
 	})
@@ -446,7 +456,7 @@ func (a *API) InChatSendByTlfName(tlfName string, body string, args ...any) (Sen
 			Name: tlfName,
 		},
 		Message: sendMessageBody{
-			Body: fmt.Sprintf(body, args...),
+			Body: fmtBody(body, args...),
 		},
 		ConfirmLumenSend: true,
 	})

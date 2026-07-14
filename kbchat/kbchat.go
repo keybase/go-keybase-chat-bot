@@ -9,6 +9,7 @@ import (
 	"math"
 	"os"
 	"os/exec"
+	"regexp"
 	"runtime"
 	"sync"
 	"time"
@@ -17,6 +18,8 @@ import (
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/stellar1"
 )
+
+var validUsernameRe = regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
 
 // SubscriptionMessage contains a message and conversation object
 type SubscriptionMessage struct {
@@ -287,11 +290,21 @@ func (a *API) auth() (username string, err error) {
 	}
 
 	// If we get here, we need to do oneshot login (logout first)
+	if !validUsernameRe.MatchString(a.runOpts.Oneshot.Username) {
+		return "", fmt.Errorf("invalid oneshot username %q: must match [a-zA-Z0-9_]+", a.runOpts.Oneshot.Username)
+	}
 	if err := a.runOpts.Command("logout", "-f").Run(); err != nil {
 		return "", err
 	}
-	if err := a.runOpts.Command("oneshot", "--username", a.runOpts.Oneshot.Username, "--paperkey",
-		a.runOpts.Oneshot.PaperKey).Run(); err != nil {
+	// Pass the paper key via env var rather than argv to avoid local disclosure via ps/proc.
+	// keybase oneshot reads KEYBASE_PAPERKEY before prompting stdin (cmd_oneshot.go:getOption).
+	// Strip any inherited KEYBASE_PAPERKEY first: getenv returns the first match, so an
+	// existing entry in the parent environment would shadow ours silently.
+	oneshotCmd := a.runOpts.Command("oneshot", "--username", a.runOpts.Oneshot.Username)
+	// Prepend so our value is found first; getenv returns the first match, so any
+	// pre-existing KEYBASE_PAPERKEY in the parent environment is silently shadowed.
+	oneshotCmd.Env = append([]string{"KEYBASE_PAPERKEY=" + a.runOpts.Oneshot.PaperKey}, os.Environ()...)
+	if err := oneshotCmd.Run(); err != nil {
 		return "", err
 	}
 	username = a.runOpts.Oneshot.Username
@@ -432,12 +445,19 @@ func (a *API) registerSubscription(sub *Subscription) {
 // events into channels
 func (a *API) Listen(opts ListenOptions) (sub *Subscription, err error) {
 	defer a.Trace(&err, "Listen(%s)", a.runOpts.DebugTag)()
-	done := make(chan struct{})
+	done := make(chan struct{}, 1)
 	sub = NewSubscription()
 	a.registerSubscription(sub)
 	pause := 2 * time.Second
 	readScanner := func(boutput *bufio.Scanner) {
-		defer func() { done <- struct{}{} }()
+		defer func() {
+			// Recover from "send on closed channel" panics that can occur when the
+			// subscription shuts down while readScanner is mid-send.
+			if r := recover(); r != nil {
+				a.Debug("readScanner: recovered from panic: %v", r)
+			}
+			done <- struct{}{}
+		}()
 		for {
 			select {
 			case <-sub.shutdownCh:
@@ -456,7 +476,7 @@ func (a *API) Listen(opts ListenOptions) (sub *Subscription, err error) {
 			var typeHolder TypeHolder
 			if err := json.Unmarshal([]byte(t), &typeHolder); err != nil {
 				submitErr(fmt.Errorf("err: %v, data: %v", err, t))
-				break
+				continue
 			}
 			switch typeHolder.Type {
 			case "chat":
@@ -532,9 +552,13 @@ func (a *API) Listen(opts ListenOptions) (sub *Subscription, err error) {
 			}
 
 			if attempts >= maxAttempts {
-				if err := a.LogSend("Listen: failed to auth, giving up"); err != nil {
-					a.Debug("Listen: logsend failed to send: %v", err)
-				}
+				// Run LogSend in a goroutine: keybase may be unresponsive (the cause of the
+				// auth failures), and blocking here would delay the panic indefinitely.
+				go func() {
+					if err := a.LogSend("Listen: failed to auth, giving up"); err != nil {
+						a.Debug("Listen: logsend failed to send: %v", err)
+					}
+				}()
 				panic("Listen: failed to auth, giving up")
 			}
 			attempts++
