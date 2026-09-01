@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/keybase/go-keybase-chat-bot/kbchat/types/chat1"
-	"github.com/keybase/go-keybase-chat-bot/kbchat/types/keybase1"
 )
 
 type Thread struct {
@@ -595,6 +594,11 @@ type listMembersArg struct {
 	Params listMembersParams
 }
 
+type ListMembersResult struct {
+	Result chat1.ChatMembersDetails `json:"result"`
+	Error  *Error                   `json:"error,omitempty"`
+}
+
 func newListMembersArg(options listMembersOptions) listMembersArg {
 	return listMembersArg{
 		Method: "listmembers",
@@ -604,21 +608,21 @@ func newListMembersArg(options listMembersOptions) listMembersArg {
 	}
 }
 
-func (a *API) ListMembers(channel chat1.ChatChannel) (keybase1.TeamMembersDetails, error) {
+func (a *API) ListMembers(channel chat1.ChatChannel) (chat1.ChatMembersDetails, error) {
 	arg := newListMembersArg(listMembersOptions{
 		Channel: channel,
 	})
 	return a.listMembers(arg)
 }
 
-func (a *API) ListMembersByConvID(conversationID chat1.ConvIDStr) (keybase1.TeamMembersDetails, error) {
+func (a *API) ListMembersByConvID(conversationID chat1.ConvIDStr) (chat1.ChatMembersDetails, error) {
 	arg := newListMembersArg(listMembersOptions{
 		ConversationID: conversationID,
 	})
 	return a.listMembers(arg)
 }
 
-func (a *API) listMembers(arg listMembersArg) (res keybase1.TeamMembersDetails, err error) {
+func (a *API) listMembers(arg listMembersArg) (res chat1.ChatMembersDetails, err error) {
 	bArg, err := json.Marshal(arg)
 	if err != nil {
 		return res, err
@@ -627,15 +631,15 @@ func (a *API) listMembers(arg listMembersArg) (res keybase1.TeamMembersDetails, 
 	if err != nil {
 		return res, err
 	}
-	members := ListTeamMembers{}
+	members := ListMembersResult{}
 	err = json.Unmarshal(output, &members)
 	if err != nil {
 		return res, UnmarshalError{err}
 	}
-	if members.Error.Message != "" {
+	if members.Error != nil {
 		return res, members.Error
 	}
-	return members.Result.Members, nil
+	return members.Result, nil
 }
 
 type GetMessagesResult struct {
