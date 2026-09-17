@@ -82,7 +82,9 @@ Reads the messages in a channel. You can read with or without marking as read.
 #### `API.ListenForNextTextMessages() NewSubscription`
 
 Returns an object that allows for a bot to enter into a loop calling `NewSubscription.Read`
-to receive any new message across all conversations (except the bots own messages). See the following example:
+to receive any new message across all conversations (except the bots own messages). See the following example.
+
+`Listen` / `ListenForNewTextMessages` restarts the `keybase chat api-listen` process if that pipe ends. A `Read` (or `ReadWallet`) error is usually transient — log it and continue. Do not exit the bot or post the error back into chat, or a dead listen pipe can turn into a message flood.
 
 #### `API.InChatSend(channel chat1.ChatChannel, body string) (SendResponse, error)`
 
@@ -105,7 +107,8 @@ send a new message which can contain in-chat-send payments (i.e. `+5XLM@joshblum
 	for {
 		msg, err := sub.Read()
 		if err != nil {
-			fail("failed to read message: %s", err.Error())
+			fmt.Printf("failed to read message: %s\n", err)
+			continue
 		}
 
 		if msg.Message.Content.TypeName != "text" {
@@ -136,7 +139,8 @@ Returns the same object as above, but this one will have another channel on it t
 		for {
 			payment, err := sub.ReadWallet()
 			if err != nil {
-				fail("failed to read payment event: %s", err.Error())
+				fmt.Printf("failed to read payment event: %s\n", err)
+				continue
 			}
 			tlfName := fmt.Sprintf("%s,%s", payment.Payment.FromUsername, "kb_monbot")
 			msg := fmt.Sprintf("thanks for the %s!", payment.Payment.AmountDescription)
@@ -149,7 +153,8 @@ Returns the same object as above, but this one will have another channel on it t
 	for {
 		msg, err := sub.Read()
 		if err != nil {
-			fail("failed to read message: %s", err.Error())
+			fmt.Printf("failed to read message: %s\n", err)
+			continue
 		}
 
 		if msg.Message.Content.TypeName != "text" {

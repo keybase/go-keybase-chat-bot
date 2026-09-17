@@ -33,7 +33,8 @@ func main() {
 	for {
 		msg, err := sub.Read()
 		if err != nil {
-			fail("failed to read message: %s", err.Error())
+			fmt.Printf("failed to read message: %s\n", err)
+			continue
 		}
 
 		if msg.Message.Content.TypeName != "text" {
