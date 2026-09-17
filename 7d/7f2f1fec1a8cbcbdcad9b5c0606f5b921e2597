@@ -1,0 +1,19 @@
+kbchat/kbchat.go
+  s_ee97987c18c7d1::t_ca96889dc62ee1 474-483
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "7d7f2f1fec1a8cbcbdcad9b5c0606f5b921e2597",
+  "prompts": {},
+  "sessions": {
+    "s_ee97987c18c7d1": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "768745b4-5410-4e76-b349-417c5ec5363d",
+        "model": "auto-smart"
+      },
+      "human_author": "Joshua Blum <joshua.blum@zoom.us>"
+    }
+  }
+}
