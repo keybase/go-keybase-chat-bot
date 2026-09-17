@@ -465,13 +465,21 @@ func (a *API) Listen(opts ListenOptions) (sub *Subscription, err error) {
 				return
 			default:
 			}
-			boutput.Scan()
-			t := boutput.Text()
 			submitErr := func(err error) {
 				if len(sub.errorCh)*2 > cap(sub.errorCh) {
 					a.Debug("large errorCh queue: len: %d cap: %d ", len(sub.errorCh), cap(sub.errorCh))
 				}
 				sub.errorCh <- err
+			}
+			if !boutput.Scan() {
+				if err := boutput.Err(); err != nil {
+					submitErr(err)
+				}
+				return
+			}
+			t := boutput.Text()
+			if t == "" {
+				continue
 			}
 			var typeHolder TypeHolder
 			if err := json.Unmarshal([]byte(t), &typeHolder); err != nil {
