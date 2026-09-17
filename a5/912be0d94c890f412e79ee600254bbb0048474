@@ -1,0 +1,24 @@
+examples/echobot/echobot.go
+  s_ee97987c18c7d1::t_1049c97e474e0c 36-37
+README.md
+  s_ee97987c18c7d1::t_eeca8768ad20ee 110-111
+  s_ee97987c18c7d1::t_e0f1895fe6af74 85-87
+  s_ee97987c18c7d1::t_6c52cfb1a535d5 156-157
+  s_ee97987c18c7d1::t_d1151140441575 142-143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "a5912be0d94c890f412e79ee600254bbb0048474",
+  "prompts": {},
+  "sessions": {
+    "s_ee97987c18c7d1": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "768745b4-5410-4e76-b349-417c5ec5363d",
+        "model": "auto-smart"
+      },
+      "human_author": null
+    }
+  }
+}
